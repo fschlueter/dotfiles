@@ -1,0 +1,10 @@
+# system
+alias ll="ls -l"
+alias ls="ls --color=auto"
+alias grep="grep --color=auto"
+
+# git
+alias git_clean='git branch --merged | egrep -v "(^\*|master|main|develop)" | xargs git branch -d'
+alias git_add_all='git ls-files --modified | xargs git add'
+alias st='git status'
+alias co='git checkout'
