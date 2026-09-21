@@ -1,2 +1,4 @@
-font-family = JetBrains Mono
+font-family = MesloLGL Nerd Font Mono
 window-decoration = false
+
+font-codepoint-map = U+E007=Symbols Nerd Font
