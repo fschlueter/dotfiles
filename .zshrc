@@ -18,4 +18,5 @@ source <(fzf --zsh)
 eval "$(zoxide init zsh --cmd cd)"
 
 # Prompt engine
+export POSH_THEME="$(cat ~/.config/ohmyposh/theme 2>/dev/null)"  # persisted by `posh-theme`
 eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/omp.toml)"

@@ -8,3 +8,23 @@ alias git_clean='git branch --merged | egrep -v "(^\*|master|main|develop)" | xa
 alias git_add_all='git ls-files --modified | xargs git add'
 alias st='git status'
 alias co='git checkout'
+
+# oh-my-posh theme switcher: picks a color palette from omp.toml (see [palettes.list.*])
+# and persists it so new shells keep using it.
+function posh-theme() {
+    local state="$HOME/.config/ohmyposh/theme"
+    local themes=($(grep -oE '^\s*\[palettes\.list\.[a-zA-Z0-9_-]+\]' ~/.config/ohmyposh/omp.toml | sed -E 's/.*\.list\.([a-zA-Z0-9_-]+)\]/\1/'))
+
+    if [[ -z "$1" ]]; then
+        echo "Current: ${POSH_THEME:-default}"
+        echo "Available: ${themes[*]}"
+        return
+    fi
+    if [[ ! " ${themes[*]} " == *" $1 "* ]]; then
+        echo "Unknown theme '$1'. Available: ${themes[*]}" >&2
+        return 1
+    fi
+
+    export POSH_THEME="$1"
+    echo "$1" > "$state"
+}
