@@ -5,7 +5,9 @@ if type brew &>/dev/null; then
     compinit
 fi
 
-alias mount_linux="sudo ext4fuse /dev/disk4s1 Linux/ -o allow_other"
-export HOMEBREW_NO_ENV_HINTS=1
 # This allows to loop over an array of words in zsh/bash scripts
 set -o shwordsplit
+
+
+alias mount_linux="sudo ext4fuse /dev/disk4s1 Linux/ -o allow_other"
+export HOMEBREW_NO_ENV_HINTS=1

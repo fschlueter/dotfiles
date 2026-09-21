@@ -6,5 +6,8 @@ source ~/.env/local  # local stuff
 # fuzzy finder
 source <(fzf --zsh)
 
+# replace cd with zoxide
+eval "$(zoxide init zsh --cmd cd)"
+
 # Prompt engine
 eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/omp.toml)"
