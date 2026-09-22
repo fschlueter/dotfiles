@@ -55,6 +55,9 @@ eval "$(zoxide init zsh --cmd cd)"
 # prompt engine
 source ~/.env/omp
 
+# file manager (`y`)
+source ~/.env/yazi
+
 
 
 source ~/.env/env  # coding and software environment

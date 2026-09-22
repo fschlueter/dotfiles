@@ -1,0 +1,45 @@
+# File manager: `y` opens yazi and cd's into its last directory on exit.
+# yazi and its plugins are installed on first use (macOS: Homebrew, Linux: static binaries into ~/.local/bin, no sudo).
+
+function _install_yazi() {
+	echo "yazi not found, installing ..."
+	if [[ "$OSTYPE" == darwin* ]]; then
+		brew install yazi
+		return
+	fi
+
+	# musl builds are static, i.e. independent of the system's glibc version
+	local arch tmp ret
+	case "$(uname -m)" in
+		x86_64) arch=x86_64 ;;
+		aarch64 | arm64) arch=aarch64 ;;
+		*) echo "No prebuilt yazi for $(uname -m)." >&2; return 1 ;;
+	esac
+	tmp="$(mktemp -d)"
+	curl -fsSL --connect-timeout 10 -o "$tmp/yazi.zip" \
+		"https://github.com/sxyazi/yazi/releases/latest/download/yazi-$arch-unknown-linux-musl.zip" \
+		&& unzip -q "$tmp/yazi.zip" -d "$tmp" \
+		&& mkdir -p "$HOME/.local/bin" \
+		&& install -m 755 "$tmp"/yazi-*/yazi "$tmp"/yazi-*/ya "$HOME/.local/bin/"
+	ret=$?
+	rm -rf "$tmp"
+	return $ret
+}
+
+# Installs the plugins pinned in package.toml (not tracked in git), again whenever it is newer than the last install
+function _sync_yazi_plugins() {
+	local cfg="$HOME/.config/yazi"
+	[[ -f "$cfg/package.toml" && ! "$cfg/plugins" -nt "$cfg/package.toml" ]] || return 0
+	echo "Installing yazi plugins ..."
+	ya pkg install && touch "$cfg/plugins"
+}
+
+function y() {
+	command -v yazi >/dev/null || _install_yazi || return
+	_sync_yazi_plugins
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
+}

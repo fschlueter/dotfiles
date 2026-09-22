@@ -1,0 +1,12 @@
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-enter"
+rev = "d1c8baa"
+hash = "56fdabc96fc1f4d53c96eb884b02a5be"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:vcs-files"
+rev = "d1c8baa"
+hash = "4ee57085277d616acfa0ef1fef37dc00"
+
+[flavor]
+deps = []

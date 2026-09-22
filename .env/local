@@ -10,13 +10,5 @@ alias imgcat="/Users/felix/software/imgcat"
 
 alias ssh_greenland="/Users/felix/software/python/start-greenland-session.py"
 
-function y() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-	yazi "$@" --cwd-file="$tmp"
-	IFS= read -r -d '' cwd < "$tmp"
-	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
-	rm -f -- "$tmp"
-}
-
 alias mount_linux="sudo ext4fuse /dev/disk4s1 Linux/ -o allow_other"
 export HOMEBREW_NO_ENV_HINTS=1

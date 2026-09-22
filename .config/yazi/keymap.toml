@@ -1,0 +1,14 @@
+[[mgr.prepend_keymap]]
+on   = [ "l", "<Enter>" ]
+run  = "plugin smart-enter"
+desc = "Enter the child directory, or open the file"
+
+[[mgr.prepend_keymap]]
+on   = [ "g", "c" ]
+run  = "plugin vcs-files"
+desc = "Show Git file changes"
+
+[[mgr.prepend_keymap]]
+on  = "y"
+run = [ 'shell -- echo "$@" | xclip -i -selection clipboard -t text/uri-list', "yank" ]
+

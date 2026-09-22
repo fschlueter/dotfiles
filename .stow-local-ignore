@@ -1,0 +1,8 @@
+# Perl regexes; without "/" matched against basenames, with "/" against the repo-relative path.
+# This file replaces stow's built-in ignore list, so the git files have to be listed here.
+\.git
+\.gitignore
+\.gitmodules
+\.DS_Store
+^/README.*
+^/install\.sh
