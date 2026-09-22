@@ -9,6 +9,11 @@ run  = "plugin vcs-files"
 desc = "Show Git file changes"
 
 [[mgr.prepend_keymap]]
+on   = "T"
+run  = "plugin toggle-pane min-preview"
+desc = "Show or hide the preview pane"
+
+[[mgr.prepend_keymap]]
 on  = "y"
 run = [ 'shell -- echo "$@" | xclip -i -selection clipboard -t text/uri-list', "yank" ]
 
