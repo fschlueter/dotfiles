@@ -1,0 +1,38 @@
+# Prompt engine
+omp_dir="$HOME/.config/ohmyposh"
+mkdir -p "$omp_dir"
+touch "$omp_dir/theme"
+
+if ! command -v oh-my-posh >/dev/null; then
+    echo "oh-my-posh not found, installing ..."
+    if [[ "$OSTYPE" == darwin* ]]; then
+        brew install jandedobbeleer/oh-my-posh/oh-my-posh
+    else
+        mkdir -p "$HOME/.local/bin"
+        curl -s https://ohmyposh.dev/install.sh | bash -s -- -d "$HOME/.local/bin"
+    fi
+fi
+
+export POSH_THEME="$(cat "$omp_dir/theme")"  # persisted by `posh-theme`
+eval "$(oh-my-posh init zsh --config "$omp_dir/omp.toml")"
+unset omp_dir
+
+# oh-my-posh theme switcher: picks a color palette from omp.toml (see [palettes.list.*])
+# and persists it so new shells keep using it.
+function posh-theme() {
+    local state="$HOME/.config/ohmyposh/theme"
+    local themes=($(grep -oE '^\s*\[palettes\.list\.[a-zA-Z0-9_-]+\]' ~/.config/ohmyposh/omp.toml | sed -E 's/.*\.list\.([a-zA-Z0-9_-]+)\]/\1/'))
+
+    if [[ -z "$1" ]]; then
+        echo "Current: ${POSH_THEME:-default}"
+        echo "Available: ${themes[*]}"
+        return
+    fi
+    if [[ ! " ${themes[*]} " == *" $1 "* ]]; then
+        echo "Unknown theme '$1'. Available: ${themes[*]}" >&2
+        return 1
+    fi
+
+    export POSH_THEME="$1"
+    echo "$1" > "$state"
+}

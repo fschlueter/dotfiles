@@ -51,7 +51,6 @@ done
 export PYTHONPATH=$PYTHONPATH:/Users/felix/work/ant/ant
 export MATPLOTLIB=/Users/felix/.matplotlib/matplotlibrc
 
-export PATH="$HOME/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
 # to find py3.11 in homebrew ...
 export PATH=/opt/homebrew/opt/python@3.11/libexec/bin:${PATH}
 ## set HDF5_DIR
