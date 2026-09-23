@@ -1,14 +1,32 @@
+# shellcheck shell=bash
 
-alias thisroot="pushd /opt/homebrew >/dev/null; . bin/thisroot.sh; popd >/dev/null"
-alias icetray="~/software/icecube/icetray/build/env-shell.sh"
+# Add a dir to a colon-separated path variable, skipping duplicates (bash + zsh).
+# Usage: path_append VAR DIR / path_prepend VAR DIR
+path_append() {
+    local cur
+    eval "cur=\${$1-}"
+    case ":$cur:" in
+        *":$2:"*) ;;
+        *) export "$1=${cur:+$cur:}$2" ;;
+    esac
+}
+path_prepend() {
+    local cur
+    eval "cur=\${$1-}"
+    case ":$cur:" in
+        *":$2:"*) ;;
+        *) export "$1=$2${cur:+:$cur}" ;;
+    esac
+}
 
-export software="/Users/felix/software"
+export SOFTWARE="/Users/felix/software"
 
 # Searches for folders in $env_home and creates alias for each virt env
-export envs_dir="$software/envs/"
-envs=$(for i in $(ls -d  $envs_dir/*);do echo $(basename $i);done)
-for e in ${envs[@]}; do
-    alias ${e}="source ${envs_dir}/${e}/bin/activate"
+export ENVS_DIR="$SOFTWARE/envs"
+for d in "$ENVS_DIR"/*/; do
+    e=$(basename "$d")
+    # shellcheck disable=SC2139  # expand at definition time on purpose
+    alias "$e"="source $ENVS_DIR/$e/bin/activate"
 done
 
 # Set Python enviourment
@@ -44,25 +62,29 @@ python_module=(
 )
 
 # export PYTHONPATH=  # Reset pythonpath
-for m in ${python_module[@]}; do
-    export PYTHONPATH=$PYTHONPATH:$software/$m
+for m in "${python_module[@]}"; do
+    path_append PYTHONPATH "$SOFTWARE/$m"
 done
 
-export PYTHONPATH=$PYTHONPATH:/Users/felix/work/ant/ant
+path_append PYTHONPATH "/Users/felix/work/ant/ant"
 export MATPLOTLIB=/Users/felix/.matplotlib/matplotlibrc
 
-# to find py3.11 in homebrew ...
-export PATH=/opt/homebrew/opt/python@3.11/libexec/bin:${PATH}
-## set HDF5_DIR
-[[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
-export HDF5_DIR="$(brew --prefix hdf5)"
+# # to find py3.11 in homebrew ...
+# path_prepend PATH /opt/homebrew/opt/python@3.11/libexec/bin
+# ## set HDF5_DIR
+# [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+# HDF5_DIR="$(brew --prefix hdf5)"
+# export HDF5_DIR
 
 
 export RNO_G_DATA="/Users/felix/work/rnog/data/full"
 export RNO_G_INSTALL_DIR="/Users/felix/software/rnog/daq/install"
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$RNO_G_INSTALL_DIR/lib
-export PATH=$PATH:$RNO_G_INSTALL_DIR/bin
+path_append LD_LIBRARY_PATH "$RNO_G_INSTALL_DIR/lib"
+path_append PATH "$RNO_G_INSTALL_DIR/bin"
 
 # ROOT's gSystem.Load on a mac check out DYLD...
-export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$LD_LIBRARY_PATH
+path_append DYLD_LIBRARY_PATH "$RNO_G_INSTALL_DIR/lib"
+
+alias thisroot="pushd /opt/homebrew >/dev/null; . bin/thisroot.sh; popd >/dev/null"
+# alias icetray="~/software/icecube/icetray/build/env-shell.sh"

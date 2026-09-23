@@ -55,14 +55,15 @@ eval "$(zoxide init zsh --cmd cd)"
 # prompt engine
 source ~/.env/omp
 
+### Programs
+
 # file manager (`y`)
 source ~/.env/yazi
 
 # editor (`nvim`)
 source ~/.env/nvim
 
-
-
+### Set up woring environments
 
 source ~/.env/env  # coding and software environment
 source ~/.env/local  # local stuff
