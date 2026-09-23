@@ -5,7 +5,8 @@
 
   [maps.host_name]
   # Mac = ""
-  Mac = " "
+  macpal = " "
+  MacBook-Pro-8 = " "
 
   # Theme switching: picks a palette below based on $POSH_THEME (set via the
   # `posh-theme` shell function), falls back to "default" if unset/unknown.

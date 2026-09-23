@@ -58,6 +58,10 @@ source ~/.env/omp
 # file manager (`y`)
 source ~/.env/yazi
 
+# editor (`nvim`)
+source ~/.env/nvim
+
+
 
 
 source ~/.env/env  # coding and software environment

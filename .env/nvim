@@ -1,0 +1,61 @@
+# Editor: Neovim with LazyVim (~/.config/nvim). lazy.nvim installs the plugins on first start, pinned in lazy-lock.json.
+# nvim and tree-sitter-cli (for nvim-treesitter) are installed on first use of `nvim`
+# (macOS: Homebrew, Linux: official release binaries into ~/.local, no sudo).
+# Checks use `whence -p`: it skips the `nvim` function below and sees new binaries without `rehash`.
+
+function _install_nvim() {
+	echo "nvim not found, installing ..."
+	if [[ "$OSTYPE" == darwin* ]]; then
+		brew install neovim
+		return
+	fi
+
+	local arch tmp ret
+	case "$(uname -m)" in
+		x86_64) arch=x86_64 ;;
+		aarch64 | arm64) arch=arm64 ;;
+		*) echo "No prebuilt nvim for $(uname -m)." >&2; return 1 ;;
+	esac
+	# The release is a bin/lib/share tree, kept in ~/.local/opt/nvim and linked into ~/.local/bin
+	tmp="$(mktemp -d)"
+	curl -fsSL --connect-timeout 10 \
+		"https://github.com/neovim/neovim/releases/latest/download/nvim-linux-$arch.tar.gz" \
+		| tar xz -C "$tmp" \
+		&& mkdir -p "$HOME/.local/opt" "$HOME/.local/bin" \
+		&& rm -rf "$HOME/.local/opt/nvim" \
+		&& mv "$tmp/nvim-linux-$arch" "$HOME/.local/opt/nvim" \
+		&& ln -sf "$HOME/.local/opt/nvim/bin/nvim" "$HOME/.local/bin/nvim"
+	ret=$?
+	rm -rf "$tmp"
+	return $ret
+}
+
+function _install_tree_sitter() {
+	echo "tree-sitter not found, installing ..."
+	if [[ "$OSTYPE" == darwin* ]]; then
+		brew install tree-sitter-cli
+		return
+	fi
+
+	local arch tmp ret
+	case "$(uname -m)" in
+		x86_64) arch=x64 ;;
+		aarch64 | arm64) arch=arm64 ;;
+		*) echo "No prebuilt tree-sitter for $(uname -m)." >&2; return 1 ;;
+	esac
+	tmp="$(mktemp -d)"
+	curl -fsSL --connect-timeout 10 -o "$tmp/tree-sitter.zip" \
+		"https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-cli-linux-$arch.zip" \
+		&& unzip -q "$tmp/tree-sitter.zip" -d "$tmp" \
+		&& mkdir -p "$HOME/.local/bin" \
+		&& install -m 755 "$tmp/tree-sitter" "$HOME/.local/bin/"
+	ret=$?
+	rm -rf "$tmp"
+	return $ret
+}
+
+function nvim() {
+	whence -p nvim >/dev/null || _install_nvim || return
+	whence -p tree-sitter >/dev/null || _install_tree_sitter  # only needed for parsers, so not fatal
+	command nvim "$@"
+}
