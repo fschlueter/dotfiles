@@ -13,5 +13,15 @@ use = "yazi-rs/plugins:toggle-pane"
 rev = "f703392"
 hash = "5b2fbef7d1513ce38ff72623a071a5e"
 
+[[plugin.deps]]
+use = "yazi-rs/plugins:full-border"
+rev = "f703392"
+hash = "f281261ff04ad7ec867c3f802a50835f"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:zoom"
+rev = "f703392"
+hash = "558bbb58e3dd36d488280a8f10e7b904"
+
 [flavor]
 deps = []

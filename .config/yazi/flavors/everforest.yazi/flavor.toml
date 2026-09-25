@@ -1,0 +1,124 @@
+# Everforest (dark, medium) — https://github.com/sainnhe/everforest
+#
+# bg0 #2D353B  bg1 #343F44  bg2 #3D484D  bg3 #475258  bg4 #4F585E  bg5 #56635F
+# fg  #D3C6AA  grey0 #7A8478  grey1 #859289  grey2 #9DA9A0
+# red #E67E80  orange #E69875  yellow #DBBC7F  green #A7C080
+# aqua #83C092  blue #7FBBB3  purple #D699B6
+
+[mgr]
+cwd = { fg = "#83C092", bold = true }
+
+find_keyword  = { fg = "#DBBC7F", bold = true, italic = true, underline = true }
+find_position = { fg = "#D699B6", bg = "reset", bold = true, italic = true }
+
+symlink_target = { fg = "#83C092", italic = true }
+
+marker_copied   = { fg = "#A7C080", bg = "#A7C080" }
+marker_cut      = { fg = "#E67E80", bg = "#E67E80" }
+marker_marked   = { fg = "#83C092", bg = "#83C092" }
+marker_selected = { fg = "#DBBC7F", bg = "#DBBC7F" }
+
+count_copied   = { fg = "#2D353B", bg = "#A7C080" }
+count_cut      = { fg = "#2D353B", bg = "#E67E80" }
+count_selected = { fg = "#2D353B", bg = "#DBBC7F" }
+
+border_style = { fg = "#4F585E" }
+
+[tabs]
+active   = { fg = "#2D353B", bg = "#A7C080", bold = true }
+inactive = { fg = "#A7C080", bg = "#3D484D" }
+
+[mode]
+normal_main = { fg = "#2D353B", bg = "#A7C080", bold = true }
+normal_alt  = { fg = "#A7C080", bg = "#3D484D" }
+select_main = { fg = "#2D353B", bg = "#E67E80", bold = true }
+select_alt  = { fg = "#E67E80", bg = "#3D484D" }
+unset_main  = { fg = "#2D353B", bg = "#D699B6", bold = true }
+unset_alt   = { fg = "#D699B6", bg = "#3D484D" }
+
+[indicator]
+parent  = { fg = "#D3C6AA", bg = "#475258" }
+current = { fg = "#D3C6AA", bg = "#475258", bold = true }
+preview = { bg = "#3D484D" }
+
+[status]
+overall = { fg = "#D3C6AA", bg = "#343F44" }
+
+perm_sep   = { fg = "#7A8478" }
+perm_type  = { fg = "#A7C080" }
+perm_read  = { fg = "#DBBC7F" }
+perm_write = { fg = "#E67E80" }
+perm_exec  = { fg = "#83C092" }
+
+progress_label  = { fg = "#D3C6AA", bold = true }
+progress_normal = { fg = "#A7C080", bg = "#3D484D" }
+progress_error  = { fg = "#E67E80", bg = "#3D484D" }
+
+[which]
+border          = { fg = "#A7C080" }
+mask            = { bg = "#343F44" }
+cand            = { fg = "#83C092" }
+rest            = { fg = "#859289" }
+desc            = { fg = "#D699B6" }
+separator_style = { fg = "#7A8478" }
+
+[confirm]
+border  = { fg = "#A7C080" }
+title   = { fg = "#A7C080", bold = true }
+btn_yes = { fg = "#2D353B", bg = "#A7C080" }
+
+[spot]
+border   = { fg = "#A7C080" }
+title    = { fg = "#A7C080" }
+tbl_col  = { fg = "#7FBBB3" }
+tbl_cell = { fg = "#2D353B", bg = "#DBBC7F" }
+
+[notify]
+title_info  = { fg = "#A7C080" }
+title_warn  = { fg = "#DBBC7F" }
+title_error = { fg = "#E67E80" }
+
+[pick]
+border = { fg = "#A7C080" }
+active = { fg = "#D699B6", bold = true }
+
+[input]
+border   = { fg = "#A7C080" }
+title    = { fg = "#A7C080" }
+selected = { bg = "#475258" }
+
+[cmp]
+border = { fg = "#A7C080" }
+active = { bg = "#475258", bold = true }
+
+[tasks]
+border  = { fg = "#A7C080" }
+hovered = { fg = "#D699B6", bold = true }
+
+[help]
+border  = { fg = "#A7C080" }
+chord   = { fg = "#83C092" }
+hovered = { bg = "#475258", bold = true }
+
+[filetype]
+rules = [
+	# Image
+	{ mime = "**/image/*", fg = "#DBBC7F" },
+	# Media
+	{ mime = "**/{audio,video}/*", fg = "#D699B6" },
+	# Archive
+	{ mime = "**/application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#E67E80" },
+	# Document
+	{ mime = "**/application/{pdf,doc,rtf}", fg = "#83C092" },
+	# Virtual file system
+	{ mime = "vfs/{absent,stale}", fg = "#7A8478" },
+	# Special file
+	{ url = "*", is = "orphan", bg = "#514045" },
+	{ url = "*", is = "exec", fg = "#A7C080" },
+	# Dummy file
+	{ url = "*", is = "dummy", bg = "#514045" },
+	{ url = "*/", is = "dummy", bg = "#514045" },
+	# Fallback
+	{ url = "*", fg = "#D3C6AA" },
+	{ url = "*/", fg = "#7FBBB3" },
+]
