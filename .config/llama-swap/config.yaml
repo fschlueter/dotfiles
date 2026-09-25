@@ -2,12 +2,29 @@ healthCheckTimeout: 300
 logLevel: info
 
 models:
-  "qwen-coder-7b-fim":
+  "qwen-coder-7b-fim-spec":
     cmd: |
       /opt/homebrew/bin/llama serve
       --fim-qwen-7b-spec
       --port ${PORT}
     ttl: 600
     aliases:
-      - "fim"
+      - "qwen2.5-coder-7b-spec"
+
+  "qwen-coder-7b-fim":
+    cmd: |
+      /opt/homebrew/bin/llama serve
+      --fim-qwen-7b-default
+      --port ${PORT}
+    ttl: 600
+    aliases:
       - "qwen2.5-coder-7b"
+
+  "qwen-coder-3b-fim":
+    cmd: |
+      /opt/homebrew/bin/llama serve
+      --fim-qwen-3b-default
+      --port ${PORT}
+    ttl: 600
+    aliases:
+      - "qwen2.5-coder-3b"

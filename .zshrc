@@ -32,6 +32,16 @@ autoload -Uz compinit && compinit
 source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+# set key bindings
+bindkey '^[[Z' autosuggest-accept   # Shift+Tab
+bindkey '^[[1;5C' forward-word       # Ctrl+Right
+bindkey '^[[1;5D' backward-word      # Ctrl+Left
+bindkey '^[[1;3C' forward-word       # Alt+Right
+bindkey '^[[1;3D' backward-word      # Alt+Left
+bindkey '^[[H' beginning-of-line     # Home / Cmd+Left
+bindkey '^[[F' end-of-line           # End / Cmd+Right
+
+
 # This allows to loop over an array of words in zsh/bash scripts
 set -o shwordsplit
 
@@ -62,6 +72,7 @@ source ~/.env/yazi
 
 # editor (`nvim`)
 source ~/.env/nvim
+alias vim=nvim
 
 ### Set up woring environments
 

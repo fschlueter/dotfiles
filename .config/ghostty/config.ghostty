@@ -1,4 +1,10 @@
 font-family = MesloLGL Nerd Font Mono
-window-decoration = false
+macos-titlebar-style = hidden
 
 font-codepoint-map = U+E007=Symbols Nerd Font
+copy-on-select = clipboard
+
+keybind = ctrl+left=esc:b
+keybind = ctrl+right=esc:f
+
+shell-integration-features = ssh-terminfo,ssh-env
