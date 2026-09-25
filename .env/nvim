@@ -3,6 +3,10 @@
 # (macOS: Homebrew, Linux: official release binaries into ~/.local, no sudo).
 # Checks use `whence -p`: it skips the `nvim` function below and sees new binaries without `rehash`.
 
+# Default editor for other programs (yazi, git, ...); they call the binary, not the `nvim` function
+export EDITOR=nvim
+export VISUAL=nvim
+
 function _install_nvim() {
 	echo "nvim not found, installing ..."
 	if [[ "$OSTYPE" == darwin* ]]; then
