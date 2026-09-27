@@ -19,3 +19,7 @@ cache_dir = "/Users/felix/.cache/yazi"
 prepend_previewers = [
   { mime = "image/{png,jpeg,webp,bmp,gif}", run = "fit --timeout=1.5 --threshold=1.1 --keep=50" },
 ]
+# Upscale the images on the current page in the background
+prepend_preloaders = [
+  { mime = "image/{png,jpeg,webp,bmp,gif}", run = "fit --timeout=1.5 --threshold=1.1 --keep=50" },
+]

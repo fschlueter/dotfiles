@@ -125,6 +125,12 @@ gaps.outer.right = 5
 # alt-enter = '''exec-and-forget osascript -e \
 # 'tell application "Terminal" to tell (do script) to activate' '''
 
+# Open a new ghostty window in the current workspace
+alt-enter = '''exec-and-forget CUR_WS=$(aerospace list-workspaces --focused) && osascript -e 'tell application "Ghostty"
+    new window
+    activate
+end tell' && aerospace move-node-to-workspace --focus-follows-window "$CUR_WS"'''
+
 # See: https://nikitabobko.github.io/AeroSpace/commands#layout
 alt-slash = 'layout tiles horizontal vertical'
 alt-comma = 'layout accordion horizontal vertical'

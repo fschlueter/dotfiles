@@ -29,6 +29,7 @@ setopt hist_find_no_dups
 fpath=(~/.zsh/plugins/zsh-completions/src $fpath)
 autoload -Uz compinit && compinit
 
+ZSH_AUTOSUGGEST_STRATEGY=(completion history)
 source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
@@ -58,6 +59,8 @@ fi
 
 # fuzzy finder
 source <(fzf --zsh)
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git --exclude .cache . ~'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # replace cd with zoxide
 eval "$(zoxide init zsh --cmd cd)"

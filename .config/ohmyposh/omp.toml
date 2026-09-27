@@ -1,412 +1,421 @@
-  console_title_template = '{{ .Shell }} in {{ .Folder }}'
-  version = 4
-  final_space = true
-  cursor_style = "blinking_underline"
-
-  [maps.host_name]
-  # Mac = ""
-  macpal = " "
-  MacBook-Pro-8 = " "
-
-  # Theme switching: picks a palette below based on $POSH_THEME (set via the
-  # `posh-theme` shell function), falls back to "default" if unset/unknown.
-  [palettes]
-    template = '{{ if .Env.POSH_THEME }}{{ .Env.POSH_THEME }}{{ else }}default{{ end }}'
-
-    # Each theme below defines its raw hues once (hue-*), then aliases every
-    # hue to the block that uses it (oh-my-posh resolves p: references
-    # recursively). Segments only ever refer to the purpose name, e.g.
-    # 'p:git-foreground' — never to a hue directly.
-    [palettes.list.default]
-      hue-black = '#262B44'
-      hue-grey = '#8c8c8c'
-      hue-blue = '#4B95E9'
-      hue-green = '#59C9A5'
-      hue-orange = '#F07623'
-      hue-red = '#D81E5B'
-      hue-white = '#E0DEF4'
-      hue-yellow = '#F3AE35'
-      hue-accent = '#8f43f3'
-
-      secondary-prompt-foreground = 'p:hue-black'
-      secondary-prompt-background = 'p:hue-yellow'
-      transient-prompt-foreground = 'p:hue-black'
-      transient-prompt-background = 'p:hue-grey'
-
-      session-foreground = 'p:hue-black'
-      session-background = 'p:hue-yellow'
-
-      sysinfo-foreground = 'p:hue-white'
-      sysinfo-background = 'p:hue-accent'
-
-      path-foreground = 'p:hue-white'
-      path-background = 'p:hue-orange'
-
-      git-foreground = 'p:hue-black'
-      git-background = 'p:hue-green'
-      git-foreground-diverged = 'p:hue-white'
-      git-background-dirty = 'p:hue-yellow'
-      git-background-diverged = 'p:hue-red'
-
-      root-foreground = 'p:hue-white'
-      root-background = 'p:hue-yellow'
-
-      prompt-foreground = 'p:hue-blue'
-      prompt-foreground-error = 'p:hue-red'
-
-      duration-foreground = 'p:hue-yellow'
-      time-foreground = 'p:hue-blue'
-      separator-foreground = 'p:hue-white'
-
-    [palettes.list.dracula]
-      hue-black = '#282A36'
-      hue-grey = '#6272A4'
-      hue-blue = '#8BE9FD'
-      hue-green = '#50FA7B'
-      hue-orange = '#FFB86C'
-      hue-red = '#FF5555'
-      hue-white = '#F8F8F2'
-      hue-yellow = '#F1FA8C'
-      hue-accent = '#BD93F9'
-
-      secondary-prompt-foreground = 'p:hue-black'
-      secondary-prompt-background = 'p:hue-yellow'
-      transient-prompt-foreground = 'p:hue-black'
-      transient-prompt-background = 'p:hue-grey'
-
-      session-foreground = 'p:hue-black'
-      session-background = 'p:hue-yellow'
-
-      sysinfo-foreground = 'p:hue-white'
-      sysinfo-background = 'p:hue-accent'
-
-      path-foreground = 'p:hue-white'
-      path-background = 'p:hue-orange'
-
-      git-foreground = 'p:hue-black'
-      git-background = 'p:hue-green'
-      git-foreground-diverged = 'p:hue-white'
-      git-background-dirty = 'p:hue-yellow'
-      git-background-diverged = 'p:hue-red'
-
-      root-foreground = 'p:hue-white'
-      root-background = 'p:hue-yellow'
-
-      prompt-foreground = 'p:hue-blue'
-      prompt-foreground-error = 'p:hue-red'
-
-      duration-foreground = 'p:hue-yellow'
-      time-foreground = 'p:hue-blue'
-      separator-foreground = 'p:hue-white'
-
-    [palettes.list.nord]
-      hue-black = '#2E3440'
-      hue-grey = '#4C566A'
-      hue-blue = '#88C0D0'
-      hue-green = '#A3BE8C'
-      hue-orange = '#D08770'
-      hue-red = '#BF616A'
-      hue-white = '#ECEFF4'
-      hue-yellow = '#EBCB8B'
-      hue-accent = '#B48EAD'
-
-      secondary-prompt-foreground = 'p:hue-black'
-      secondary-prompt-background = 'p:hue-yellow'
-      transient-prompt-foreground = 'p:hue-black'
-      transient-prompt-background = 'p:hue-grey'
-
-      session-foreground = 'p:hue-black'
-      session-background = 'p:hue-yellow'
-
-      sysinfo-foreground = 'p:hue-white'
-      sysinfo-background = 'p:hue-accent'
-
-      path-foreground = 'p:hue-white'
-      path-background = 'p:hue-orange'
-
-      git-foreground = 'p:hue-black'
-      git-background = 'p:hue-green'
-      git-foreground-diverged = 'p:hue-white'
-      git-background-dirty = 'p:hue-yellow'
-      git-background-diverged = 'p:hue-red'
-
-      root-foreground = 'p:hue-white'
-      root-background = 'p:hue-yellow'
-
-      prompt-foreground = 'p:hue-blue'
-      prompt-foreground-error = 'p:hue-red'
-
-      duration-foreground = 'p:hue-yellow'
-      time-foreground = 'p:hue-blue'
-      separator-foreground = 'p:hue-white'
-
-    [palettes.list.catppuccin]
-      hue-black = '#1E1E2E'
-      hue-grey = '#6C7086'
-      hue-blue = '#89B4FA'
-      hue-green = '#A6E3A1'
-      hue-orange = '#FAB387'
-      hue-red = '#F38BA8'
-      hue-white = '#CDD6F4'
-      hue-yellow = '#F9E2AF'
-      hue-accent = '#CBA6F7'
-
-      secondary-prompt-foreground = 'p:hue-black'
-      secondary-prompt-background = 'p:hue-yellow'
-      transient-prompt-foreground = 'p:hue-black'
-      transient-prompt-background = 'p:hue-grey'
-
-      session-foreground = 'p:hue-black'
-      session-background = 'p:hue-yellow'
-
-      sysinfo-foreground = 'p:hue-white'
-      sysinfo-background = 'p:hue-accent'
-
-      path-foreground = 'p:hue-white'
-      path-background = 'p:hue-orange'
-
-      git-foreground = 'p:hue-black'
-      git-background = 'p:hue-green'
-      git-foreground-diverged = 'p:hue-white'
-      git-background-dirty = 'p:hue-yellow'
-      git-background-diverged = 'p:hue-red'
-
-      root-foreground = 'p:hue-white'
-      root-background = 'p:hue-yellow'
-
-      prompt-foreground = 'p:hue-blue'
-      prompt-foreground-error = 'p:hue-red'
-
-      duration-foreground = 'p:hue-yellow'
-      time-foreground = 'p:hue-blue'
-      separator-foreground = 'p:hue-white'
-
-    [palettes.list.gruvbox]
-      hue-black = '#282828'
-      hue-grey = '#928374'
-      hue-blue = '#83A598'
-      hue-green = '#B8BB26'
-      hue-orange = '#FE8019'
-      hue-red = '#FB4934'
-      hue-white = '#EBDBB2'
-      hue-yellow = '#FABD2F'
-      hue-accent = '#D3869B'
-
-      secondary-prompt-foreground = 'p:hue-black'
-      secondary-prompt-background = 'p:hue-yellow'
-      transient-prompt-foreground = 'p:hue-black'
-      transient-prompt-background = 'p:hue-grey'
-
-      session-foreground = 'p:hue-black'
-      session-background = 'p:hue-yellow'
-
-      sysinfo-foreground = 'p:hue-white'
-      sysinfo-background = 'p:hue-accent'
-
-      path-foreground = 'p:hue-white'
-      path-background = 'p:hue-orange'
-
-      git-foreground = 'p:hue-black'
-      git-background = 'p:hue-green'
-      git-foreground-diverged = 'p:hue-white'
-      git-background-dirty = 'p:hue-yellow'
-      git-background-diverged = 'p:hue-red'
-
-      root-foreground = 'p:hue-white'
-      root-background = 'p:hue-yellow'
-
-      prompt-foreground = 'p:hue-blue'
-      prompt-foreground-error = 'p:hue-red'
-
-      duration-foreground = 'p:hue-yellow'
-      time-foreground = 'p:hue-blue'
-      separator-foreground = 'p:hue-white'
-
-    # Everforest (dark, medium). Its pastel hues need dark text on top.
-    [palettes.list.everforest]
-      hue-black = '#2D353B'
-      hue-grey = '#859289'
-      hue-blue = '#7FBBB3'
-      hue-green = '#A7C080'
-      hue-orange = '#E69875'
-      hue-red = '#E67E80'
-      hue-white = '#D3C6AA'
-      hue-yellow = '#DBBC7F'
-      hue-accent = '#D699B6'
-
-      secondary-prompt-foreground = 'p:hue-black'
-      secondary-prompt-background = 'p:hue-yellow'
-      transient-prompt-foreground = 'p:hue-black'
-      transient-prompt-background = 'p:hue-grey'
-
-      session-foreground = 'p:hue-black'
-      session-background = 'p:hue-yellow'
-
-      sysinfo-foreground = 'p:hue-black'
-      sysinfo-background = 'p:hue-accent'
-
-      path-foreground = 'p:hue-black'
-      path-background = 'p:hue-orange'
-
-      git-foreground = 'p:hue-black'
-      git-background = 'p:hue-green'
-      git-foreground-diverged = 'p:hue-black'
-      git-background-dirty = 'p:hue-yellow'
-      git-background-diverged = 'p:hue-red'
-
-      root-foreground = 'p:hue-black'
-      root-background = 'p:hue-yellow'
-
-      prompt-foreground = 'p:hue-blue'
-      prompt-foreground-error = 'p:hue-red'
-
-      duration-foreground = 'p:hue-yellow'
-      time-foreground = 'p:hue-blue'
-      separator-foreground = 'p:hue-white'
-
-  [secondary_prompt]
-    template = '<p:secondary-prompt-background,transparent></><,p:secondary-prompt-background> > </><p:secondary-prompt-background,transparent></> '
-    foreground = 'p:secondary-prompt-foreground'
-    background = 'transparent'
-
-  [transient_prompt]
-    template = '<p:transient-prompt-background,transparent></><,p:transient-prompt-background> {{ .Folder }} </><p:transient-prompt-background,transparent></> '
-    foreground = 'p:transient-prompt-foreground'
-    background = 'transparent'
-
-  [upgrade]
-    source = 'cdn'
-    interval = '168h'
-    auto = false
-    notice = false
-
-  [[blocks]]
-    type = 'prompt'
-    alignment = 'left'
-    newline = true
-
-    [[blocks.segments]]
-      leading_diamond = ''
-      trailing_diamond = ''
-      template = ' {{ if .SSHSession }} {{ end }}{{ .HostName }} '
-      foreground = 'p:session-foreground'
-      background = 'p:session-background'
-      type = 'session'
-      style = 'diamond'
-
-  [[blocks]]
-    type = 'prompt'
-    alignment = 'left'
-
-    [[blocks.segments]]
-      type = "sysinfo"
-      powerline_symbol = ""
-      foreground = "p:sysinfo-foreground"
-      background = "p:sysinfo-background"
-      template = "  {{ round .PhysicalPercentUsed .Precision }}% "
-      style = "powerline"
-
-      [blocks.segments.options]
-        precision = 0
-
-    [[blocks.segments]]
-      type = "sysinfo"
-      powerline_symbol = ''
-      foreground = "p:sysinfo-foreground"
-      background = "p:sysinfo-background"
-      template = "  {{ round .Load1 .Precision }}% "
-      style = "powerline"
-
-      [blocks.segments.options]
-        precision = 1
-
-  [[blocks]]
-    type = 'prompt'
-    alignment = 'left'
-
-    [[blocks.segments]]
-      template = '  {{ path .Path .Location }} '
-      foreground = 'p:path-foreground'
-      powerline_symbol = ''
-      background = 'p:path-background'
-      type = 'path'
-      style = 'powerline'
-
-      [blocks.segments.options]
-        style = 'folder'
-
-  [[blocks]]
-    type = 'prompt'
-    alignment = 'left'
-
-    [[blocks.segments]]
-      template = ' {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }} '
-      foreground = 'p:git-foreground'
-      powerline_symbol = ''
-      background = 'p:git-background'
-      type = 'git'
-      style = 'powerline'
-      background_templates = ['{{ if or (.Working.Changed) (.Staging.Changed) }}p:git-background-dirty{{ end }}', '{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:git-background-diverged{{ end }}', '{{ if gt .Ahead 0 }}#49416D{{ end }}', '{{ if gt .Behind 0 }}#7A306C{{ end }}']
-      foreground_templates = ['{{ if or (.Working.Changed) (.Staging.Changed) }}p:git-foreground{{ end }}', '{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:git-foreground-diverged{{ end }}', '{{ if gt .Ahead 0 }}p:git-foreground-diverged{{ end }}']
-
-      [blocks.segments.options]
-        branch_template = '{{ trunc 10 .Branch }}'
-
-    [[blocks.segments]]
-      type = "python"
-      style = "powerline"
-      powerline_symbol = ""
-      foreground = "#ffd43b"
-      background = "#306998"
-      template = "  {{ .Venv }} "
-
-      [blocks.segments.options]
-        home_enabled = true
-        display_mode = "environment"
-
-    [[blocks.segments]]
-      template = '  '
-      foreground = 'p:root-foreground'
-      powerline_symbol = ''
-      background = 'p:root-background'
-      type = 'root'
-      style = 'powerline'
-
-    # Simple round end: matches the background of the nearest enabled
-    # segment in this block (falls back to git when python/root are
-    # hidden); parentBackground only resolves within one block, so
-    # this must share a block with git rather than get its own.
-    [[blocks.segments]]
-      type = 'text'
-      style = 'powerline'
-      foreground = 'parentBackground'
-      background = 'parentBackground'
-      template = "<background,transparent></>"
-
-  [[blocks]]
-    type = 'prompt'
-    alignment = 'left'
-    newline = true
-
-    [[blocks.segments]]
-      type = 'text'
-      style = 'plain'
-      foreground = 'p:prompt-foreground'
-      foreground_templates = ['{{ if gt .Code 0 }}p:prompt-foreground-error{{ end }}']
-      template = '❯'
-
-  [[blocks]]
-    type = 'rprompt'
-
-    [[blocks.segments]]
-      type = "executiontime"
-      background = 'transparent'
-      foreground = 'p:duration-foreground'
-      template = "{{ .FormattedMs }}<p:separator-foreground> | </>"
-
-    [[blocks.segments]]
-      template = '<p:time-foreground><b>{{ .CurrentDate | date "15:04:05" }}</b></>'
-      foreground = 'p:separator-foreground'
-      background = 'transparent'
-      type = 'time'
-      style = 'plain'
+console_title_template = '{{ .Shell }} in {{ .Folder }}'
+version = 4
+final_space = true
+cursor_style = "blinking_underline"
+
+[maps.host_name]
+# Mac = ""
+macpal = " "
+MacBook-Pro-8 = " "
+
+# Theme switching: picks a palette below based on $POSH_THEME (set via the
+# `posh-theme` shell function), falls back to "default" if unset/unknown.
+[palettes]
+template = '{{ if .Env.POSH_THEME }}{{ .Env.POSH_THEME }}{{ else }}default{{ end }}'
+
+# Each theme below defines its raw hues once (hue-*), then aliases every
+# hue to the block that uses it (oh-my-posh resolves p: references
+# recursively). Segments only ever refer to the purpose name, e.g.
+# 'p:git-foreground' — never to a hue directly.
+[palettes.list.default]
+hue-black = '#262B44'
+hue-grey = '#8c8c8c'
+hue-blue = '#4B95E9'
+hue-green = '#59C9A5'
+hue-orange = '#F07623'
+hue-red = '#D81E5B'
+hue-white = '#E0DEF4'
+hue-yellow = '#F3AE35'
+hue-accent = '#8f43f3'
+
+secondary-prompt-foreground = 'p:hue-black'
+secondary-prompt-background = 'p:hue-yellow'
+transient-prompt-foreground = 'p:hue-black'
+transient-prompt-background = 'p:hue-grey'
+
+session-foreground = 'p:hue-black'
+session-background = 'p:hue-yellow'
+
+sysinfo-foreground = 'p:hue-white'
+sysinfo-background = 'p:hue-accent'
+
+path-foreground = 'p:hue-white'
+path-background = 'p:hue-orange'
+
+git-foreground = 'p:hue-black'
+git-background = 'p:hue-green'
+git-foreground-diverged = 'p:hue-white'
+git-background-dirty = 'p:hue-yellow'
+git-background-diverged = 'p:hue-red'
+
+root-foreground = 'p:hue-white'
+root-background = 'p:hue-yellow'
+
+prompt-foreground = 'p:hue-blue'
+prompt-foreground-error = 'p:hue-red'
+
+duration-foreground = 'p:hue-yellow'
+time-foreground = 'p:hue-blue'
+separator-foreground = 'p:hue-white'
+
+[palettes.list.dracula]
+hue-black = '#282A36'
+hue-grey = '#6272A4'
+hue-blue = '#8BE9FD'
+hue-green = '#50FA7B'
+hue-orange = '#FFB86C'
+hue-red = '#FF5555'
+hue-white = '#F8F8F2'
+hue-yellow = '#F1FA8C'
+hue-accent = '#BD93F9'
+
+secondary-prompt-foreground = 'p:hue-black'
+secondary-prompt-background = 'p:hue-yellow'
+transient-prompt-foreground = 'p:hue-black'
+transient-prompt-background = 'p:hue-grey'
+
+session-foreground = 'p:hue-black'
+session-background = 'p:hue-yellow'
+
+sysinfo-foreground = 'p:hue-white'
+sysinfo-background = 'p:hue-accent'
+
+path-foreground = 'p:hue-white'
+path-background = 'p:hue-orange'
+
+git-foreground = 'p:hue-black'
+git-background = 'p:hue-green'
+git-foreground-diverged = 'p:hue-white'
+git-background-dirty = 'p:hue-yellow'
+git-background-diverged = 'p:hue-red'
+
+root-foreground = 'p:hue-white'
+root-background = 'p:hue-yellow'
+
+prompt-foreground = 'p:hue-blue'
+prompt-foreground-error = 'p:hue-red'
+
+duration-foreground = 'p:hue-yellow'
+time-foreground = 'p:hue-blue'
+separator-foreground = 'p:hue-white'
+
+[palettes.list.nord]
+hue-black = '#2E3440'
+hue-grey = '#4C566A'
+hue-blue = '#88C0D0'
+hue-green = '#A3BE8C'
+hue-orange = '#D08770'
+hue-red = '#BF616A'
+hue-white = '#ECEFF4'
+hue-yellow = '#EBCB8B'
+hue-accent = '#B48EAD'
+
+secondary-prompt-foreground = 'p:hue-black'
+secondary-prompt-background = 'p:hue-yellow'
+transient-prompt-foreground = 'p:hue-black'
+transient-prompt-background = 'p:hue-grey'
+
+session-foreground = 'p:hue-black'
+session-background = 'p:hue-yellow'
+
+sysinfo-foreground = 'p:hue-white'
+sysinfo-background = 'p:hue-accent'
+
+path-foreground = 'p:hue-white'
+path-background = 'p:hue-orange'
+
+git-foreground = 'p:hue-black'
+git-background = 'p:hue-green'
+git-foreground-diverged = 'p:hue-white'
+git-background-dirty = 'p:hue-yellow'
+git-background-diverged = 'p:hue-red'
+
+root-foreground = 'p:hue-white'
+root-background = 'p:hue-yellow'
+
+prompt-foreground = 'p:hue-blue'
+prompt-foreground-error = 'p:hue-red'
+
+duration-foreground = 'p:hue-yellow'
+time-foreground = 'p:hue-blue'
+separator-foreground = 'p:hue-white'
+
+[palettes.list.catppuccin]
+hue-black = '#1E1E2E'
+hue-grey = '#6C7086'
+hue-blue = '#89B4FA'
+hue-green = '#A6E3A1'
+hue-orange = '#FAB387'
+hue-red = '#F38BA8'
+hue-white = '#CDD6F4'
+hue-yellow = '#F9E2AF'
+hue-accent = '#CBA6F7'
+
+secondary-prompt-foreground = 'p:hue-black'
+secondary-prompt-background = 'p:hue-yellow'
+transient-prompt-foreground = 'p:hue-black'
+transient-prompt-background = 'p:hue-grey'
+
+session-foreground = 'p:hue-black'
+session-background = 'p:hue-yellow'
+
+sysinfo-foreground = 'p:hue-white'
+sysinfo-background = 'p:hue-accent'
+
+path-foreground = 'p:hue-white'
+path-background = 'p:hue-orange'
+
+git-foreground = 'p:hue-black'
+git-background = 'p:hue-green'
+git-foreground-diverged = 'p:hue-white'
+git-background-dirty = 'p:hue-yellow'
+git-background-diverged = 'p:hue-red'
+
+root-foreground = 'p:hue-white'
+root-background = 'p:hue-yellow'
+
+prompt-foreground = 'p:hue-blue'
+prompt-foreground-error = 'p:hue-red'
+
+duration-foreground = 'p:hue-yellow'
+time-foreground = 'p:hue-blue'
+separator-foreground = 'p:hue-white'
+
+[palettes.list.gruvbox]
+hue-black = '#282828'
+hue-grey = '#928374'
+hue-blue = '#83A598'
+hue-green = '#B8BB26'
+hue-orange = '#FE8019'
+hue-red = '#FB4934'
+hue-white = '#EBDBB2'
+hue-yellow = '#FABD2F'
+hue-accent = '#D3869B'
+
+secondary-prompt-foreground = 'p:hue-black'
+secondary-prompt-background = 'p:hue-yellow'
+transient-prompt-foreground = 'p:hue-black'
+transient-prompt-background = 'p:hue-grey'
+
+session-foreground = 'p:hue-black'
+session-background = 'p:hue-yellow'
+
+sysinfo-foreground = 'p:hue-white'
+sysinfo-background = 'p:hue-accent'
+
+path-foreground = 'p:hue-white'
+path-background = 'p:hue-orange'
+
+git-foreground = 'p:hue-black'
+git-background = 'p:hue-green'
+git-foreground-diverged = 'p:hue-white'
+git-background-dirty = 'p:hue-yellow'
+git-background-diverged = 'p:hue-red'
+
+root-foreground = 'p:hue-white'
+root-background = 'p:hue-yellow'
+
+prompt-foreground = 'p:hue-blue'
+prompt-foreground-error = 'p:hue-red'
+
+duration-foreground = 'p:hue-yellow'
+time-foreground = 'p:hue-blue'
+separator-foreground = 'p:hue-white'
+
+# Everforest (dark, medium). Its pastel hues need dark text on top.
+[palettes.list.everforest]
+hue-black = '#2D353B'
+hue-grey = '#859289'
+hue-blue = '#7FBBB3'
+hue-green = '#A7C080'
+hue-orange = '#E69875'
+hue-red = '#E67E80'
+hue-white = '#D3C6AA'
+hue-yellow = '#DBBC7F'
+hue-accent = '#D699B6'
+
+secondary-prompt-foreground = 'p:hue-black'
+secondary-prompt-background = 'p:hue-yellow'
+transient-prompt-foreground = 'p:hue-black'
+transient-prompt-background = 'p:hue-grey'
+
+session-foreground = 'p:hue-black'
+session-background = 'p:hue-yellow'
+
+sysinfo-foreground = 'p:hue-black'
+sysinfo-background = 'p:hue-accent'
+
+path-foreground = 'p:hue-black'
+path-background = 'p:hue-orange'
+
+git-foreground = 'p:hue-black'
+git-background = 'p:hue-green'
+git-foreground-diverged = 'p:hue-black'
+git-background-dirty = 'p:hue-yellow'
+git-background-diverged = 'p:hue-red'
+
+root-foreground = 'p:hue-black'
+root-background = 'p:hue-yellow'
+
+prompt-foreground = 'p:hue-blue'
+prompt-foreground-error = 'p:hue-red'
+
+duration-foreground = 'p:hue-yellow'
+time-foreground = 'p:hue-blue'
+separator-foreground = 'p:hue-white'
+
+[secondary_prompt]
+template = '<p:secondary-prompt-background,transparent></><,p:secondary-prompt-background> > </><p:secondary-prompt-background,transparent></> '
+foreground = 'p:secondary-prompt-foreground'
+background = 'transparent'
+
+[transient_prompt]
+template = '<p:transient-prompt-background,transparent></><,p:transient-prompt-background> {{ .Folder }} </><p:transient-prompt-background,transparent></> '
+foreground = 'p:transient-prompt-foreground'
+background = 'transparent'
+
+[upgrade]
+source = 'cdn'
+interval = '168h'
+auto = false
+notice = false
+
+[[blocks]]
+type = 'prompt'
+alignment = 'left'
+newline = true
+
+[[blocks.segments]]
+leading_diamond = ''
+trailing_diamond = ''
+template = ' {{ if .SSHSession }} {{ end }}{{ .HostName }} '
+foreground = 'p:session-foreground'
+background = 'p:session-background'
+type = 'session'
+style = 'diamond'
+
+[[blocks]]
+type = 'prompt'
+alignment = 'left'
+
+[[blocks.segments]]
+type = "sysinfo"
+powerline_symbol = ""
+foreground = "p:sysinfo-foreground"
+background = "p:sysinfo-background"
+template = "  {{ round .PhysicalPercentUsed .Precision }}% "
+style = "powerline"
+
+[blocks.segments.options]
+precision = 0
+
+[[blocks.segments]]
+type = "sysinfo"
+powerline_symbol = ''
+foreground = "p:sysinfo-foreground"
+background = "p:sysinfo-background"
+template = "  {{ round .Load1 .Precision }}% "
+style = "powerline"
+
+[blocks.segments.options]
+precision = 1
+
+[[blocks]]
+type = 'prompt'
+alignment = 'left'
+
+[[blocks.segments]]
+template = '  {{ path .Path .Location }} '
+foreground = 'p:path-foreground'
+powerline_symbol = ''
+background = 'p:path-background'
+type = 'path'
+style = 'powerline'
+
+[blocks.segments.options]
+style = 'letter'
+
+[[blocks]]
+type = 'prompt'
+alignment = 'left'
+
+[[blocks.segments]]
+template = ' {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }} '
+foreground = 'p:git-foreground'
+powerline_symbol = ''
+background = 'p:git-background'
+type = 'git'
+style = 'powerline'
+background_templates = [
+  '{{ if or (.Working.Changed) (.Staging.Changed) }}p:git-background-dirty{{ end }}',
+  '{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:git-background-diverged{{ end }}',
+  '{{ if gt .Ahead 0 }}#49416D{{ end }}',
+  '{{ if gt .Behind 0 }}#7A306C{{ end }}',
+]
+foreground_templates = [
+  '{{ if or (.Working.Changed) (.Staging.Changed) }}p:git-foreground{{ end }}',
+  '{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:git-foreground-diverged{{ end }}',
+  '{{ if gt .Ahead 0 }}p:git-foreground-diverged{{ end }}',
+]
+
+[blocks.segments.options]
+branch_template = '{{ trunc 10 .Branch }}'
+
+[[blocks.segments]]
+type = "python"
+style = "powerline"
+powerline_symbol = ""
+foreground = "#ffd43b"
+background = "#306998"
+template = "  {{ .Venv }} "
+
+[blocks.segments.options]
+home_enabled = true
+display_mode = "environment"
+
+[[blocks.segments]]
+template = '  '
+foreground = 'p:root-foreground'
+powerline_symbol = ''
+background = 'p:root-background'
+type = 'root'
+style = 'powerline'
+
+# Simple round end: matches the background of the nearest enabled
+# segment in this block (falls back to git when python/root are
+# hidden); parentBackground only resolves within one block, so
+# this must share a block with git rather than get its own.
+[[blocks.segments]]
+type = 'text'
+style = 'powerline'
+foreground = 'parentBackground'
+background = 'parentBackground'
+template = "<background,transparent></>"
+
+[[blocks]]
+type = 'prompt'
+alignment = 'left'
+newline = true
+
+[[blocks.segments]]
+type = 'text'
+style = 'plain'
+foreground = 'p:prompt-foreground'
+foreground_templates = ['{{ if gt .Code 0 }}p:prompt-foreground-error{{ end }}']
+template = '❯'
+
+[[blocks]]
+type = 'rprompt'
+
+[[blocks.segments]]
+type = "executiontime"
+background = 'transparent'
+foreground = 'p:duration-foreground'
+template = "{{ .FormattedMs }}<p:separator-foreground> | </>"
+
+[[blocks.segments]]
+template = '<p:time-foreground><b>{{ .CurrentDate | date "15:04:05" }}</b></>'
+foreground = 'p:separator-foreground'
+background = 'transparent'
+type = 'time'
+style = 'plain'

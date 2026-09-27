@@ -4,9 +4,8 @@ return {
     opts = {
       picker = {
         sources = {
-          explorer = { hidden = true },
+          explorer = { hidden = true, watch = true },
           files = { hidden = true },
-          watch = true,
         },
       },
     },
