@@ -14,14 +14,18 @@ if ! command -v oh-my-posh >/dev/null; then
 fi
 
 export POSH_THEME="$(cat "$omp_dir/theme")"  # persisted by `posh-theme`
-eval "$(oh-my-posh init zsh --config "$omp_dir/omp.toml")"
-unset omp_dir
+# oh-my-posh has no config imports: assemble base config + themes/*.toml
+omp_cfg="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh/config.toml"
+mkdir -p "${omp_cfg%/*}"
+cat "$omp_dir/omp.toml" "$omp_dir"/themes/*.toml > "$omp_cfg"
+eval "$(oh-my-posh init zsh --config "$omp_cfg")"
+unset omp_dir omp_cfg
 
-# oh-my-posh theme switcher: picks a color palette from omp.toml (see [palettes.list.*])
+# oh-my-posh theme switcher: picks a color palette from themes/*.toml
 # and persists it so new shells keep using it.
 function posh-theme() {
     local state="$HOME/.config/ohmyposh/theme"
-    local themes=($(grep -oE '^\s*\[palettes\.list\.[a-zA-Z0-9_-]+\]' ~/.config/ohmyposh/omp.toml | sed -E 's/.*\.list\.([a-zA-Z0-9_-]+)\]/\1/'))
+    local themes=($(ls ~/.config/ohmyposh/themes | sed 's/\.toml$//'))
 
     if [[ -z "$1" ]]; then
         echo "Current: ${POSH_THEME:-default}"

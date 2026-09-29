@@ -8,3 +8,5 @@ keybind = ctrl+left=esc:b
 keybind = ctrl+right=esc:f
 
 shell-integration-features = ssh-terminfo,ssh-env
+
+theme = Matrix

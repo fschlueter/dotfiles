@@ -1,0 +1,45 @@
+[palettes.list.default]
+hue-black = '#262B44'
+hue-grey = '#8c8c8c'
+hue-blue = '#4B95E9'
+hue-green = '#59C9A5'
+hue-orange = '#F07623'
+hue-red = '#D81E5B'
+hue-white = '#E0DEF4'
+hue-yellow = '#F3AE35'
+hue-accent = '#8f43f3'
+
+secondary-prompt-foreground = 'p:hue-black'
+secondary-prompt-background = 'p:hue-yellow'
+transient-prompt-foreground = 'p:hue-black'
+transient-prompt-background = 'p:hue-grey'
+
+session-foreground = 'p:hue-black'
+session-background = 'p:hue-yellow'
+
+sysinfo-foreground = 'p:hue-white'
+sysinfo-background = 'p:hue-accent'
+
+path-foreground = 'p:hue-white'
+path-background = 'p:hue-orange'
+
+git-foreground = 'p:hue-black'
+git-background = 'p:hue-green'
+git-foreground-diverged = 'p:hue-white'
+git-background-dirty = 'p:hue-yellow'
+git-background-diverged = 'p:hue-red'
+git-background-ahead = '#49416D'
+git-background-behind = '#7A306C'
+
+root-foreground = 'p:hue-white'
+root-background = 'p:hue-yellow'
+
+python-foreground = '#ffd43b'
+python-background = '#306998'
+
+prompt-foreground = 'p:hue-blue'
+prompt-foreground-error = 'p:hue-red'
+
+duration-foreground = 'p:hue-yellow'
+time-foreground = 'p:hue-blue'
+separator-foreground = 'p:hue-white'
