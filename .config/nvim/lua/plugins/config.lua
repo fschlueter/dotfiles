@@ -8,6 +8,7 @@ return {
           files = { hidden = true },
         },
       },
+      notifier = { timeout = 10000 }, -- ms, default is 3000
     },
   },
 }
