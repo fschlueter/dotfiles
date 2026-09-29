@@ -23,3 +23,13 @@ prepend_previewers = [
 prepend_preloaders = [
   { mime = "image/{png,jpeg,webp,bmp,gif}", run = "fit --timeout=1.5 --threshold=1.1 --keep=50" },
 ]
+
+[[plugin.prepend_fetchers]]
+url = "*"
+run = "git"
+group = "git"
+
+[[plugin.prepend_fetchers]]
+url = "*/"
+run = "git"
+group = "git"

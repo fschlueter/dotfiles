@@ -1,5 +1,12 @@
 require("full-border"):setup()
 
+require("git"):setup({
+	-- Order of status signs showing in the linemode
+	order = 1500,
+})
+
+require("omp"):setup({ config = "/home/felix/.config/omp/omp.toml" })
+
 Status:children_add(function(self)
 	local h = self._current.hovered
 	if h and h.link_to then
@@ -15,12 +22,12 @@ Status:children_add(function()
 		return ""
 	end
 
-	return ui.Line {
+	return ui.Line({
 		ui.Span(ya.user_name(h.cha.uid) or tostring(h.cha.uid)):fg("magenta"),
 		":",
 		ui.Span(ya.group_name(h.cha.gid) or tostring(h.cha.gid)):fg("magenta"),
 		" ",
-	}
+	})
 end, 500, Status.RIGHT)
 
 Header:children_add(function()

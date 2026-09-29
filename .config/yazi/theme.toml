@@ -1,3 +1,9 @@
 [flavor]
-dark  = "everforest"
+dark = "everforest"
 light = "everforest"
+
+[git]
+unknown_sign = " "
+unstaged_sign = "M"
+deleted_sign = "D"
+clean_sign = "✔"
