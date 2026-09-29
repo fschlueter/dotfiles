@@ -16,13 +16,7 @@ HISTSIZE=10000
 HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
 HISTDUP=erase
-setopt appendhistory
-setopt sharehistory
-setopt hist_ignore_space
-setopt hist_ignore_all_dups
-setopt hist_save_no_dups
-setopt hist_ignore_dups
-setopt hist_find_no_dups
+setopt appendhistory sharehistory hist_ignore_space hist_ignore_all_dups hist_save_no_dups hist_ignore_dups hist_find_no_dups
 
 ### zsh plugins
 
@@ -55,12 +49,18 @@ if [[ "$OSTYPE" == darwin* ]]; then
     export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
 fi
 
+### Colors
+eval "$(gdircolors -b)"
+
 ### Shell integrations
 
 # fuzzy finder
 source <(fzf --zsh)
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git --exclude .cache . ~'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+zstyle ':completion:*' menu select
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # replace cd with zoxide
 eval "$(zoxide init zsh --cmd cd)"
