@@ -9,4 +9,4 @@ keybind = ctrl+right=esc:f
 
 shell-integration-features = ssh-terminfo,ssh-env
 
-theme = Matrix
+theme = Matrix Contrast

@@ -1,7 +1,7 @@
 
 # Aliases
 alias ll="ls -l"
-alias ls="ls --color=auto"
+alias ls="gls --color=auto"  # GNU ls honors LS_COLORS; macOS /bin/ls does not
 alias grep="grep --color=auto"
 
 # git aliases
@@ -51,6 +51,7 @@ fi
 
 ### Colors
 eval "$(gdircolors -b)"
+LS_COLORS+=":fi=92"  # regular files: bright green (Ghostty palette 10)
 
 ### Shell integrations
 
