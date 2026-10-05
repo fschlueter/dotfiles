@@ -9,7 +9,13 @@ vim.opt.relativenumber = false
 vim.opt.guicursor =
   "n-v-c:block-Cursor-blinkon500-blinkoff500,i-ci-ve:ver25-iCursor-blinkon500-blinkoff500,r-cr-o:hor20-Cursor"
 
+vim.g.autoformat = false -- LazyVim: no format on save (toggle per buffer with <leader>uf)
+
 vim.o.autoread = true
 vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
   command = "checktime",
+})
+-- Save on focus loss so external tools (e.g. Claude Code) see current content; no ! to keep the conflict warning
+vim.api.nvim_create_autocmd("FocusLost", {
+  command = "silent! wa",
 })
