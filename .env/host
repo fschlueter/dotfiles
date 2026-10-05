@@ -52,7 +52,7 @@ esac
 DOTFILES_HOSTNAME="$_h"
 # Interactive shells only (not install.sh); DOTFILES_QUIET=1 defers it to the caller
 _dotfiles_banner() {
-    [[ $- == *i* ]] && echo "dotfiles: profile '$DOTFILES_PROFILE' (host '$DOTFILES_HOSTNAME')"
+    [[ $- == *i* ]] && echo "dotfiles: profile '$DOTFILES_PROFILE' (host '$DOTFILES_HOSTNAME', shell ${ZSH_VERSION:+zsh}${BASH_VERSION:+bash})"
 }
 [[ -n ${DOTFILES_QUIET-} ]] || _dotfiles_banner
 unset _h _p _ai _dotfiles_env
