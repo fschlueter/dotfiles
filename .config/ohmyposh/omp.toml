@@ -81,14 +81,6 @@ style = "powerline"
 [blocks.segments.options]
 precision = 0
 
-[[blocks.segments]]
-type = "text"
-style = "powerline"
-powerline_symbol = "\uE0B0"
-foreground = "p:sysinfo-foreground"
-background = "p:sysinfo-background"
-template = "{{ if .Env.OMP_GPU }} \U000F0379 {{ .Env.OMP_GPU }}% {{ end }}"
-
 [[blocks]]
 type = 'prompt'
 alignment = 'left'
