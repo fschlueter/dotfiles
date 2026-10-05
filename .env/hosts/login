@@ -1,2 +1,3 @@
 # login.app.tu-dortmund.de
 DOTFILES_AUTO_INSTALL=0
+DOTFILES_SHELL=zsh

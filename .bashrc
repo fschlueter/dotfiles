@@ -5,12 +5,15 @@
 [[ $- == *i* ]] || return
 
 # host profile (flags per host or OS, see .env/host); quiet because the banner is printed below
-DOTFILES_QUIET=1 source ~/.env/host
-# hand over to zsh where the profile asks for it (DOTFILES_NO_HANDOVER=1 skips); lets a
-# bash login shell become zsh when it can't be changed without root
-if [[ ${DOTFILES_SHELL-} == zsh && -z ${DOTFILES_NO_HANDOVER-} ]] \
+DOTFILES_QUIET=1
+source ~/.env/host
+unset DOTFILES_QUIET
+# hand over to zsh where the profile asks for it (DOTFILES_NO_HANDOVER=1 skips); lets a bash login
+# shell become zsh when it can't be changed without root. Only once per session (DOTFILES_HANDED_OVER):
+# a host that switches shells itself must not cause a loop.
+if [[ ${DOTFILES_SHELL-} == zsh && -z ${DOTFILES_NO_HANDOVER-} && -z ${DOTFILES_HANDED_OVER-} ]] \
     && PATH="$HOME/.local/bin:$PATH" command -v zsh >/dev/null; then
-    export PATH="$HOME/.local/bin:$PATH"
+    export PATH="$HOME/.local/bin:$PATH" DOTFILES_HANDED_OVER=1
     exec zsh -l
 fi
 _dotfiles_banner
