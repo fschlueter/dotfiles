@@ -252,3 +252,10 @@ run = 'layout floating'
 [[on-window-detected]]
 if.app-id = 'org.python.python'
 run = 'layout floating'
+
+
+[workspace-to-monitor-force-assignment]
+C = "Built-in Retina Display"
+M = ["DELL S2725DC", "Built-in Retina Display"]
+N = "Built-in Retina Display"
+
