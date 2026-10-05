@@ -10,8 +10,9 @@ Each host gets its own branch for small host-specific differences:
 
 | Branch | Host |
 |--------|------|
-| `main` | personal macOS laptop (also holds mac-only pieces such as AeroSpace and sketchybar) |
-| *host branches* | to be added; branch off `main` and keep the diff small |
+| `main` | personal macOS laptop (also holds mac-only pieces such as Ghostty, AeroSpace and sketchybar) |
+| `linux-server` | remote Ubuntu/Debian servers (x86_64/aarch64), ssh only, no sudo. Drops Ghostty, AeroSpace, sketchybar, llama-swap, the AI nvim plugins (`claudecode.nvim`, `llama.vim`, `minuet-ai.nvim`), the prompt's GPU segment and the laptop aliases in `.env/local`; the CPU segment reads `/proc/stat`. |
+| *other host branches* | to be added; branch off `main` and keep the diff small |
 
 Keep shared changes on `main` and merge or rebase them into the host branches, so the branches differ only in host-specific config.
 
@@ -26,11 +27,9 @@ Keep shared changes on `main` and merge or rebase them into the host branches, s
 | `.env/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
 | `.env/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
 | `.env/local` | machine-specific aliases and functions |
-| `.config/ghostty/` | [Ghostty](https://ghostty.org) terminal config |
 | `.config/ohmyposh/` | oh-my-posh theme |
 | `.config/yazi/` | yazi config; plugins are pinned in `package.toml` (manage with `ya pkg add/upgrade`) and not tracked in git |
 | `.config/nvim/` | [LazyVim](https://www.lazyvim.org) config (from the starter); plugins are installed by lazy.nvim on first start, pinned in `lazy-lock.json` |
-| `.config/aerospace/` | [AeroSpace](https://github.com/nikitabobko/AeroSpace) window manager config and session save/restore (macOS, see its [README](.config/aerospace/README.md)) |
 
 ## Install
 
@@ -41,10 +40,11 @@ git clone <repo-url> ~/.dotfiles
 
 [`install.sh`](install.sh) does the following and is safe to re-run:
 
-1. Installs stow if it is missing: via Homebrew on macOS, on Linux built from source into `~/.local` (no sudo; needs `curl`, `perl` and `make`).
-2. Initialises the plugin submodules.
-3. Creates `~/.config` if missing, so stow links its subfolders instead of the whole directory.
-4. Runs `stow --restow --target=$HOME .`, i.e. links every file in this repo to the same path under `$HOME`.
+1. Needs `git` up front. Installs stow if it is missing: via Homebrew on macOS, on Linux into `~/.local` (no sudo; needs `curl`, `tar` and `perl`, no `make`).
+2. On Linux, installs a static zsh into `~/.local` if zsh is missing and adds a hand-over to zsh to `~/.bashrc` for interactive logins (`DOTFILES_NO_BASHRC=1` skips it, `NO_ZSH=1 bash` bypasses it).
+3. Initialises the plugin submodules.
+4. Creates `~/.config` if missing, so stow links its subfolders instead of the whole directory.
+5. Runs `stow --restow --target=$HOME .`, i.e. links every file in this repo to the same path under `$HOME`.
 
 Extra arguments are passed to stow, e.g. `./install.sh -n -v` for a dry run.
 
@@ -52,7 +52,7 @@ If a real file already exists at a link location (e.g. `~/.zshrc` on a fresh mac
 
 ## How stow is used here
 
-The repo root is a single stow package whose layout mirrors `$HOME`. To add a config, put it at its home-relative path in the repo and re-run `./install.sh`. Stow links whole directories where it can, so new files in e.g. `~/.config/ghostty/` land in the repo directly.
+The repo root is a single stow package whose layout mirrors `$HOME`. To add a config, put it at its home-relative path in the repo and re-run `./install.sh`. Stow links whole directories where it can, so new files in e.g. `~/.config/yazi/` land in the repo directly.
 
 Files that should not be linked (git files, `.DS_Store`, this README, `install.sh`) are listed in [`.stow-local-ignore`](.stow-local-ignore).
 
