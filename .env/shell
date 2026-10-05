@@ -50,6 +50,7 @@ if _have fzf && _fzf_init="$(fzf "--$_sh" 2>/dev/null)"; then  # fzf < 0.48 has 
     eval "$_fzf_init"
 fi
 unset _fzf_init
+
 # fd is optional (Debian/Ubuntu name it fdfind); without it fzf falls back to find
 if _have fd; then
     export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git --exclude .cache . ~'
@@ -73,11 +74,10 @@ source ~/.env/yazi
 source ~/.env/nvim
 alias vim=nvim
 
-# uv
-
+# uv programs
 alias vd='uvx --with pyarrow visidata'
 
-### Set up woring environments
+### Set up working environments
 
 source ~/.env/env  # coding and software environment
 source ~/.env/local  # local stuff

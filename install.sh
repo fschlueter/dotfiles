@@ -76,5 +76,6 @@ case "${DOTFILES_SHELL-}" in
     bash) ignore+=(--ignore='\.zshrc$') ;;
 esac
 
+echo "dotfiles: installing profile '$DOTFILES_PROFILE' (shell: ${DOTFILES_SHELL:-any})"
 cd "$DOTFILES"
 stow --restow --target="$HOME" ${ignore[@]+"${ignore[@]}"} "$@" .
