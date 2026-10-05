@@ -5,7 +5,7 @@ sort_by = "mtime"
 sort_reverse = true
 sort_dir_first = true
 
-linemode = "size"
+linemode = "size_and_mtime"
 
 [preview]
 wrap = "yes"
