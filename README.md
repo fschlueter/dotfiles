@@ -2,6 +2,19 @@
 
 Personal shell and app configuration for macOS and Linux, symlinked into `$HOME` with [GNU Stow](https://www.gnu.org/software/stow/).
 
+## Platforms and branches
+
+The building blocks (shell setup, `.env/*` tool installers, nvim, yazi, prompt themes) are written to work on both macOS and Linux, with OS checks (`$OSTYPE`) where behaviour differs. Anything outside `.zshrc`/`*.zsh` stays bash-compatible.
+
+Each host gets its own branch for small host-specific differences:
+
+| Branch | Host |
+|--------|------|
+| `main` | personal macOS laptop (also holds mac-only pieces such as AeroSpace and sketchybar) |
+| *host branches* | to be added; branch off `main` and keep the diff small |
+
+Keep shared changes on `main` and merge or rebase them into the host branches, so the branches differ only in host-specific config.
+
 ## Contents
 
 | Path | What |

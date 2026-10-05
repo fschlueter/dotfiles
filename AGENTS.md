@@ -9,6 +9,10 @@ Personal shell/app config for macOS (primary) and Linux servers. See `README.md`
 - Runtime state is gitignored and stow-ignored (e.g. `.config/ohmyposh/theme`, `.config/yazi/plugins/`, `.config/aerospace/session.tsv`).
 - Zsh plugins are git submodules in `.zsh/plugins/`.
 
+## Platforms and branches
+
+Code should work on macOS and Linux; gate OS-specific parts with `$OSTYPE`. `main` is the personal macOS laptop; other hosts get their own branches (to be added) holding only host-specific differences. Put cross-platform changes on `main` so they can be merged into the host branches, and don't bake host-specific values into shared files.
+
 ## Shell conventions
 
 - Only `.zshrc` and `*.zsh` may use zsh-only syntax. Everything else (`.env/*`) is sourced by zsh but must also work in bash (Linux servers): no `typeset -T/-U`, `${(P)var}`, glob qualifiers or `${!var}`; use `eval` for indirection. Keep `# shellcheck shell=bash`.
