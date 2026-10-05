@@ -1,6 +1,7 @@
 # shellcheck shell=bash
 # Default profile on macOS (the personal laptop).
 DOTFILES_NVIM_AI="claudecode minuet"
+DOTFILES_SHELL=zsh
 
 # for desy login
 alias tssh='totp ssh'

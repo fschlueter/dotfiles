@@ -2,7 +2,6 @@
 # Install GNU Stow (macOS: Homebrew, Linux: from source into ~/.local) and symlink this repo into $HOME.
 # On Linux also installs zsh into ~/.local if missing.
 # Usage: ./install.sh [stow args], e.g. `./install.sh -n -v` for a dry run.
-# Set DOTFILES_BASHRC=1 to also make interactive bash logins start zsh (for hosts whose login shell can't be changed).
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -50,23 +49,6 @@ install_zsh() {
         | sh -s -- -q -d "$HOME/.local" -e no
 }
 
-# Opt-in: interactive bash logins (ssh) hand over to zsh, since the login shell can't be changed without root.
-# Non-interactive shells (scp, ssh host cmd) are unaffected; `NO_ZSH=1 bash` skips the hand-over.
-hook_bashrc() {
-    local rc="$HOME/.bashrc" marker="# >>> dotfiles zsh >>>"
-    grep -qsF "$marker" "$rc" && return 0
-    cat >> "$rc" <<'EOF'
-
-# >>> dotfiles zsh >>>
-if [[ $- == *i* && -z ${ZSH_VERSION-} && -z ${NO_ZSH-} ]]; then
-    PATH="$HOME/.local/bin:$PATH"
-    command -v zsh >/dev/null && exec zsh -l
-fi
-# <<< dotfiles zsh <<<
-EOF
-    echo "Added zsh hand-over to $rc"
-}
-
 # So a previous ~/.local install is found (and the fresh one is usable below)
 export PATH="$HOME/.local/bin:$PATH"
 require git
@@ -74,9 +56,6 @@ command -v stow >/dev/null || install_stow
 
 if [[ "$OSTYPE" != darwin* ]]; then
     command -v zsh >/dev/null || install_zsh
-    dry_run=
-    for a in "$@"; do [[ $a == -n || $a == --no || $a == --simulate ]] && dry_run=1; done
-    [[ -z ${DOTFILES_BASHRC-} || -n $dry_run ]] || hook_bashrc
 fi
 
 git -C "$DOTFILES" submodule update --init --recursive
@@ -91,6 +70,11 @@ mkdir -p "$HOME/.config"
 DOTFILES_ENV_DIR="$DOTFILES/.env" . "$DOTFILES/.env/host"
 ignore=()
 for r in $DOTFILES_STOW_IGNORE; do ignore+=(--ignore="$r"); done
+# Only link the rc file of the shell the profile selects (both if it selects none)
+case "${DOTFILES_SHELL-}" in
+    zsh) ignore+=(--ignore='\.bashrc$') ;;
+    bash) ignore+=(--ignore='\.zshrc$') ;;
+esac
 
 cd "$DOTFILES"
 stow --restow --target="$HOME" ${ignore[@]+"${ignore[@]}"} "$@" .

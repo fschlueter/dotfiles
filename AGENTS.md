@@ -15,11 +15,11 @@ Code should work on macOS and Linux; gate OS-specific parts with `$OSTYPE`. Host
 
 ## Shell conventions
 
-- Only `.zshrc` and `*.zsh` may use zsh-only syntax. Everything else (`.env/*`) is sourced by zsh but must also work in bash (Linux servers): no `typeset -T/-U`, `${(P)var}`, glob qualifiers or `${!var}`; use `eval` for indirection. Keep `# shellcheck shell=bash`. Helpers in `.env/tools`: `_have` (executable lookup, ignores functions), `_unzip`, `_glibc_at_least`.
+- zsh and bash are both supported. Shell-independent setup lives in `.env/shell`, which `.zshrc` and `.bashrc` source after their own shell-specific parts (history, completion, plugins, key bindings); put new aliases/integrations there so the two stay in sync, and branch on `$ZSH_VERSION`/`$BASH_VERSION` only if unavoidable. Only `.zshrc` and `*.zsh` may use zsh-only syntax, only `.bashrc` bash-only. Everything else (`.env/*`) is sourced by both and must work in each: no `typeset -T/-U`, `${(P)var}`, glob qualifiers or `${!var}`; use `eval` for indirection. Keep `# shellcheck shell=bash`. Helpers in `.env/tools`: `_have` (executable lookup, ignores functions), `_unzip`, `_glibc_at_least`.
 - `.env/*` files follow one pattern: install the tool on first use if missing (brew on macOS, no-sudo download into `~/.local` on Linux), then configure it. Examples: `.env/omp`, `.env/yazi` (`y()` wrapper, auto-syncs plugins from `package.toml`), `.env/nvim` (installs nvim + tree-sitter-cli, sets `EDITOR`), `.env/tools` (fzf, zoxide, uv).
-- `PATH` is set once in `.zshrc` (`~/.local/bin` everywhere, homebrew dirs only on darwin). Use the `path_append`/`path_prepend` helpers in `.env/env` for colon-separated vars (dedupes).
+- `PATH` is set once in `.env/shell` (`~/.local/bin` everywhere, homebrew dirs only on darwin). Use the `path_append`/`path_prepend` helpers in `.env/env` for colon-separated vars (dedupes).
 - Python envs are uv-managed in `~/software/uvenvs`; `.env/env` creates one activation alias per folder.
-- Use `whence -p` rather than `$commands`/`command -v` when checking for a tool installed mid-session (avoids stale hash table).
+- Use `_have` (`.env/tools`; `whence -p` in zsh, `type -P` in bash) rather than `$commands`/`command -v` when checking for a tool installed mid-session (avoids a stale hash table).
 - macOS quirks: `/bin/ls` ignores `LS_COLORS`, so `ls` is aliased to `gls`; `sed -i` needs an argument.
 
 ## Themes

@@ -1,1 +1,2 @@
 export ENVS_DIR="/scratch/fschlueter/envs"
+DOTFILES_SHELL=zsh

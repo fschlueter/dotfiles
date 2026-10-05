@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# Host profile: loads .env/hosts/<profile> and exports its settings. Sourced by .zshrc and install.sh (bash + zsh).
+# Host profile: loads .env/hosts/<profile> and exports its settings. Sourced by .zshrc, .bashrc and install.sh.
 #
 # Profile, first match wins (a candidate only counts if .env/hosts/<name> exists):
 #   1. $DOTFILES_HOST
@@ -11,7 +11,10 @@
 # A profile may set (and hold aliases/exports for that host):
 #   DOTFILES_STOW_IGNORE  stow --ignore regexes, space-separated, e.g. `\.config/ghostty` (no leading `^/`); used by install.sh
 #   DOTFILES_NVIM_AI      AI nvim plugins to load (claudecode, minuet); read by lua/config/dotfiles.lua
-#   DOTFILES_SHELL        zsh (default). Anything else only prints a warning: no .bashrc is shipped yet.
+#   DOTFILES_SHELL        zsh or bash: the shell this host should use. .bashrc hands over to zsh (and .zshrc to bash)
+#                         if it was started the other way round; unset (default) keeps whatever shell started.
+#                         DOTFILES_NO_HANDOVER=1 skips the hand-over. install.sh links only that shell's rc file, so with
+#                         `zsh` there is no .bashrc and a bash login shell cannot hand over; set it only if the login shell is zsh.
 #   DOTFILES_AUTO_INSTALL 1 (default) installs missing fzf/zoxide/uv/oh-my-posh at shell start; 0 skips that.
 #                         A DOTFILES_AUTO_INSTALL set in the environment wins over the profile.
 #                         With a home shared between servers, put `DOTFILES_AUTO_INSTALL=0` into .env/hosts/<hostname>.
@@ -30,7 +33,7 @@ _ai="${DOTFILES_AUTO_INSTALL-}"
 
 DOTFILES_STOW_IGNORE=""
 DOTFILES_NVIM_AI=""
-DOTFILES_SHELL=zsh
+DOTFILES_SHELL=
 DOTFILES_AUTO_INSTALL=1
 # shellcheck disable=SC1090
 . "$_dotfiles_env/hosts/$_p"
@@ -41,8 +44,15 @@ fi
 DOTFILES_AUTO_INSTALL="${_ai:-$DOTFILES_AUTO_INSTALL}"
 export DOTFILES_PROFILE="$_p" DOTFILES_NVIM_AI DOTFILES_SHELL DOTFILES_AUTO_INSTALL
 
-if [[ $DOTFILES_SHELL != zsh ]]; then
-    echo "dotfiles: warning: profile '$_p' wants shell '$DOTFILES_SHELL', but only zsh is configured (no .bashrc shipped)" >&2
-fi
-[[ $- == *i* ]] && echo "dotfiles: profile '$_p' (host '$_h')"  # interactive shells only, not install.sh
+case "$DOTFILES_SHELL" in
+    "" | zsh | bash) ;;
+    *) echo "dotfiles: warning: profile '$_p' sets unknown DOTFILES_SHELL '$DOTFILES_SHELL' (use zsh or bash)" >&2 ;;
+esac
+
+DOTFILES_HOSTNAME="$_h"
+# Interactive shells only (not install.sh); DOTFILES_QUIET=1 defers it to the caller
+_dotfiles_banner() {
+    [[ $- == *i* ]] && echo "dotfiles: profile '$DOTFILES_PROFILE' (host '$DOTFILES_HOSTNAME')"
+}
+[[ -n ${DOTFILES_QUIET-} ]] || _dotfiles_banner
 unset _h _p _ai _dotfiles_env

@@ -2,3 +2,4 @@
 # Default profile on Linux (remote servers reached over ssh: no GUI apps, no laptop-only AI plugins).
 DOTFILES_NVIM_AI="claudecode"
 DOTFILES_STOW_IGNORE="\.config/aerospace \.config/ghostty \.config/sketchybar \.config/llama-swap"
+DOTFILES_SHELL=bash

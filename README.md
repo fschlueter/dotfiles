@@ -11,6 +11,8 @@ Hosts differ through a **profile** (`.env/hosts/<profile>`), not through branche
 | Variable | Effect |
 |----------|--------|
 | `DOTFILES_STOW_IGNORE` | space-separated regexes `install.sh` passes to stow as `--ignore` (e.g. the macOS-only configs on Linux) |
+| `DOTFILES_SHELL` | `zsh` or `bash`: the shell this host should use. If a shell is started the other way (e.g. a bash login shell that can't be changed without root), its rc file hands over with `exec`; unset keeps whatever started. `DOTFILES_NO_HANDOVER=1` skips it. Defaults: `zsh` on macOS, `bash` on Linux, `zsh` on `NuRadioOpt-GPU` |
+| `DOTFILES_AUTO_INSTALL` | `0` stops missing fzf/zoxide/uv/oh-my-posh being installed at shell start (default `1`) |
 | `DOTFILES_NVIM_AI` | AI nvim plugins to load (`claudecode`, `minuet`); the others stay unloaded, their pins stay in `lazy-lock.json` |
 
 It can also hold aliases and exports for that host (the laptop's DESY aliases live in `hosts/darwin`). To give a server its own settings, add `.env/hosts/<hostname>` and re-run `./install.sh`.
@@ -37,9 +39,10 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 
 | Path | What |
 |------|------|
-| `.zshrc` | zsh config: aliases, history, plugins, PATH, shell integrations (fzf, zoxide) |
+| `.zshrc`, `.bashrc` | per-shell parts only: history, completion, plugins, key bindings. Login shells must source `.bashrc`; the stock `~/.profile` (Debian/Ubuntu) and `~/.bash_profile` (RHEL/Alma) already do, so no `.bash_profile` is shipped |
+| `.env/shell` | everything shell-independent, sourced by both: aliases, PATH, colors, fzf, zoxide, prompt, tools, environments |
 | `.zsh/plugins/` | zsh plugins as git submodules (completions, autosuggestions, syntax highlighting) |
-| `.env/env` | coding and software environment, sourced by `.zshrc` |
+| `.env/env` | coding and software environment, sourced by `.env/shell` |
 | `.env/omp` | [oh-my-posh](https://ohmyposh.dev) prompt setup |
 | `.env/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
 | `.env/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
@@ -60,14 +63,14 @@ git clone <repo-url> ~/.dotfiles
 [`install.sh`](install.sh) does the following and is safe to re-run:
 
 1. Needs `git` up front. Installs stow if it is missing: via Homebrew on macOS, on Linux into `~/.local` (no sudo; needs `curl`, `tar` and `perl`, no `make`).
-2. On Linux, installs a static zsh into `~/.local` if zsh is missing and, only with `DOTFILES_BASHRC=1`, adds a hand-over to zsh to `~/.bashrc` for interactive logins (`NO_ZSH=1 bash` bypasses it). Skip this if your login shell is already zsh.
+2. On Linux, installs a static zsh into `~/.local` if zsh is missing.
 3. Initialises the plugin submodules.
 4. Creates `~/.config` if missing, so stow links its subfolders instead of the whole directory.
 5. Runs `stow --restow --target=$HOME .`, i.e. links every file in this repo to the same path under `$HOME`.
 
 Extra arguments are passed to stow, e.g. `./install.sh -n -v` for a dry run.
 
-If a real file already exists at a link location (e.g. `~/.zshrc` on a fresh machine), stow aborts with a conflict. Move the file away, or run `./install.sh --adopt` to move it into the repo, then check `git diff`.
+If a real file already exists at a link location (e.g. `~/.zshrc` or `~/.bashrc` on a fresh machine), stow aborts with a conflict. Move the file away, or run `./install.sh --adopt` to move it into the repo, then check `git diff`.
 
 ## How stow is used here
 
