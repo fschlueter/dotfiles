@@ -19,10 +19,10 @@ path_prepend() {
     esac
 }
 
-export SOFTWARE="$HOME/software"
+export SOFTWARE="${SOFTWARE:-$HOME/software}"  # a host profile (.env/hosts/) can set it first
 
 # Searches for folders in $ENVS_DIR and creates alias for each virt env
-export ENVS_DIR="$SOFTWARE/uvenvs"
+export ENVS_DIR="${ENVS_DIR:-$SOFTWARE/envs}"
 if [[ -d $ENVS_DIR ]]; then
     for d in "$ENVS_DIR"/*/; do
         e=$(basename "$d")
