@@ -36,7 +36,7 @@ notice = false
 [[blocks]]
 type = 'prompt'
 alignment = 'left'
-newline = true
+newline = false
 
 [[blocks.segments]]
 leading_diamond = ''
@@ -53,25 +53,41 @@ alignment = 'left'
 
 [[blocks.segments]]
 type = "sysinfo"
+powerline_symbol = ''
+foreground = "p:sysinfo-foreground"
+background = "p:sysinfo-background"
+template = " \uF0E4 {{ round .Load1 .Precision }}"
+style = "powerline"
+
+[blocks.segments.options]
+precision = 1
+
+[[blocks.segments]]
+type = "text"
+style = "powerline"
+powerline_symbol = "\uE0B0"
+foreground = "p:sysinfo-foreground"
+background = "p:sysinfo-background"
+template = "{{ if .Env.OMP_CPU }} \U000F061A {{ .Env.OMP_CPU }}%{{ end }}"
+
+[[blocks.segments]]
+type = "sysinfo"
 powerline_symbol = ""
 foreground = "p:sysinfo-foreground"
 background = "p:sysinfo-background"
-template = "  {{ round .PhysicalPercentUsed .Precision }}% "
+template = " \U000F035B {{ round .PhysicalPercentUsed .Precision }}%"
 style = "powerline"
 
 [blocks.segments.options]
 precision = 0
 
 [[blocks.segments]]
-type = "sysinfo"
-powerline_symbol = ''
+type = "text"
+style = "powerline"
+powerline_symbol = "\uE0B0"
 foreground = "p:sysinfo-foreground"
 background = "p:sysinfo-background"
-template = "  {{ round .Load1 .Precision }}% "
-style = "powerline"
-
-[blocks.segments.options]
-precision = 1
+template = "{{ if .Env.OMP_GPU }} \U000F0379 {{ .Env.OMP_GPU }}% {{ end }}"
 
 [[blocks]]
 type = 'prompt'
@@ -155,7 +171,7 @@ type = 'text'
 style = 'plain'
 foreground = 'p:prompt-foreground'
 foreground_templates = ['{{ if gt .Code 0 }}p:prompt-foreground-error{{ end }}']
-template = '❯'
+template = "\n❯"
 
 [[blocks]]
 type = 'rprompt'
