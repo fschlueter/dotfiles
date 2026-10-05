@@ -4,7 +4,8 @@
 # Profile, first match wins (a candidate only counts if .env/hosts/<name> exists):
 #   1. $DOTFILES_HOST
 #   2. first line of ~/.config/dotfiles/host  (per-host override, lives outside the repo)
-#   3. `hostname -s`
+#   3. `hostname -f` (the FQDN, because short names collide: two different hosts are called `rno-g`;
+#      falls back to `hostname -s` if that prints nothing)
 #   4. OS default: hosts/darwin on macOS, hosts/linux otherwise
 # The OS default is always loaded first; a hostname profile is loaded on top and only needs the differences.
 #
@@ -17,11 +18,12 @@
 #                         `zsh` there is no .bashrc and a bash login shell cannot hand over; set it only if the login shell is zsh.
 #   DOTFILES_AUTO_INSTALL 1 (default) installs missing fzf/zoxide/uv/oh-my-posh at shell start; 0 skips that.
 #                         A DOTFILES_AUTO_INSTALL set in the environment wins over the profile.
-#                         With a home shared between servers, put `DOTFILES_AUTO_INSTALL=0` into .env/hosts/<hostname>.
+#                         With a home shared between servers, put `DOTFILES_AUTO_INSTALL=0` into .env/hosts/<FQDN>.
 
 _dotfiles_env="${DOTFILES_ENV_DIR:-$HOME/.env}"  # install.sh points this at the repo
 _h="${DOTFILES_HOST-}"
 [[ -z $_h && -r "$HOME/.config/dotfiles/host" ]] && read -r _h < "$HOME/.config/dotfiles/host"
+[[ -z $_h ]] && _h="$(hostname -f 2>/dev/null)"
 [[ -z $_h ]] && _h="$(hostname -s 2>/dev/null)"
 _h="${_h//\//_}"  # hostnames come from outside: keep the lookup inside hosts/
 

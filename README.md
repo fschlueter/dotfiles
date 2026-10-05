@@ -6,7 +6,7 @@ Personal shell and app configuration for macOS and Linux, symlinked into `$HOME`
 
 The building blocks (shell setup, `.env/*` tool installers, nvim, yazi, prompt themes) are written to work on both macOS and Linux, with OS checks (`$OSTYPE`) where behaviour differs. Anything outside `.zshrc`/`*.zsh` stays bash-compatible.
 
-Hosts differ through a **profile** (`.env/hosts/<profile>`), not through branches. `.env/host` picks the first that exists of: `$DOTFILES_HOST`, the first line of `~/.config/dotfiles/host` (untracked override), the short hostname; otherwise the OS default (`darwin` or `linux`). A profile is a small bash-compatible script that sets:
+Hosts differ through a **profile** (`.env/hosts/<profile>`), not through branches. `.env/host` picks the first that exists of: `$DOTFILES_HOST`, the first line of `~/.config/dotfiles/host` (untracked override), the FQDN (`hostname -f`; short names collide, e.g. two hosts called `rno-g`); otherwise the OS default (`darwin` or `linux`). A profile is a small bash-compatible script that sets:
 
 | Variable | Effect |
 |----------|--------|
@@ -15,7 +15,7 @@ Hosts differ through a **profile** (`.env/hosts/<profile>`), not through branche
 | `DOTFILES_AUTO_INSTALL` | `0` stops missing fzf/zoxide/uv/oh-my-posh being installed at shell start (default `1`) |
 | `DOTFILES_NVIM_AI` | AI nvim plugins to load (`claudecode`, `minuet`); the others stay unloaded, their pins stay in `lazy-lock.json` |
 
-It can also hold aliases and exports for that host (the laptop's DESY aliases live in `hosts/darwin`). To give a server its own settings, add `.env/hosts/<hostname>` and re-run `./install.sh`.
+It can also hold aliases and exports for that host (the laptop's DESY aliases live in `hosts/darwin`). To give a server its own settings, add `.env/hosts/<FQDN>` and re-run `./install.sh`.
 
 ### Linux distributions
 

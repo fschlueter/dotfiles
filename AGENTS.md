@@ -11,7 +11,7 @@ Personal shell/app config for macOS (primary) and Linux servers. See `README.md`
 
 ## Platforms and hosts
 
-Code should work on macOS and Linux; gate OS-specific parts with `$OSTYPE`. Hosts differ through profiles, not branches: `.env/host` selects `.env/hosts/<profile>` (`$DOTFILES_HOST` > `~/.config/dotfiles/host` > short hostname > OS default `darwin`/`linux`). Profiles set `DOTFILES_STOW_IGNORE` (stow `--ignore` regexes without a leading `^/`, used by `install.sh`) and `DOTFILES_NVIM_AI` (AI nvim plugins, read by `lua/config/dotfiles.lua`; plugins use `cond`, not `enabled`, so `lazy-lock.json` keeps their pins). Put host-specific values in a profile, never in shared files, and keep profiles bash-compatible.
+Code should work on macOS and Linux; gate OS-specific parts with `$OSTYPE`. Hosts differ through profiles, not branches: `.env/host` selects `.env/hosts/<profile>` (`$DOTFILES_HOST` > `~/.config/dotfiles/host` > FQDN (`hostname -f`) > OS default `darwin`/`linux`). Profiles set `DOTFILES_STOW_IGNORE` (stow `--ignore` regexes without a leading `^/`, used by `install.sh`) and `DOTFILES_NVIM_AI` (AI nvim plugins, read by `lua/config/dotfiles.lua`; plugins use `cond`, not `enabled`, so `lazy-lock.json` keeps their pins). Put host-specific values in a profile, never in shared files, and keep profiles bash-compatible.
 
 ## Shell conventions
 

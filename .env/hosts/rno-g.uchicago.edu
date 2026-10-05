@@ -1,0 +1,12 @@
+# shellcheck shell=bash
+# rno-g (FQDN `rno-g`, RHEL-family server; from its former stock ~/.bashrc). Loaded before .env/env.
+export PATH="$HOME/bin:$PATH:$HOME/software/rnog/install/bin:$HOME/software/bin"
+
+# virtualenv aliases are created by .env/env from $ENVS_DIR
+ENVS_DIR="/mnt/rno-g-0/felix/envs"
+export data="/mnt/rno-g-0/felix"
+
+alias thisroot=". /mnt/rno-g-0/felix/root/install/bin/thisroot.sh"
+alias cvmfs="source /cvmfs/rnog.opensciencegrid.org/software/trunk/setup.sh"
+alias rpyroot="pyroot; thisroot"
+alias RNO_G_INSTALL_DIR="export RNO_G_INSTALL_DIR=\"$HOME/software/rnog/install\""
