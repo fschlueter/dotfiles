@@ -13,6 +13,26 @@ if ! command -v oh-my-posh >/dev/null; then
     fi
 fi
 
+# CPU/GPU usage for the prompt: read the cache from the previous sample (no
+# fork), then refresh it in the background. Must be registered before omp init.
+_omp_sysload() {
+    local f="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh/sysload" v
+    if [[ -r $f ]]; then
+        v=("${(@f)$(<$f)}")
+        export OMP_CPU=${v[1]} OMP_GPU=${v[2]}
+    fi
+    {
+        local ncpu=$(sysctl -n hw.ncpu)
+        local cpu=$(ps -A -o %cpu | awk -v n=$ncpu 'NR>1{s+=$1} END{s=s/n; printf "%d", (s>100?100:s)}')
+        local gpu=$(ioreg -r -c IOAccelerator | grep -o '"Device Utilization %"=[0-9]*' | head -1 | cut -d= -f2)
+        printf '%s\n%s\n' "$cpu" "$gpu" > "$f"
+    } &!
+}
+if [[ "$OSTYPE" == darwin* ]]; then
+    autoload -Uz add-zsh-hook
+    add-zsh-hook precmd _omp_sysload
+fi
+
 export POSH_THEME="$(cat "$omp_dir/theme")"  # persisted by `posh-theme`
 # oh-my-posh has no config imports: assemble base config + themes/*.toml
 omp_cfg="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh/config.toml"
