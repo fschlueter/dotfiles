@@ -37,6 +37,7 @@ _omp_sysload() {
     [[ -r $f ]] && { read -r cpu; read -r second; } < "$f"
     export OMP_CPU=$cpu
     [[ "$OSTYPE" == darwin* ]] && export OMP_GPU=$second
+    (  # subshell: a bare `&` prints "[1] pid" in interactive shells
     {
         if [[ "$OSTYPE" == darwin* ]]; then
             local ncpu gpu
@@ -56,7 +57,7 @@ _omp_sysload() {
             printf '%s\n%s %s\n' "$pct" "$busy" "$total" > "$f"
         fi
     } >/dev/null 2>&1 &
-    disown 2>/dev/null  # bash and zsh; keeps the job out of the job table
+    )
 }
 if [[ "$OSTYPE" == darwin* || -r /proc/stat ]]; then
     if [[ -n ${ZSH_VERSION-} ]]; then
