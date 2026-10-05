@@ -11,6 +11,9 @@ end
 
 return {
   "milanglacier/minuet-ai.nvim",
+  cond = function()
+    return require("config.dotfiles").ai("minuet")
+  end,
   dependencies = { "nvim-lua/plenary.nvim" },
   event = "InsertEnter",
   opts = {
