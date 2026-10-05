@@ -1,3 +1,4 @@
 .config/aerospace/session.tsv
 .config/ohmyposh/theme
 .config/yazi/plugins/
+.env/local

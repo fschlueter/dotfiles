@@ -1,2 +1,3 @@
 # shellcheck shell=bash
 # Machine-specific aliases and functions that don't belong in a host profile (.env/hosts/).
+# Changes to this file are not tracked by git
