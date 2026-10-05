@@ -12,7 +12,6 @@ wrap = "yes"
 max_width = 10000
 max_height = 10000
 image_quality = 90
-cache_dir = "/Users/felix/.cache/yazi"
 
 [plugin]
 # Upscale small images to fill the preview pane (local plugin, see plugins/fit.yazi)
