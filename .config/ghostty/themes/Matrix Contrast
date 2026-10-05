@@ -32,8 +32,9 @@ palette = 5 = #33ccff
 palette = 6 = #00ffe0
 # 7 white: default/context text where programs set it explicitly (e.g. unchanged diff lines)
 palette = 7 = #c8d8c4
-# 8 bright black (gray): zsh-autosuggestions (inline ghost text), other "dimmed" hints
-palette = 8 = #6f9468
+# 8 bright black (teal here): zsh-autosuggestions (inline ghost text), other "dimmed" hints.
+#   Teal, not green, so a suggestion stands out from typed text (foreground, hue 139); contrast 7.1:1 on the background
+palette = 8 = #4fb3a9
 # 9 bright red (amber): emphasized removals in word-level diffs (delta, diff-highlight), if used
 palette = 9 = #ffd066
 # 10 bright green: regular files in ls/completion (via LS_COLORS fi=92 in .zshrc),
