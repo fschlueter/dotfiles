@@ -1,34 +1,54 @@
+# shellcheck shell=bash
 # Prompt engine
 omp_dir="$HOME/.config/ohmyposh"
 mkdir -p "$omp_dir"
 touch "$omp_dir/theme"
 
-if ! command -v oh-my-posh >/dev/null; then
+_install_omp() {
     echo "oh-my-posh not found, installing ..."
+    local arch
+    case "$(uname -m)" in
+        x86_64) arch=amd64 ;;
+        aarch64 | arm64) arch=arm64 ;;
+        *) echo "No prebuilt oh-my-posh for $(uname -m)." >&2; return 1 ;;
+    esac
+    # The binary only; the official install.sh additionally needs unzip (for the bundled themes, unused here)
+    mkdir -p "$HOME/.local/bin" \
+        && curl -fsSL --connect-timeout 10 -o "$HOME/.local/bin/oh-my-posh.tmp" \
+            "https://cdn.ohmyposh.dev/releases/latest/posh-linux-$arch" \
+        && chmod 755 "$HOME/.local/bin/oh-my-posh.tmp" \
+        && mv "$HOME/.local/bin/oh-my-posh.tmp" "$HOME/.local/bin/oh-my-posh"
+}
+
+if ! command -v oh-my-posh >/dev/null; then
     if [[ "$OSTYPE" == darwin* ]]; then
+        echo "oh-my-posh not found, installing ..."
         brew install jandedobbeleer/oh-my-posh/oh-my-posh
     else
-        mkdir -p "$HOME/.local/bin"
-        curl -s https://ohmyposh.dev/install.sh | bash -s -- -d "$HOME/.local/bin"
+        _install_omp
     fi
 fi
 
-# CPU/GPU usage for the prompt: read the cache from the previous sample (no
-# fork), then refresh it in the background. Must be registered before omp init.
+# CPU usage (and load) for the prompt: read the cache from the previous sample
+# (no fork), then refresh it in the background. Must be registered before omp init.
+# The cache holds the CPU percentage, then the previous /proc/stat totals (busy, total).
 _omp_sysload() {
-    local f="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh/sysload" v
-    if [[ -r $f ]]; then
-        v=("${(@f)$(<$f)}")
-        export OMP_CPU=${v[1]} OMP_GPU=${v[2]}
-    fi
+    local f="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh/sysload" cpu=""
+    [[ -r $f ]] && read -r cpu < "$f"
+    export OMP_CPU=$cpu
     {
-        local ncpu=$(sysctl -n hw.ncpu)
-        local cpu=$(ps -A -o %cpu | awk -v n=$ncpu 'NR>1{s+=$1} END{s=s/n; printf "%d", (s>100?100:s)}')
-        local gpu=$(ioreg -r -c IOAccelerator | grep -o '"Device Utilization %"=[0-9]*' | head -1 | cut -d= -f2)
-        printf '%s\n%s\n' "$cpu" "$gpu" > "$f"
+        local pct=0 skip u n s i io irq sirq st busy total pbusy=0 ptotal=0
+        read -r skip u n s i io irq sirq st _ < /proc/stat
+        busy=$((u + n + s + irq + sirq + st))
+        total=$((busy + i + io))
+        [[ -r $f ]] && { read -r skip; read -r pbusy ptotal; } < "$f"
+        if ((total > ptotal)); then
+            pct=$(((busy - pbusy) * 100 / (total - ptotal)))
+        fi
+        printf '%s\n%s %s\n' "$pct" "$busy" "$total" > "$f"
     } &!
 }
-if [[ "$OSTYPE" == darwin* ]]; then
+if [[ -n ${ZSH_VERSION-} && -r /proc/stat ]]; then
     autoload -Uz add-zsh-hook
     add-zsh-hook precmd _omp_sysload
 fi
@@ -38,7 +58,9 @@ export POSH_THEME="$(cat "$omp_dir/theme")"  # persisted by `posh-theme`
 omp_cfg="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh/config.toml"
 mkdir -p "${omp_cfg%/*}"
 cat "$omp_dir/omp.toml" "$omp_dir"/themes/*.toml > "$omp_cfg"
-eval "$(oh-my-posh init zsh --config "$omp_cfg")"
+if command -v oh-my-posh >/dev/null; then
+    eval "$(oh-my-posh init zsh --config "$omp_cfg")"
+fi
 unset omp_dir omp_cfg
 
 # oh-my-posh theme switcher: picks a color palette from themes/*.toml

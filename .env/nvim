@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Editor: Neovim with LazyVim (~/.config/nvim). lazy.nvim installs the plugins on first start, pinned in lazy-lock.json.
 # nvim and tree-sitter-cli (for nvim-treesitter) are installed on first use of `nvim`
 # (macOS: Homebrew, Linux: official release binaries into ~/.local, no sudo).
@@ -50,16 +51,24 @@ function _install_tree_sitter() {
 	tmp="$(mktemp -d)"
 	curl -fsSL --connect-timeout 10 -o "$tmp/tree-sitter.zip" \
 		"https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-cli-linux-$arch.zip" \
-		&& unzip -q "$tmp/tree-sitter.zip" -d "$tmp" \
+		&& _unzip "$tmp/tree-sitter.zip" "$tmp" \
 		&& mkdir -p "$HOME/.local/bin" \
 		&& install -m 755 "$tmp/tree-sitter" "$HOME/.local/bin/"
 	ret=$?
 	rm -rf "$tmp"
+	# The prebuilt binary needs a recent glibc (2.39); drop it if it can't run, so we don't retry on every start
+	if [[ $ret -eq 0 ]] && ! "$HOME/.local/bin/tree-sitter" --version >/dev/null 2>&1; then
+		echo "tree-sitter does not run here (glibc too old?); parsers can't be built." >&2
+		rm -f "$HOME/.local/bin/tree-sitter"
+		mkdir -p "$HOME/.cache" && touch "$HOME/.cache/no-tree-sitter"  # checked by `nvim` below
+		ret=1
+	fi
 	return $ret
 }
 
 function nvim() {
 	whence -p nvim >/dev/null || _install_nvim || return
-	whence -p tree-sitter >/dev/null || _install_tree_sitter  # only needed for parsers, so not fatal
+	# tree-sitter is only needed for parsers, so not fatal
+	whence -p tree-sitter >/dev/null || [[ -e "$HOME/.cache/no-tree-sitter" ]] || _install_tree_sitter
 	command nvim "$@"
 }

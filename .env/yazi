@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # File manager: `y` opens yazi and cd's into its last directory on exit.
 # yazi and its plugins are installed on first use (macOS: Homebrew, Linux: static binaries into ~/.local/bin, no sudo).
 
@@ -18,7 +19,7 @@ function _install_yazi() {
 	tmp="$(mktemp -d)"
 	curl -fsSL --connect-timeout 10 -o "$tmp/yazi.zip" \
 		"https://github.com/sxyazi/yazi/releases/latest/download/yazi-$arch-unknown-linux-musl.zip" \
-		&& unzip -q "$tmp/yazi.zip" -d "$tmp" \
+		&& _unzip "$tmp/yazi.zip" "$tmp" \
 		&& mkdir -p "$HOME/.local/bin" \
 		&& install -m 755 "$tmp"/yazi-*/yazi "$tmp"/yazi-*/ya "$HOME/.local/bin/"
 	ret=$?

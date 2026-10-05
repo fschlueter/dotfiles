@@ -1,5 +1,19 @@
+# shellcheck shell=bash
 # Core CLI tools (fzf, zoxide, uv), installed if missing when sourced
 # (macOS: Homebrew, Linux: official installers/release binaries into ~/.local/bin, no sudo).
+# Also defines `_unzip`, used by the installers in .env/nvim and .env/yazi (this file is sourced first).
+
+# Usage: _unzip ARCHIVE DIR. Bare servers often lack `unzip`; fall back to python3.
+function _unzip() {
+	if command -v unzip >/dev/null; then
+		unzip -q "$1" -d "$2"
+	elif command -v python3 >/dev/null; then
+		python3 -m zipfile -e "$1" "$2"
+	else
+		echo "Need unzip or python3 to extract $1." >&2
+		return 1
+	fi
+}
 
 function _install_fzf() {
 	echo "fzf not found, installing ..."
@@ -15,7 +29,7 @@ function _install_fzf() {
 		*) echo "No prebuilt fzf for $(uname -m)." >&2; return 1 ;;
 	esac
 	ver="$(curl -fsSLI --connect-timeout 10 -o /dev/null -w '%{url_effective}' \
-		https://github.com/junegunn/fzf/releases/latest)"
+		https://github.com/junegunn/fzf/releases/latest)" || return
 	ver="${ver##*/v}"
 	tmp="$(mktemp -d)"
 	curl -fsSL --connect-timeout 10 -o "$tmp/fzf.tar.gz" \
@@ -33,6 +47,7 @@ function _install_zoxide() {
 	if [[ "$OSTYPE" == darwin* ]]; then
 		brew install zoxide
 	else
+		# Installs to ~/.local/bin by default (needs curl and tar)
 		curl -fsSL --connect-timeout 10 \
 			https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
 	fi
@@ -47,6 +62,7 @@ function _install_uv() {
 	fi
 }
 
-command -v fzf >/dev/null || _install_fzf
-command -v zoxide >/dev/null || _install_zoxide
-command -v uv >/dev/null || _install_uv
+# Failures are not fatal: the shell stays usable without these tools
+command -v fzf >/dev/null || _install_fzf || echo "fzf install failed." >&2
+command -v zoxide >/dev/null || _install_zoxide || echo "zoxide install failed." >&2
+command -v uv >/dev/null || _install_uv || echo "uv install failed." >&2
