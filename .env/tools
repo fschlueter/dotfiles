@@ -1,0 +1,52 @@
+# Core CLI tools (fzf, zoxide, uv), installed if missing when sourced
+# (macOS: Homebrew, Linux: official installers/release binaries into ~/.local/bin, no sudo).
+
+function _install_fzf() {
+	echo "fzf not found, installing ..."
+	if [[ "$OSTYPE" == darwin* ]]; then
+		brew install fzf
+		return
+	fi
+
+	local arch tmp ver ret
+	case "$(uname -m)" in
+		x86_64) arch=amd64 ;;
+		aarch64 | arm64) arch=arm64 ;;
+		*) echo "No prebuilt fzf for $(uname -m)." >&2; return 1 ;;
+	esac
+	ver="$(curl -fsSLI --connect-timeout 10 -o /dev/null -w '%{url_effective}' \
+		https://github.com/junegunn/fzf/releases/latest)"
+	ver="${ver##*/v}"
+	tmp="$(mktemp -d)"
+	curl -fsSL --connect-timeout 10 -o "$tmp/fzf.tar.gz" \
+		"https://github.com/junegunn/fzf/releases/download/v$ver/fzf-$ver-linux_$arch.tar.gz" \
+		&& tar -xzf "$tmp/fzf.tar.gz" -C "$tmp" \
+		&& mkdir -p "$HOME/.local/bin" \
+		&& install -m 755 "$tmp/fzf" "$HOME/.local/bin/"
+	ret=$?
+	rm -rf "$tmp"
+	return $ret
+}
+
+function _install_zoxide() {
+	echo "zoxide not found, installing ..."
+	if [[ "$OSTYPE" == darwin* ]]; then
+		brew install zoxide
+	else
+		curl -fsSL --connect-timeout 10 \
+			https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
+	fi
+}
+
+function _install_uv() {
+	echo "uv not found, installing ..."
+	if [[ "$OSTYPE" == darwin* ]]; then
+		brew install uv
+	else
+		curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh
+	fi
+}
+
+command -v fzf >/dev/null || _install_fzf
+command -v zoxide >/dev/null || _install_zoxide
+command -v uv >/dev/null || _install_uv

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Block commits whose staged additions look like secrets (dependency-free, regex only).
+# Bypass a false positive with `git commit --no-verify`.
+
+patterns='-----BEGIN [A-Z ]*PRIVATE KEY-----'
+patterns+='|AKIA[0-9A-Z]{16}'
+patterns+='|gh[pousr]_[A-Za-z0-9]{36,}'
+patterns+='|github_pat_[A-Za-z0-9_]{50,}'
+patterns+='|sk-[A-Za-z0-9_-]{20,}'
+patterns+='|xox[baprs]-[A-Za-z0-9-]{10,}'
+patterns+='|(api[_-]?key|secret|token|passw(or)?d)[A-Za-z0-9_]*["'"'"']?[[:space:]]*[:=][[:space:]]*["'"'"'][^"'"'"'$ ]{12,}["'"'"']'
+
+hits=$(git diff --cached --no-color -U0 --diff-filter=ACM | grep -nE '^\+[^+]' | grep -iE -e "$patterns")
+if [[ -n "$hits" ]]; then
+    echo "pre-commit: possible secret in staged changes:" >&2
+    echo "$hits" | cut -c1-160 >&2
+    exit 1
+fi

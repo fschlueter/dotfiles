@@ -24,6 +24,7 @@ export PATH="$HOME/.local/bin:$PATH"
 command -v stow >/dev/null || install_stow
 
 git -C "$DOTFILES" submodule update --init --recursive
+git -C "$DOTFILES" config core.hooksPath .githooks
 
 # Stow "folds" missing dirs into a single symlink. Pre-create ~/.config so only its
 # subfolders get linked, otherwise other apps would write their configs into this repo.

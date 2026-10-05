@@ -22,6 +22,7 @@ setopt appendhistory sharehistory hist_ignore_space hist_ignore_all_dups hist_sa
 
 fpath=(~/.zsh/plugins/zsh-completions/src $fpath)
 autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
 ZSH_AUTOSUGGEST_STRATEGY=(completion history)
 source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -55,6 +56,9 @@ LS_COLORS+=":fi=92"  # regular files: bright green (Ghostty palette 10)
 
 ### Shell integrations
 
+# installs fzf, zoxide and uv if missing
+source ~/.env/tools
+
 # fuzzy finder
 source <(fzf --zsh)
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git --exclude .cache . ~'
@@ -77,6 +81,10 @@ source ~/.env/yazi
 # editor (`nvim`)
 source ~/.env/nvim
 alias vim=nvim
+
+# uv
+
+alias vd='uvx --with pyarrow visidata'
 
 ### Set up woring environments
 
