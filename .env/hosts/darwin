@@ -20,3 +20,33 @@ export HOMEBREW_NO_ENV_HINTS=1
 
 
 export ENVS_DIR="/Users/felix/software/uvenvs/"
+
+# Extra PYTHONPATH modules (relative to $SOFTWARE), added to the default list in .env/env; uncomment as needed
+python_module_extra=(
+    "python/radiotools"
+    "python/cr-pulse-interpolator/src"
+    "python/RadioPropa/radiopropa/install/lib/python3.11/site-packages/radiopropa"
+    "python/radioanalysis"
+    "rnog/repos/antenna-positioning"
+    "rnog/daq/stationrc/"
+    "rnog/analysis/analysis-tools"
+
+    # "radioAnalysis" #  <---- Caused issues with py3.10 virt env (proabably because of the io module)
+    # "proposal/build/package/lib/"
+
+    # # Python mics
+    # "python/interpolation_fourier"
+    # "python/utilities"
+    # "python/coreasutilities"
+    # "grafana-client"
+
+    # # IceCube
+    # "icecube/toise" "icecube/ic3-labels" "icecube/event-generator"
+    # "ehe/EHE_simulations/photon_propagation"
+
+    # # RNO-G
+    # "rnog/rnog-data-analysis-and-issues/rnog_data" "rnog/rnogDataViewer"
+    # "rnog/rno-g-flight-tracker" "rnog/rnog-runtable"
+    # "rnog/radiant/stationrc"
+    # "rnog/data/hardware-webinterface"
+)

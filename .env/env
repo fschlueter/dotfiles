@@ -1,9 +1,11 @@
 # shellcheck shell=bash
 
 # Add a dir to a colon-separated path variable, skipping duplicates (bash + zsh).
+# path_append also skips entries that do not exist (-e, so zip/egg files in PYTHONPATH work too).
 # Usage: path_append VAR DIR / path_prepend VAR DIR
 path_append() {
     local cur
+    [[ -e $2 ]] || return 0
     eval "cur=\${$1-}"
     case ":$cur:" in
         *":$2:"*) ;;
@@ -31,37 +33,15 @@ if [[ -d $ENVS_DIR ]]; then
     done
 fi
 
-# Set Python enviourment
-python_module=(
-    "nuRadio"
-
-    # "radioAnalysis" #  <---- Caused issues with py3.10 virt env (proabably because of the io module)
-    # "proposal/build/package/lib/"
-
-    # # Python mics
-    # "python/interpolation_fourier"
-    "python/radiotools"
-    "python/cr-pulse-interpolator/src"
-    "python/RadioPropa/radiopropa/install/lib/python3.11/site-packages/radiopropa"
-    "python/radioanalysis"
-    # "python/utilities"
-    # "python/coreasutilities"
-    # "grafana-client"
-
-    # # IceCube
-    # "icecube/toise" "icecube/ic3-labels" "icecube/event-generator"
-    # "ehe/EHE_simulations/photon_propagation"
-
-    # RNO-G
-    "rnog/daq/mattak/py"
-    "rnog/repos/antenna-positioning"
-    # "rnog/rnog-data-analysis-and-issues/rnog_data" "rnog/rnogDataViewer"
-    # "rnog/rno-g-flight-tracker" "rnog/rnog-runtable"
-    # "rnog/radiant/stationrc"
-    "rnog/daq/stationrc/"
-    "rnog/analysis/analysis-tools"
-    # "rnog/data/hardware-webinterface"
-)
+# Set Python enviourment: modules (relative to $SOFTWARE) added to PYTHONPATH. Default list; a host profile
+# (.env/hosts/) can add to it with python_module_extra=(...) or replace it by setting python_module=(...).
+if [[ -z ${python_module+x} ]]; then
+    python_module=(
+        "nuradio"
+        "rnog/daq/mattak/py"
+    )
+fi
+python_module+=(${python_module_extra[@]+"${python_module_extra[@]}"})
 
 # export PYTHONPATH=  # Reset pythonpath
 for m in "${python_module[@]}"; do
