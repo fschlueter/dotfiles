@@ -10,10 +10,29 @@ Each host gets its own branch for small host-specific differences:
 
 | Branch | Host |
 |--------|------|
-| `main` | personal macOS laptop (also holds mac-only pieces such as AeroSpace and sketchybar) |
-| *host branches* | to be added; branch off `main` and keep the diff small |
+| `main` | personal macOS laptop (also holds mac-only pieces such as Ghostty, AeroSpace and sketchybar) |
+| `linux-server` | remote Ubuntu/Debian servers (x86_64/aarch64), ssh only, no sudo. Drops Ghostty, AeroSpace, sketchybar, llama-swap, the `llama.vim` and `minuet-ai.nvim` plugins (`claudecode.nvim` stays), the prompt's GPU segment and the laptop aliases in `.env/local`; the CPU segment reads `/proc/stat`. |
+| *other host branches* | to be added; branch off `main` and keep the diff small |
 
 Keep shared changes on `main` and merge or rebase them into the host branches, so the branches differ only in host-specific config.
+
+### Linux distributions
+
+The installers download prebuilt binaries, so what runs depends on the glibc of the host:
+
+| Distribution | glibc | nvim (needs 2.34) | tree-sitter-cli (needs 2.39) |
+|--------------|-------|:-----------------:|:----------------------------:|
+| AlmaLinux / RHEL / Rocky 8 | 2.28 | no | no |
+| AlmaLinux / RHEL / Rocky 9 | 2.34 | yes | needs `cargo` |
+| AlmaLinux / RHEL / Rocky 10 | 2.39 | yes | yes |
+| Debian 11 / Ubuntu 20.04 | 2.31 | no | no |
+| Debian 12 / Ubuntu 22.04 | 2.35-2.36 | yes | needs `cargo` |
+| Debian 13 / Ubuntu 24.04 | 2.39-2.41 | yes | yes |
+
+- Without a usable nvim the `nvim` wrapper prints a message; install Neovim >= 0.11 yourself.
+- Without tree-sitter-cli nvim still works, but nvim-treesitter cannot build parsers. The wrapper installs it with `cargo` if present, otherwise it remembers the failure in `~/.cache/no-tree-sitter` (delete it to retry). nvim-treesitter also needs a C compiler (`cc`).
+- yazi uses static musl builds and has no glibc requirement.
+- glibc minimums were read from the released binaries; the install paths have not yet been run on real servers.
 
 ## Contents
 
@@ -41,10 +60,11 @@ git clone <repo-url> ~/.dotfiles
 
 [`install.sh`](install.sh) does the following and is safe to re-run:
 
-1. Installs stow if it is missing: via Homebrew on macOS, on Linux built from source into `~/.local` (no sudo; needs `curl`, `perl` and `make`).
-2. Initialises the plugin submodules.
-3. Creates `~/.config` if missing, so stow links its subfolders instead of the whole directory.
-4. Runs `stow --restow --target=$HOME .`, i.e. links every file in this repo to the same path under `$HOME`.
+1. Needs `git` up front. Installs stow if it is missing: via Homebrew on macOS, on Linux into `~/.local` (no sudo; needs `curl`, `tar` and `perl`, no `make`).
+2. On Linux, installs a static zsh into `~/.local` if zsh is missing and, only with `DOTFILES_BASHRC=1`, adds a hand-over to zsh to `~/.bashrc` for interactive logins (`NO_ZSH=1 bash` bypasses it). Skip this if your login shell is already zsh.
+3. Initialises the plugin submodules.
+4. Creates `~/.config` if missing, so stow links its subfolders instead of the whole directory.
+5. Runs `stow --restow --target=$HOME .`, i.e. links every file in this repo to the same path under `$HOME`.
 
 Extra arguments are passed to stow, e.g. `./install.sh -n -v` for a dry run.
 
