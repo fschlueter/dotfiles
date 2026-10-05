@@ -27,6 +27,11 @@ SAVEHIST=$HISTSIZE
 HISTDUP=erase
 setopt appendhistory sharehistory hist_ignore_space hist_ignore_all_dups hist_save_no_dups hist_ignore_dups hist_find_no_dups
 
+### Globbing
+
+# Pass unmatched patterns through literally (like bash), so remote globs work: scp host:/data/run26* .
+setopt nonomatch
+
 ### zsh plugins
 
 fpath=(~/.zsh/plugins/zsh-completions/src $fpath)

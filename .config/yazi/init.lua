@@ -5,7 +5,11 @@ require("git"):setup({
 	order = 1500,
 })
 
-require("omp"):setup({ config = "/home/felix/.config/omp/omp.toml" })
+-- Skip instead of failing on a host where the plugin is not installed yet
+local ok, omp = pcall(require, "omp")
+if ok then
+	omp:setup({ config = "/home/felix/.config/omp/omp.toml" })
+end
 
 Status:children_add(function(self)
 	local h = self._current.hovered
