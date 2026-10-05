@@ -36,6 +36,7 @@ _omp_sysload() {
     local f="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh/sysload" cpu=""
     [[ -r $f ]] && read -r cpu < "$f"
     export OMP_CPU=$cpu
+    (  # subshell: a bare `&` prints "[1] pid" in interactive shells
     {
         local pct=0 skip u n s i io irq sirq st busy total pbusy=0 ptotal=0
         read -r skip u n s i io irq sirq st _ < /proc/stat
@@ -47,7 +48,7 @@ _omp_sysload() {
         fi
         printf '%s\n%s %s\n' "$pct" "$busy" "$total" > "$f"
     } >/dev/null 2>&1 &
-    disown 2>/dev/null  # bash and zsh; keeps the job out of the job table
+    )
 }
 if [[ -r /proc/stat ]]; then
     if [[ -n ${ZSH_VERSION-} ]]; then
