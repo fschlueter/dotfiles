@@ -11,7 +11,7 @@ Personal shell/app config for macOS (primary) and Linux servers. See `README.md`
 
 ## Platforms and branches
 
-Code should work on macOS and Linux; gate OS-specific parts with `$OSTYPE`. `main` is the personal macOS laptop; `linux-server` is for remote Ubuntu/Debian servers (ssh only, no sudo, no GUI/AI-nvim configs); other hosts get their own branches (to be added) holding only host-specific differences. Put cross-platform changes on `main` so they can be merged into the host branches, and don't bake host-specific values into shared files.
+Code should work on macOS and Linux; gate OS-specific parts with `$OSTYPE`. `main` is the personal macOS laptop; `linux-server` is for remote Ubuntu/Debian servers (ssh only, no sudo, no GUI configs, only `claudecode.nvim` among the AI nvim plugins); other hosts get their own branches (to be added) holding only host-specific differences. Put cross-platform changes on `main` so they can be merged into the host branches, and don't bake host-specific values into shared files.
 
 ## Shell conventions
 
