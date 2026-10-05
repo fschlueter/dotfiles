@@ -73,8 +73,22 @@ export POSH_THEME="$(cat "$omp_dir/theme")"  # persisted by `posh-theme`
 omp_cfg="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh/config.toml"
 mkdir -p "${omp_cfg%/*}"
 cat "$omp_dir/omp.toml" "$omp_dir"/themes/*.toml > "$omp_cfg"
+# bash < 5.1 only runs PROMPT_COMMAND[0], but the oh-my-posh init appends _omp_hook as a further array element
+# (so the prompt never renders). Flatten to one string, hook first so it sees the real exit status.
+_omp_flatten_prompt_command() {
+    local pc="_omp_hook" c
+    for c in "${PROMPT_COMMAND[@]}"; do
+        [[ $c == _omp_hook ]] || pc+=";$c"
+    done
+    unset PROMPT_COMMAND
+    PROMPT_COMMAND=$pc
+}
+
 if command -v oh-my-posh >/dev/null; then
     eval "$(oh-my-posh init "${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}" --config "$omp_cfg")"
+    if [[ -n ${BASH_VERSION-} ]] && ((BASH_VERSINFO[0] < 5 || (BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] < 1))); then
+        _omp_flatten_prompt_command
+    fi
 fi
 unset omp_dir omp_cfg
 
