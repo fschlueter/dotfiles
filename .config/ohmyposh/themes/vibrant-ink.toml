@@ -1,0 +1,48 @@
+# Vibrant Ink (matches the Ghostty "Vibrant Ink" theme): black background, saturated orange/lime/teal/purple.
+[palettes.list.vibrant-ink]
+hue-black = '#000000'
+hue-grey = '#878787'
+hue-orange = '#FF6600'
+hue-lime = '#CCFF04'
+hue-gold = '#FFCC00'
+hue-teal = '#44B4CC'
+hue-purple = '#9933CC'
+hue-magenta = '#FF00FF'
+hue-red = '#FF0000'
+hue-crimson = '#D90000'
+hue-white = '#F5F5F5'
+
+secondary-prompt-foreground = 'p:hue-black'
+secondary-prompt-background = 'p:hue-gold'
+transient-prompt-foreground = 'p:hue-black'
+transient-prompt-background = 'p:hue-grey'
+
+session-foreground = 'p:hue-black'
+session-background = 'p:hue-orange'
+
+sysinfo-foreground = 'p:hue-white'
+sysinfo-background = 'p:hue-purple'
+
+path-foreground = 'p:hue-black'
+path-background = 'p:hue-teal'
+
+git-foreground = 'p:hue-black'
+git-background = 'p:hue-lime'
+git-foreground-diverged = 'p:hue-white'
+git-background-dirty = 'p:hue-gold'
+git-background-diverged = 'p:hue-crimson'
+git-background-ahead = '#1F7A3A'
+git-background-behind = 'p:hue-magenta'
+
+root-foreground = 'p:hue-white'
+root-background = 'p:hue-crimson'
+
+python-foreground = 'p:hue-gold'
+python-background = '#1D5F6E'
+
+prompt-foreground = 'p:hue-lime'
+prompt-foreground-error = 'p:hue-red'
+
+duration-foreground = 'p:hue-gold'
+time-foreground = 'p:hue-teal'
+separator-foreground = 'p:hue-grey'
