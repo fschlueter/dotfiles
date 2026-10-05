@@ -2,19 +2,18 @@
 
 Personal shell and app configuration for macOS and Linux, symlinked into `$HOME` with [GNU Stow](https://www.gnu.org/software/stow/).
 
-## Platforms and branches
+## Platforms and hosts
 
 The building blocks (shell setup, `.env/*` tool installers, nvim, yazi, prompt themes) are written to work on both macOS and Linux, with OS checks (`$OSTYPE`) where behaviour differs. Anything outside `.zshrc`/`*.zsh` stays bash-compatible.
 
-Each host gets its own branch for small host-specific differences:
+Hosts differ through a **profile** (`.env/hosts/<profile>`), not through branches. `.env/host` picks the first that exists of: `$DOTFILES_HOST`, the first line of `~/.config/dotfiles/host` (untracked override), the short hostname; otherwise the OS default (`darwin` or `linux`). A profile is a small bash-compatible script that sets:
 
-| Branch | Host |
-|--------|------|
-| `main` | personal macOS laptop (also holds mac-only pieces such as Ghostty, AeroSpace and sketchybar) |
-| `linux-server` | remote Ubuntu/Debian servers (x86_64/aarch64), ssh only, no sudo. Drops Ghostty, AeroSpace, sketchybar, llama-swap, the `llama.vim` and `minuet-ai.nvim` plugins (`claudecode.nvim` stays), the prompt's GPU segment and the laptop aliases in `.env/local`; the CPU segment reads `/proc/stat`. |
-| *other host branches* | to be added; branch off `main` and keep the diff small |
+| Variable | Effect |
+|----------|--------|
+| `DOTFILES_STOW_IGNORE` | space-separated regexes `install.sh` passes to stow as `--ignore` (e.g. the macOS-only configs on Linux) |
+| `DOTFILES_NVIM_AI` | AI nvim plugins to load (`claudecode`, `minuet`); the others stay unloaded, their pins stay in `lazy-lock.json` |
 
-Keep shared changes on `main` and merge or rebase them into the host branches, so the branches differ only in host-specific config.
+It can also hold aliases and exports for that host (the laptop's DESY aliases live in `hosts/darwin`). To give a server its own settings, add `.env/hosts/<hostname>` and re-run `./install.sh`.
 
 ### Linux distributions
 
@@ -44,7 +43,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.env/omp` | [oh-my-posh](https://ohmyposh.dev) prompt setup |
 | `.env/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
 | `.env/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
-| `.env/local` | machine-specific aliases and functions |
+| `.env/host`, `.env/hosts/` | host profiles (see above); `.env/local` is for anything else machine-specific |
 | `.config/ghostty/` | [Ghostty](https://ghostty.org) terminal config |
 | `.config/ohmyposh/` | oh-my-posh theme |
 | `.config/yazi/` | yazi config; plugins are pinned in `package.toml` (manage with `ya pkg add/upgrade`) and not tracked in git |

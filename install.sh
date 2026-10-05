@@ -86,5 +86,11 @@ git -C "$DOTFILES" config core.hooksPath .githooks
 # subfolders get linked, otherwise other apps would write their configs into this repo.
 mkdir -p "$HOME/.config"
 
+# Host profile: files to leave unlinked on this host (e.g. macOS-only configs on Linux)
+# shellcheck disable=SC1091
+DOTFILES_ENV_DIR="$DOTFILES/.env" . "$DOTFILES/.env/host"
+ignore=()
+for r in $DOTFILES_STOW_IGNORE; do ignore+=(--ignore="$r"); done
+
 cd "$DOTFILES"
-stow --restow --target="$HOME" "$@" .
+stow --restow --target="$HOME" ${ignore[@]+"${ignore[@]}"} "$@" .

@@ -10,6 +10,10 @@ return {
   },
   {
     "coder/claudecode.nvim",
+    -- `cond` (not `enabled`) keeps the pin in lazy-lock.json on hosts that don't load it
+    cond = function()
+      return require("config.dotfiles").ai("claudecode")
+    end,
     dependencies = { "folke/snacks.nvim" },
     config = true,
     -- `cmd` lets lazy.nvim create command stubs that load the plugin on first use,
