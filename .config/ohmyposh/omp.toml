@@ -5,7 +5,7 @@ cursor_style = "blinking_underline"
 
 [maps.host_name]
 # Mac = ""
-macpal = " "
+MacPal = " "
 MacBook-Pro-8 = " "
 NuRadioOpt-GPU = " NuRadio"
 
