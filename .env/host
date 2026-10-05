@@ -1,11 +1,17 @@
 # shellcheck shell=bash
-# Host profile: sets per-host flags from .env/hosts/<profile> (sourced by .zshrc and install.sh, bash + zsh).
-# The profile is the first that exists of: $DOTFILES_HOST, the first line of ~/.config/dotfiles/host
-# (untracked override), `hostname -s`; otherwise the OS default (hosts/darwin or hosts/linux).
-# Profiles may set:
-#   DOTFILES_STOW_IGNORE  space-separated stow ignore regexes, matched against paths like `.config/ghostty`
-#                         (install.sh passes them as --ignore; no leading `^/`, unlike .stow-local-ignore)
-#   DOTFILES_NVIM_AI      space-separated AI nvim plugins to load (claudecode, minuet); read by nvim
+# Host profile: loads .env/hosts/<profile> and exports its settings. Sourced by .zshrc and install.sh (bash + zsh).
+#
+# Profile, first match wins (a candidate only counts if .env/hosts/<name> exists):
+#   1. $DOTFILES_HOST
+#   2. first line of ~/.config/dotfiles/host  (per-host override, lives outside the repo)
+#   3. `hostname -s`
+#   4. OS default: hosts/darwin on macOS, hosts/linux otherwise
+# Only that one file is loaded; a hostname profile does not inherit from the OS default.
+#
+# A profile may set (and hold aliases/exports for that host):
+#   DOTFILES_STOW_IGNORE  stow --ignore regexes, space-separated, e.g. `\.config/ghostty` (no leading `^/`); used by install.sh
+#   DOTFILES_NVIM_AI      AI nvim plugins to load (claudecode, minuet); read by lua/config/dotfiles.lua
+#   DOTFILES_SHELL        zsh (default). Anything else only prints a warning: no .bashrc is shipped yet.
 
 _dotfiles_env="${DOTFILES_ENV_DIR:-$HOME/.env}"  # install.sh points this at the repo
 _h="${DOTFILES_HOST-}"
@@ -21,7 +27,13 @@ esac
 
 DOTFILES_STOW_IGNORE=""
 DOTFILES_NVIM_AI=""
+DOTFILES_SHELL=zsh
 # shellcheck disable=SC1090
 . "$_dotfiles_env/hosts/$_p"
-export DOTFILES_PROFILE="$_p" DOTFILES_NVIM_AI
+export DOTFILES_PROFILE="$_p" DOTFILES_NVIM_AI DOTFILES_SHELL
+
+if [[ $DOTFILES_SHELL != zsh ]]; then
+    echo "dotfiles: warning: profile '$_p' wants shell '$DOTFILES_SHELL', but only zsh is configured (no .bashrc shipped)" >&2
+fi
+[[ $- == *i* ]] && echo "dotfiles: profile '$_p' (host '$_h')"  # interactive shells only, not install.sh
 unset _h _p _dotfiles_env

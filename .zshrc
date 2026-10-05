@@ -1,3 +1,5 @@
+# host profile (flags per host or OS, see the file)
+source ~/.env/host
 
 # Aliases
 alias ll="ls -l"
@@ -73,9 +75,6 @@ fi
 LS_COLORS+=":fi=92"  # regular files: bright green (Ghostty palette 10)
 
 ### Shell integrations
-
-# host profile (flags per host or OS, see the file)
-source ~/.env/host
 
 # installs fzf, zoxide and uv if missing
 source ~/.env/tools
