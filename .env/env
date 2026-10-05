@@ -22,7 +22,7 @@ path_prepend() {
 export SOFTWARE="/Users/felix/software"
 
 # Searches for folders in $env_home and creates alias for each virt env
-export ENVS_DIR="$SOFTWARE/envs"
+export ENVS_DIR="$SOFTWARE/uvenvs"
 for d in "$ENVS_DIR"/*/; do
     e=$(basename "$d")
     # shellcheck disable=SC2139  # expand at definition time on purpose
@@ -88,3 +88,6 @@ path_append DYLD_LIBRARY_PATH "$RNO_G_INSTALL_DIR/lib"
 
 alias thisroot="pushd /opt/homebrew >/dev/null; . bin/thisroot.sh; popd >/dev/null"
 # alias icetray="~/software/icecube/icetray/build/env-shell.sh"
+
+alias pip="uv pip"
+alias venv="uv venv"
