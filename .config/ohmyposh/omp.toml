@@ -7,6 +7,7 @@ cursor_style = "blinking_underline"
 # Mac = ""
 macpal = " "
 MacBook-Pro-8 = " "
+NuRadioOpt-GPU = " NuRadio"
 
 # Theme switching: picks a palette based on $POSH_THEME (set via the
 # `posh-theme` shell function), falls back to "default" if unset/unknown.
