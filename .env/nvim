@@ -2,7 +2,7 @@
 # Editor: Neovim with LazyVim (~/.config/nvim). lazy.nvim installs the plugins on first start, pinned in lazy-lock.json.
 # nvim and tree-sitter-cli (for nvim-treesitter) are installed on first use of `nvim`
 # (macOS: Homebrew, Linux: official release binaries into ~/.local, no sudo).
-# Checks use `whence -p`: it skips the `nvim` function below and sees new binaries without `rehash`.
+# Checks use `_have` (.env/tools): it skips the `nvim` function below and sees new binaries without `rehash`.
 
 # Default editor for other programs (yazi, git, ...); they call the binary, not the `nvim` function
 export EDITOR=nvim
@@ -15,6 +15,11 @@ function _install_nvim() {
 		return
 	fi
 
+	# The official tarball needs glibc >= 2.34 (RHEL/Alma 9+, Debian 12+, Ubuntu 22.04+)
+	if ! _glibc_at_least 2.34; then
+		echo "glibc too old for the prebuilt nvim; install Neovim >= 0.11 another way." >&2
+		return 1
+	fi
 	local arch tmp ret
 	case "$(uname -m)" in
 		x86_64) arch=x86_64 ;;
@@ -42,6 +47,17 @@ function _install_tree_sitter() {
 		return
 	fi
 
+	# The prebuilt binary needs glibc >= 2.39 (RHEL/Alma 10, Debian 13, Ubuntu 24.04+); older hosts build it with cargo if present
+	if ! _glibc_at_least 2.39; then
+		if command -v cargo >/dev/null; then
+			cargo install --locked --root "$HOME/.local" tree-sitter-cli
+		else
+			echo "glibc too old for the prebuilt tree-sitter; install cargo to build it, parsers can't be built until then." >&2
+			mkdir -p "$HOME/.cache" && touch "$HOME/.cache/no-tree-sitter"  # checked by `nvim` below
+			return 1
+		fi
+		return
+	fi
 	local arch tmp ret
 	case "$(uname -m)" in
 		x86_64) arch=x64 ;;
@@ -56,9 +72,9 @@ function _install_tree_sitter() {
 		&& install -m 755 "$tmp/tree-sitter" "$HOME/.local/bin/"
 	ret=$?
 	rm -rf "$tmp"
-	# The prebuilt binary needs a recent glibc (2.39); drop it if it can't run, so we don't retry on every start
+	# Drop the binary if it can't run, so we don't retry on every start
 	if [[ $ret -eq 0 ]] && ! "$HOME/.local/bin/tree-sitter" --version >/dev/null 2>&1; then
-		echo "tree-sitter does not run here (glibc too old?); parsers can't be built." >&2
+		echo "tree-sitter does not run here (unexpected); parsers can't be built." >&2
 		rm -f "$HOME/.local/bin/tree-sitter"
 		mkdir -p "$HOME/.cache" && touch "$HOME/.cache/no-tree-sitter"  # checked by `nvim` below
 		ret=1
@@ -67,8 +83,8 @@ function _install_tree_sitter() {
 }
 
 function nvim() {
-	whence -p nvim >/dev/null || _install_nvim || return
+	_have nvim || _install_nvim || return
 	# tree-sitter is only needed for parsers, so not fatal
-	whence -p tree-sitter >/dev/null || [[ -e "$HOME/.cache/no-tree-sitter" ]] || _install_tree_sitter
+	_have tree-sitter || [[ -e "$HOME/.cache/no-tree-sitter" ]] || _install_tree_sitter
 	command nvim "$@"
 }

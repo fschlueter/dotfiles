@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Install GNU Stow (macOS: Homebrew, Linux: from source into ~/.local) and symlink this repo into $HOME.
-# On Linux also installs zsh into ~/.local if missing and makes interactive bash logins start it.
+# On Linux also installs zsh into ~/.local if missing.
 # Usage: ./install.sh [stow args], e.g. `./install.sh -n -v` for a dry run.
-# Set DOTFILES_NO_BASHRC=1 to leave ~/.bashrc alone.
+# Set DOTFILES_BASHRC=1 to also make interactive bash logins start zsh (for hosts whose login shell can't be changed).
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -50,7 +50,7 @@ install_zsh() {
         | sh -s -- -q -d "$HOME/.local" -e no
 }
 
-# Interactive bash logins (ssh) hand over to zsh, since the login shell can't be changed without root.
+# Opt-in: interactive bash logins (ssh) hand over to zsh, since the login shell can't be changed without root.
 # Non-interactive shells (scp, ssh host cmd) are unaffected; `NO_ZSH=1 bash` skips the hand-over.
 hook_bashrc() {
     local rc="$HOME/.bashrc" marker="# >>> dotfiles zsh >>>"
@@ -76,7 +76,7 @@ if [[ "$OSTYPE" != darwin* ]]; then
     command -v zsh >/dev/null || install_zsh
     dry_run=
     for a in "$@"; do [[ $a == -n || $a == --no || $a == --simulate ]] && dry_run=1; done
-    [[ -n ${DOTFILES_NO_BASHRC-} || -n $dry_run ]] || hook_bashrc
+    [[ -z ${DOTFILES_BASHRC-} || -n $dry_run ]] || hook_bashrc
 fi
 
 git -C "$DOTFILES" submodule update --init --recursive

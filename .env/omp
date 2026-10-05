@@ -46,11 +46,16 @@ _omp_sysload() {
             pct=$(((busy - pbusy) * 100 / (total - ptotal)))
         fi
         printf '%s\n%s %s\n' "$pct" "$busy" "$total" > "$f"
-    } &!
+    } >/dev/null 2>&1 &
+    disown 2>/dev/null  # bash and zsh; keeps the job out of the job table
 }
-if [[ -n ${ZSH_VERSION-} && -r /proc/stat ]]; then
-    autoload -Uz add-zsh-hook
-    add-zsh-hook precmd _omp_sysload
+if [[ -r /proc/stat ]]; then
+    if [[ -n ${ZSH_VERSION-} ]]; then
+        autoload -Uz add-zsh-hook
+        add-zsh-hook precmd _omp_sysload
+    elif [[ -n ${BASH_VERSION-} ]]; then
+        PROMPT_COMMAND="_omp_sysload${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+    fi
 fi
 
 export POSH_THEME="$(cat "$omp_dir/theme")"  # persisted by `posh-theme`
@@ -59,7 +64,7 @@ omp_cfg="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh/config.toml"
 mkdir -p "${omp_cfg%/*}"
 cat "$omp_dir/omp.toml" "$omp_dir"/themes/*.toml > "$omp_cfg"
 if command -v oh-my-posh >/dev/null; then
-    eval "$(oh-my-posh init zsh --config "$omp_cfg")"
+    eval "$(oh-my-posh init "${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}" --config "$omp_cfg")"
 fi
 unset omp_dir omp_cfg
 
