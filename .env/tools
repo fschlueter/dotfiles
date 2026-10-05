@@ -75,7 +75,9 @@ function _install_uv() {
 	fi
 }
 
-# Failures are not fatal: the shell stays usable without these tools
-command -v fzf >/dev/null || _install_fzf || echo "fzf install failed." >&2
-command -v zoxide >/dev/null || _install_zoxide || echo "zoxide install failed." >&2
-command -v uv >/dev/null || _install_uv || echo "uv install failed." >&2
+# Failures are not fatal: the shell stays usable without these tools. Skipped when DOTFILES_AUTO_INSTALL=0 (.env/host).
+if [[ ${DOTFILES_AUTO_INSTALL-1} != 0 ]]; then
+	command -v fzf >/dev/null || _install_fzf || echo "fzf install failed." >&2
+	command -v zoxide >/dev/null || _install_zoxide || echo "zoxide install failed." >&2
+	command -v uv >/dev/null || _install_uv || echo "uv install failed." >&2
+fi

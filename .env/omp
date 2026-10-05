@@ -20,7 +20,7 @@ _install_omp() {
         && mv "$HOME/.local/bin/oh-my-posh.tmp" "$HOME/.local/bin/oh-my-posh"
 }
 
-if ! command -v oh-my-posh >/dev/null; then
+if ! command -v oh-my-posh >/dev/null && [[ ${DOTFILES_AUTO_INSTALL-1} != 0 ]]; then
     if [[ "$OSTYPE" == darwin* ]]; then
         echo "oh-my-posh not found, installing ..."
         brew install jandedobbeleer/oh-my-posh/oh-my-posh
