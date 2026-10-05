@@ -11,11 +11,11 @@ Personal shell/app config for macOS (primary) and Linux servers. See `README.md`
 
 ## Platforms and branches
 
-Code should work on macOS and Linux; gate OS-specific parts with `$OSTYPE`. `main` is the personal macOS laptop; other hosts get their own branches (to be added) holding only host-specific differences. Put cross-platform changes on `main` so they can be merged into the host branches, and don't bake host-specific values into shared files.
+Code should work on macOS and Linux; gate OS-specific parts with `$OSTYPE`. `main` is the personal macOS laptop; `linux-server` is for remote Ubuntu/Debian servers (ssh only, no sudo, no GUI configs, only `claudecode.nvim` among the AI nvim plugins); other hosts get their own branches (to be added) holding only host-specific differences. Put cross-platform changes on `main` so they can be merged into the host branches, and don't bake host-specific values into shared files.
 
 ## Shell conventions
 
-- Only `.zshrc` and `*.zsh` may use zsh-only syntax. Everything else (`.env/*`) is sourced by zsh but must also work in bash (Linux servers): no `typeset -T/-U`, `${(P)var}`, glob qualifiers or `${!var}`; use `eval` for indirection. Keep `# shellcheck shell=bash`.
+- Only `.zshrc` and `*.zsh` may use zsh-only syntax. Everything else (`.env/*`) is sourced by zsh but must also work in bash (Linux servers): no `typeset -T/-U`, `${(P)var}`, glob qualifiers or `${!var}`; use `eval` for indirection. Keep `# shellcheck shell=bash`. Helpers in `.env/tools`: `_have` (executable lookup, ignores functions), `_unzip`, `_glibc_at_least`.
 - `.env/*` files follow one pattern: install the tool on first use if missing (brew on macOS, no-sudo download into `~/.local` on Linux), then configure it. Examples: `.env/omp`, `.env/yazi` (`y()` wrapper, auto-syncs plugins from `package.toml`), `.env/nvim` (installs nvim + tree-sitter-cli, sets `EDITOR`), `.env/tools` (fzf, zoxide, uv).
 - `PATH` is set once in `.zshrc` (`~/.local/bin` everywhere, homebrew dirs only on darwin). Use the `path_append`/`path_prepend` helpers in `.env/env` for colon-separated vars (dedupes).
 - Python envs are uv-managed in `~/software/uvenvs`; `.env/env` creates one activation alias per folder.
@@ -31,7 +31,7 @@ Keep nvim, Ghostty and oh-my-posh looks aligned (soft preference): when theming 
   - Segments use purpose-named palette aliases (`p:git-foreground`, ...) that resolve to base `hue-*` colors; don't hardcode hex.
   - Nerd Font glyphs are invisible private-use chars, so string matching on them fails: edit with Python regex or write `\uXXXX`/`\U000XXXXX` in double-quoted TOML strings (single-quoted TOML strings are literal, `\n` needs double quotes).
   - `parentBackground`/`parentForeground` only resolve within the same `[[blocks]]`; separate blocks give the visible gap between groups. Powerline segments fade out on their own when last, so no extra "end" segment is needed.
-  - Slow metrics (CPU/GPU) use the async cache pattern: `_omp_sysload` precmd hook in `.env/omp` reads `~/.cache/ohmyposh/sysload` and refreshes it in a background `&!` job, exposed as `OMP_CPU`/`OMP_GPU`. Reuse it for any expensive prompt metric.
+  - Slow metrics (CPU/GPU) use the async cache pattern: `_omp_sysload` precmd hook in `.env/omp` reads `~/.cache/ohmyposh/sysload` and refreshes it in a background job (`ps`/`ioreg` on macOS, `/proc/stat` deltas on Linux; GPU is macOS only), exposed as `OMP_CPU`/`OMP_GPU`. Bash and zsh compatible (zsh `precmd` / bash `PROMPT_COMMAND`); avoid zsh-only `&!`. Reuse it for any expensive prompt metric.
 - **Neovim** (LazyVim starter, `.config/nvim/`): options in `lua/config/options.lua`, autocmds in `lua/config/autocmds.lua`, plugins in `lua/plugins/`; versions pinned in `lazy-lock.json`. Derive custom highlight colors from the active theme (`nvim_get_hl`, re-applied in a `ColorScheme` autocmd), never hardcoded hex. Current colorscheme family: everforest.
 - **Yazi**: config in `.config/yazi/`; plugins pinned in `package.toml` (manage with `ya pkg add/upgrade`), not tracked in git; Everforest flavor in `flavors/`.
 

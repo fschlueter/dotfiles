@@ -21,7 +21,7 @@ desc = "Maximize or restore the preview pane"
 [[mgr.prepend_keymap]]
 on = "y"
 run = [
-  'shell -- if command -v pbcopy >/dev/null; then echo "$@" | pbcopy; else echo "$@" | xclip -i -selection clipboard -t text/uri-list; fi',
+  'shell -- if command -v pbcopy >/dev/null; then echo "$@" | pbcopy; elif command -v xclip >/dev/null; then echo "$@" | xclip -i -selection clipboard -t text/uri-list; fi',
   "yank",
 ]
 

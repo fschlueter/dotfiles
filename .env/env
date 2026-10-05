@@ -19,15 +19,17 @@ path_prepend() {
     esac
 }
 
-export SOFTWARE="/Users/felix/software"
+export SOFTWARE="$HOME/software"
 
-# Searches for folders in $env_home and creates alias for each virt env
+# Searches for folders in $ENVS_DIR and creates alias for each virt env
 export ENVS_DIR="$SOFTWARE/uvenvs"
-for d in "$ENVS_DIR"/*/; do
-    e=$(basename "$d")
-    # shellcheck disable=SC2139  # expand at definition time on purpose
-    alias "$e"="source $ENVS_DIR/$e/bin/activate"
-done
+if [[ -d $ENVS_DIR ]]; then
+    for d in "$ENVS_DIR"/*/; do
+        e=$(basename "$d")
+        # shellcheck disable=SC2139  # expand at definition time on purpose
+        alias "$e"="source $ENVS_DIR/$e/bin/activate"
+    done
+fi
 
 # Set Python enviourment
 python_module=(
@@ -66,8 +68,8 @@ for m in "${python_module[@]}"; do
     path_append PYTHONPATH "$SOFTWARE/$m"
 done
 
-path_append PYTHONPATH "/Users/felix/work/ant/ant"
-export MATPLOTLIB=/Users/felix/.matplotlib/matplotlibrc
+path_append PYTHONPATH "$HOME/work/ant/ant"
+export MATPLOTLIB="$HOME/.matplotlib/matplotlibrc"
 
 # # to find py3.11 in homebrew ...
 # path_prepend PATH /opt/homebrew/opt/python@3.11/libexec/bin
@@ -77,16 +79,18 @@ export MATPLOTLIB=/Users/felix/.matplotlib/matplotlibrc
 # export HDF5_DIR
 
 
-export RNO_G_DATA="/Users/felix/work/rnog/data/full"
-export RNO_G_INSTALL_DIR="/Users/felix/software/rnog/daq/install"
+export RNO_G_DATA="$HOME/work/rnog/data/full"
+export RNO_G_INSTALL_DIR="$SOFTWARE/rnog/daq/install"
 
 path_append LD_LIBRARY_PATH "$RNO_G_INSTALL_DIR/lib"
 path_append PATH "$RNO_G_INSTALL_DIR/bin"
 
-# ROOT's gSystem.Load on a mac check out DYLD...
-path_append DYLD_LIBRARY_PATH "$RNO_G_INSTALL_DIR/lib"
+if [[ "$OSTYPE" == darwin* ]]; then
+    # ROOT's gSystem.Load on a mac check out DYLD...
+    path_append DYLD_LIBRARY_PATH "$RNO_G_INSTALL_DIR/lib"
 
-alias thisroot="pushd /opt/homebrew >/dev/null; . bin/thisroot.sh; popd >/dev/null"
+    alias thisroot="pushd /opt/homebrew >/dev/null; . bin/thisroot.sh; popd >/dev/null"
+fi
 # alias icetray="~/software/icecube/icetray/build/env-shell.sh"
 
 alias pip="uv pip"
