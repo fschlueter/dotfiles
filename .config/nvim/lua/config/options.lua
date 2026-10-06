@@ -19,3 +19,22 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
 vim.api.nvim_create_autocmd("FocusLost", {
   command = "silent! wa",
 })
+
+if vim.fn.has('mac') == 1 then
+  vim.g.clipboard = {
+    name = 'pbcopy',
+    copy  = { ['+'] = 'pbcopy',  ['*'] = 'pbcopy' },
+    paste = { ['+'] = 'pbpaste', ['*'] = 'pbpaste' },
+    cache_enabled = 0,
+  }
+elseif vim.env.SSH_TTY then
+  local osc52 = require('vim.ui.clipboard.osc52')
+  local function paste() return vim.split(vim.fn.getreg('"'), '\n') end
+  vim.g.clipboard = {
+    name = 'OSC 52',
+    copy  = { ['+'] = osc52.copy('+'), ['*'] = osc52.copy('*') },
+    paste = { ['+'] = paste, ['*'] = paste },
+  }
+end
+-- otherwise (e.g. a local Linux desktop): Neovim auto-detects xclip/wl-copy
+
