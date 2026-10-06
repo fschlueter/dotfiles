@@ -48,8 +48,7 @@ for m in "${python_module[@]}"; do
     path_append PYTHONPATH "$SOFTWARE/$m"
 done
 
-path_append PYTHONPATH "$HOME/work/ant/ant"
-export MATPLOTLIB="$HOME/.matplotlib/matplotlibrc"
+export MATPLOTLIB="${MATPLOTLIB:-$HOME/.matplotlib/matplotlibrc}"
 
 # # to find py3.11 in homebrew ...
 # path_prepend PATH /opt/homebrew/opt/python@3.11/libexec/bin
@@ -59,8 +58,8 @@ export MATPLOTLIB="$HOME/.matplotlib/matplotlibrc"
 # export HDF5_DIR
 
 
-export RNO_G_DATA="$HOME/work/rnog/data/full"
-export RNO_G_INSTALL_DIR="$SOFTWARE/rnog/daq/install"
+#export RNO_G_DATA="${RNO_G_DATA:-$HOME/work/rnog/data/full}"
+export RNO_G_INSTALL_DIR="${RNO_G_INSTALL_DIR:-$SOFTWARE/rnog/install}"
 
 path_append LD_LIBRARY_PATH "$RNO_G_INSTALL_DIR/lib"
 path_append PATH "$RNO_G_INSTALL_DIR/bin"

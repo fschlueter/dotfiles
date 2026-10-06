@@ -30,6 +30,7 @@ python_module_extra=(
     "rnog/repos/antenna-positioning"
     "rnog/daq/stationrc/"
     "rnog/analysis/analysis-tools"
+    "../work/ant/ant"
 
     # "radioAnalysis" #  <---- Caused issues with py3.10 virt env (proabably because of the io module)
     # "proposal/build/package/lib/"
@@ -50,3 +51,6 @@ python_module_extra=(
     # "rnog/radiant/stationrc"
     # "rnog/data/hardware-webinterface"
 )
+
+export RNO_G_DATA="${RNO_G_DATA:-$HOME/work/rnog/data/full}"
+export RNO_G_INSTALL_DIR="${RNO_G_INSTALL_DIR:-${SOFTWARE:-$HOME/software}/rnog/daq/install}"  # $SOFTWARE is not set yet here
