@@ -38,7 +38,7 @@ fi
 if [[ -z ${python_module+x} ]]; then
     python_module=(
         "nuradio"
-        "rnog/daq/mattak/py"
+        "rnog/mattak/py"
     )
 fi
 python_module+=(${python_module_extra[@]+"${python_module_extra[@]}"})

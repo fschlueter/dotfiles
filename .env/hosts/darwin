@@ -32,6 +32,8 @@ python_module_extra=(
     "rnog/analysis/analysis-tools"
     "../work/ant/ant"
 
+    "rnog/daq/mattak/py"
+
     # "radioAnalysis" #  <---- Caused issues with py3.10 virt env (proabably because of the io module)
     # "proposal/build/package/lib/"
 
