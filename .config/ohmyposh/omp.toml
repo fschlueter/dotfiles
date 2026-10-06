@@ -8,7 +8,8 @@ cursor_style = "blinking_underline"
 MacPal = " "
 MacBook-Pro-8 = " "
 NuRadioOpt-GPU = " NuRadio"
-rno-g.uchicago.edu = "🇬🇱 "
+"rno-g.uchicago.edu" = "🇬🇱 "  # host names with a . need qotes
+
 # Theme switching: picks a palette based on $POSH_THEME (set via the
 # `posh-theme` shell function), falls back to "default" if unset/unknown.
 # Palettes live in themes/*.toml (one [palettes.list.<name>] each) and are
