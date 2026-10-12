@@ -55,4 +55,4 @@ python_module_extra=(
 )
 
 export RNO_G_DATA="${RNO_G_DATA:-$HOME/work/rnog/data/full}"
-export RNO_G_INSTALL_DIR="${RNO_G_INSTALL_DIR:-${SOFTWARE:-$HOME/software}/rnog/daq/install}"  # $SOFTWARE is not set yet here
+export RNO_G_INSTALL_DIR="${SOFTWARE:-$HOME/software}/rnog/daq/install"  # $SOFTWARE is not set yet here

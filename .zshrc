@@ -21,7 +21,8 @@ HISTDUP=erase
 setopt appendhistory sharehistory hist_ignore_space hist_ignore_all_dups hist_save_no_dups hist_ignore_dups hist_find_no_dups
 
 ### Globbing
-
+#alias scp='noglob scp'
+#alias rsync='noglob rsync'
 # Pass unmatched patterns through literally (like bash), so remote globs work: scp host:/data/run26* .
 setopt nonomatch
 
