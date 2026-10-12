@@ -255,9 +255,24 @@ run = 'layout floating'
 if.app-id = 'org.python.python'
 run = 'layout floating'
 
+[[on-window-detected]]
+if.app-id = 'com.apple.mail'
+if.window-title-regex-substring = '^(New Message)'
+run = 'layout floating'
+
+#[[on-window-detected]]
+#if.app-id = 'us.zoom.xos'
+#if.window-title-regex-substring = '^(Zoom Meeting)'
+#run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'us.zoom.xos'
+if.window-title-regex-substring = '^(Zoom Workplace)'
+run = 'close'
+
 
 [workspace-to-monitor-force-assignment]
-C = "Built-in Retina Display"
+C = ["Built-in Retina Display", "DELL S2725DC"]
 M = ["DELL S2725DC", "Built-in Retina Display"]
-N = "Built-in Retina Display"
+N = ["DELL S2725DC", "Built-in Retina Display"]
 
