@@ -7,6 +7,6 @@ copy-on-select = clipboard
 keybind = ctrl+left=esc:b
 keybind = ctrl+right=esc:f
 
-shell-integration-features = ssh-terminfo,ssh-env
+shell-integration-features = no-ssh-terminfo,ssh-env
 
 theme = Matrix Contrast
