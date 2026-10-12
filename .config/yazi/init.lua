@@ -41,6 +41,7 @@ Header:children_add(function()
 	return ui.Span(ya.user_name() .. "@" .. ya.host_name() .. ":"):fg("blue")
 end, 500, Header.LEFT)
 
+-- Show size and mtime on the right hand side
 function Linemode:size_and_mtime()
 	local time = math.floor(self._file.cha.mtime or 0)
 	if time == 0 then
@@ -53,4 +54,17 @@ function Linemode:size_and_mtime()
 
 	local size = self._file:size()
 	return string.format("%s %s", size and ya.readable_size(size) or "-", time)
+end
+
+-- Visible footer to indicate a FILTER
+local old_redraw = Status.redraw
+function Status:redraw()
+  local elements = old_redraw(self)
+  local f = cx.active.current.files.filter
+  if f then
+    elements[#elements + 1] = ui.Line(
+      ui.Span(" FILTER: " .. tostring(f) .. " "):fg("black"):bg("#ff0000")
+    ):area(self._area):align(ui.Align.CENTER)
+  end
+  return elements
 end
