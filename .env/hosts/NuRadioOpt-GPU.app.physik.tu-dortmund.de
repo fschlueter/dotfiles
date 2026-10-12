@@ -1,2 +1,4 @@
 export ENVS_DIR="/scratch/fschlueter/envs"
 DOTFILES_SHELL=zsh
+
+alias thisroot=". /net/apphome/home/fschlueter/scratch/root/install/bin/thisroot.sh"
