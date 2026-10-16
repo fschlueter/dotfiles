@@ -30,6 +30,16 @@ run = [
   "yank",
 ]
 
+[[mgr.prepend_keymap]]
+on   = ["g", "m"]
+run  = '''shell --block -- dest="$( { fd -t d -d 1 -a . ; fd -t d . ~ ; } | awk '!s[$0]++' | fzf --tiebreak=index --tmux 80%,60% --bind 'ctrl-d:reload(fd -t d -d 1 -a .),ctrl-h:reload(fd -t d . ~)' )" && mv -i -- %s "$dest"'''
+desc = "Move selection to fzf-picked dir"
+
+[[mgr.prepend_keymap]]
+on   = ["g", "c"]
+run  = '''shell --block -- dest="$( { fd -t d -d 1 -a . ; fd -t d . ~ ; } | awk '!s[$0]++' | fzf --tiebreak=index --tmux 80%,60% --bind 'ctrl-d:reload(fd -t d -d 1 -a .),ctrl-h:reload(fd -t d . ~)' )" && cp -Ri -- %s "$dest"'''
+desc = "Copy selection to fzf-picked dir"
+
 # keymap.toml
 [[mgr.prepend_keymap]]
 on = "+"
