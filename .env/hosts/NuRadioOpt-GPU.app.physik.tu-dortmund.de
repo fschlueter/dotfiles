@@ -2,3 +2,6 @@ export ENVS_DIR="/scratch/fschlueter/envs"
 DOTFILES_SHELL=zsh
 
 alias thisroot=". /net/apphome/home/fschlueter/scratch/root/install/bin/thisroot.sh"
+
+alias parallel="~/.local/bin/parallel"
+alias augerenv="eval $(/scratch/fschlueter/auger/ape/ape sh externals --rc=/scratch/fschlueter/auger/ape/ape.rc)"
