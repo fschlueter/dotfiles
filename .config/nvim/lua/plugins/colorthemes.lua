@@ -7,7 +7,7 @@ return {
     -- Optional; default configuration will be used if setup isn't called.
     config = function()
       require("everforest").setup({
-        -- Your config here
+        background = "hard", -- darkest of soft/medium/hard
       })
     end,
   },

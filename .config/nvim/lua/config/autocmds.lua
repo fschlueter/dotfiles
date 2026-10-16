@@ -19,3 +19,18 @@ local function set_cursor_hl()
 end
 set_cursor_hl()
 vim.api.nvim_create_autocmd("ColorScheme", { callback = set_cursor_hl })
+
+-- mini.diff overlay: old (reference) text of changed lines in red instead of DiffText (blue);
+-- the new buffer text then needs its own group, as it links to MiniDiffOverChange by default
+local function set_minidiff_hl()
+  local function get(name, attr)
+    return vim.api.nvim_get_hl(0, { name = name, link = false })[attr]
+  end
+  local red = get("Red", "fg") or get("DiagnosticError", "fg") or 0xe67e80
+  local green = get("Green", "fg") or get("DiagnosticOk", "fg") or 0xa7c080
+  vim.api.nvim_set_hl(0, "MiniDiffOverChange", { fg = get("Normal", "bg"), bg = red, bold = true })
+  vim.api.nvim_set_hl(0, "MiniDiffOverContext", { link = "DiffDelete" })
+  vim.api.nvim_set_hl(0, "MiniDiffOverChangeBuf", { fg = get("Normal", "bg"), bg = green, bold = true })
+end
+set_minidiff_hl()
+vim.api.nvim_create_autocmd("ColorScheme", { callback = set_minidiff_hl })
