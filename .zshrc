@@ -1,16 +1,7 @@
 # zsh-specific setup; everything shell-independent is in .env/shell (shared with .bashrc)
 
-# host profile (flags per host or OS, see .env/host); quiet because the banner is printed below
-DOTFILES_QUIET=1
+# host profile (flags per host or OS, see .env/host)
 source ~/.env/host
-unset DOTFILES_QUIET
-# hand over to bash where the profile asks for it (DOTFILES_NO_HANDOVER=1 skips). Only once per
-# session (DOTFILES_HANDED_OVER): a host that switches shells itself must not cause a loop.
-if [[ ${DOTFILES_SHELL-} == bash && -z ${DOTFILES_NO_HANDOVER-} && -z ${DOTFILES_HANDED_OVER-} ]] && whence -p bash >/dev/null; then
-    export DOTFILES_HANDED_OVER=1
-    exec bash -l
-fi
-_dotfiles_banner
 
 ### History
 
