@@ -6,6 +6,7 @@ return {
         sources = {
           explorer = { hidden = true, watch = true },
           files = { hidden = true },
+          grep = { hidden = true },
         },
       },
       notifier = { timeout = 10000 }, -- ms, default is 3000
