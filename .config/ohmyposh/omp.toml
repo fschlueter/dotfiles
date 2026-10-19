@@ -13,7 +13,7 @@ NuRadioOpt-GPU = " NuRadio"
 # Theme switching: picks a palette based on $POSH_THEME (set via the
 # `posh-theme` shell function), falls back to "default" if unset/unknown.
 # Palettes live in themes/*.toml (one [palettes.list.<name>] each) and are
-# appended to this file by .env/omp into a generated config at shell start.
+# appended to this file by .env/tools/omp into a generated config at shell start.
 # Each theme defines its raw hues (hue-*) and aliases them to purpose names
 # (e.g. 'p:git-background'); segments only refer to the purpose names.
 [palettes]

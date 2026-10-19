@@ -4,9 +4,6 @@
 # Non-interactive shells (scp, ssh host cmd) must stay silent and unchanged
 [[ $- == *i* ]] || return
 
-# host profile (flags per host or OS, see .env/host)
-source ~/.env/host
-
 ### History
 
 HISTSIZE=10000
@@ -32,6 +29,7 @@ bind '"\e[1;3D": backward-word'      # Alt+Left
 bind '"\e[H": beginning-of-line'     # Home / Cmd+Left
 bind '"\e[F": end-of-line'           # End / Cmd+Right
 
-### Shared setup (aliases, PATH, colors, fzf, zoxide, prompt, tools, environments)
+### Shared setup; must come after the bash parts above (history -a ahead of the prompt hook, bash-completion before fzf)
 
+source ~/.env/host  # host profile (flags per host or OS); presets variables used by .env/shell
 source ~/.env/shell

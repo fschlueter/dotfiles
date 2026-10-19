@@ -1,7 +1,36 @@
 # shellcheck shell=bash
 # Core CLI tools (fzf, zoxide, uv), installed if missing when sourced
 # (macOS: Homebrew, Linux: official installers/release binaries into ~/.local/bin, no sudo).
-# Also defines `_unzip`, `_have` and `_glibc_at_least`, used by the installers in .env/nvim and .env/yazi (this file is sourced first).
+# Also defines `_unzip`, `_have` and `_glibc_at_least`, used by the installers in .env/tools/nvim and .env/tools/yazi (this file is sourced first),
+# `path_append`/`path_prepend` for colon-separated variables, and sets the base PATH.
+
+# Add a dir to a colon-separated path variable, skipping duplicates (bash + zsh).
+# path_append also skips entries that do not exist (-e, so zip/egg files in PYTHONPATH work too).
+# Usage: path_append VAR DIR / path_prepend VAR DIR
+function path_append() {
+	local cur
+	[[ -e $2 ]] || return 0
+	eval "cur=\${$1-}"
+	case ":$cur:" in
+		*":$2:"*) ;;
+		*) export "$1=${cur:+$cur:}$2" ;;
+	esac
+}
+function path_prepend() {
+	local cur
+	eval "cur=\${$1-}"
+	case ":$cur:" in
+		*":$2:"*) ;;
+		*) export "$1=$2${cur:+:$cur}" ;;
+	esac
+}
+
+# Base locations for user-installed tools; set before the installers below, which put tools there.
+path_prepend PATH "$HOME/.local/bin"
+if [[ "$OSTYPE" == darwin* ]]; then
+	path_prepend PATH /opt/homebrew/sbin
+	path_prepend PATH /opt/homebrew/bin
+fi
 
 # Usage: _have CMD. True if CMD is an executable on PATH, ignoring functions and aliases (bash + zsh).
 function _have() {

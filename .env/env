@@ -1,25 +1,5 @@
 # shellcheck shell=bash
-
-# Add a dir to a colon-separated path variable, skipping duplicates (bash + zsh).
-# path_append also skips entries that do not exist (-e, so zip/egg files in PYTHONPATH work too).
-# Usage: path_append VAR DIR / path_prepend VAR DIR
-path_append() {
-    local cur
-    [[ -e $2 ]] || return 0
-    eval "cur=\${$1-}"
-    case ":$cur:" in
-        *":$2:"*) ;;
-        *) export "$1=${cur:+$cur:}$2" ;;
-    esac
-}
-path_prepend() {
-    local cur
-    eval "cur=\${$1-}"
-    case ":$cur:" in
-        *":$2:"*) ;;
-        *) export "$1=$2${cur:+:$cur}" ;;
-    esac
-}
+# path_append/path_prepend come from .env/tools/core (sourced earlier by .env/shell).
 
 export SOFTWARE="${SOFTWARE:-$HOME/software}"  # a host profile (.env/hosts/) can set it first
 
@@ -74,3 +54,13 @@ fi
 
 alias pip="uv pip"
 alias venv="uv venv"
+
+alias gitclean='git branch --merged | grep -Ev "(^\*|master|main|develop)" | xargs git branch -d'
+alias gitadd='git ls-files --modified | xargs git add'
+alias st='git status'
+alias co='git checkout'
+alias log='git log'
+alias ga='git add'
+
+# uv programs
+alias vd='uvx --with pyarrow visidata'

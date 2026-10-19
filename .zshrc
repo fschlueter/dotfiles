@@ -1,8 +1,5 @@
 # zsh-specific setup; everything shell-independent is in .env/shell (shared with .bashrc)
 
-# host profile (flags per host or OS, see .env/host)
-source ~/.env/host
-
 ### History
 
 HISTSIZE=10000
@@ -25,7 +22,6 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
 ZSH_AUTOSUGGEST_STRATEGY=(completion history)
 source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # set key bindings
 bindkey '^[[Z' autosuggest-accept   # Shift+Tab
@@ -40,10 +36,14 @@ bindkey '^[[F' end-of-line           # End / Cmd+Right
 # This allows to loop over an array of words in zsh/bash scripts
 set -o shwordsplit
 
-### Shared setup (aliases, PATH, colors, fzf, zoxide, prompt, tools, environments)
+### Shared setup; must come after the zsh parts above (compinit, shwordsplit)
 
+source ~/.env/host  # host profile (flags per host or OS); presets variables used by .env/shell
 source ~/.env/shell
 
 # needs LS_COLORS from the shared setup
 zstyle ':completion:*' menu select
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+# last: wraps only widgets defined before it (fzf, zoxide, oh-my-posh)
+source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

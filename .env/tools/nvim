@@ -2,7 +2,7 @@
 # Editor: Neovim with LazyVim (~/.config/nvim). lazy.nvim installs the plugins on first start, pinned in lazy-lock.json.
 # nvim and tree-sitter-cli (for nvim-treesitter) are installed on first use of `nvim`
 # (macOS: Homebrew, Linux: official release binaries into ~/.local, no sudo).
-# Checks use `_have` (.env/tools): it skips the `nvim` function below and sees new binaries without `rehash`.
+# Checks use `_have` (.env/tools/core): it skips the `nvim` function below and sees new binaries without `rehash`.
 
 # Default editor for other programs (yazi, git, ...); they call the binary, not the `nvim` function
 export EDITOR=nvim

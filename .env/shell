@@ -17,20 +17,10 @@ if [[ "$TERM" == xterm-ghostty ]] && ! infocmp "$TERM" >/dev/null 2>&1; then
     export TERM=xterm-256color
 fi
 
-# git aliases
-alias gitclean='git branch --merged | grep -Ev "(^\*|master|main|develop)" | xargs git branch -d'
-alias gitadd='git ls-files --modified | xargs git add'
-alias st='git status'
-alias co='git checkout'
+### Helpers, PATH and core tools
 
-### PATH
-
-# Basic locations for user-installed tools. Set before the integrations below,
-# which are installed in these dirs.
-export PATH="$HOME/.local/bin:$PATH"
-if [[ "$OSTYPE" == darwin* ]]; then
-    export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
-fi
+# path helpers, _have & co., base PATH; installs fzf, zoxide and uv if missing
+source ~/.env/tools/core
 
 ### Colors
 if [[ "$OSTYPE" == darwin* ]]; then
@@ -42,8 +32,6 @@ LS_COLORS+=":fi=92"  # regular files: bright green (Ghostty palette 10)
 
 ### Shell integrations
 
-# installs fzf, zoxide and uv if missing (also defines _have)
-source ~/.env/tools
 
 # fuzzy finder
 if _have fzf && _fzf_init="$(fzf "--$_sh" 2>/dev/null)"; then  # fzf < 0.48 has no --bash
@@ -68,22 +56,18 @@ if [[ $_sh == bash ]] && _have uv; then
 fi
 
 # prompt engine
-source ~/.env/omp
+source ~/.env/tools/omp
 
 ### Programs
 
 # file manager (`y`)
-source ~/.env/yazi
+source ~/.env/tools/yazi
 
 # editor (`nvim`)
-source ~/.env/nvim
+source ~/.env/tools/nvim
 alias vim=nvim
-
-# uv programs
-alias vd='uvx --with pyarrow visidata'
 
 ### Set up working environments
 
 source ~/.env/env  # coding and software environment
-source ~/.env/local  # local stuff
 unset _sh

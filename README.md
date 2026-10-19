@@ -2,6 +2,36 @@
 
 Personal shell and app configuration for macOS and Linux, symlinked into `$HOME` with [GNU Stow](https://www.gnu.org/software/stow/).
 
+## Load order
+
+An interactive shell runs, top to bottom. Every file shown is always sourced, except in `.env/hosts/`: the OS default plus at most one host profile.
+
+```
+~/.zshrc  or  ~/.bashrc       (a bash login shell gets there via the stock ~/.profile or ~/.bash_profile;
+│                              non-interactive bash, e.g. scp, stops at the top of .bashrc)
+├── zsh:  history, nonomatch, compinit + .zsh/plugins/zsh-completions, zsh-autosuggestions,
+│         key bindings, shwordsplit
+│   bash: history, system bash_completion (first one found), readline bindings
+├── .env/host                 always: picks the profile (reads ~/.config/dotfiles/host, `hostname -f`),
+│   │                         exports DOTFILES_* flags, prints the banner. install.sh sources it too.
+│   ├── .env/hosts/darwin  OR  .env/hosts/linux     always: the OS default
+│   └── .env/hosts/<name>     at most one, only if it exists, on top: $DOTFILES_HOST > ~/.config/dotfiles/host > FQDN
+├── .env/shell                aliases (ls/ll/grep), TERM fallback for xterm-ghostty
+│   ├── .env/tools/core       path_append/path_prepend, _have, _unzip, _glibc_at_least;
+│   │                         base PATH; installs fzf, zoxide, uv if missing
+│   ├── (shell)               LS_COLORS, fzf init + FZF_DEFAULT_COMMAND, zoxide (as cd), uv completion (bash)
+│   ├── .env/tools/omp        installs oh-my-posh if missing; CPU/GPU hook; builds ~/.cache/ohmyposh/config.toml
+│   │                         from omp.toml + themes/*.toml; oh-my-posh init; posh-theme
+│   ├── .env/tools/yazi       defines y() (installs yazi and its plugins on first call)
+│   ├── .env/tools/nvim       EDITOR/VISUAL; defines nvim() (installs nvim and tree-sitter on first call)
+│   ├── (shell)               alias vim
+│   └── .env/env              SOFTWARE, venv aliases from ENVS_DIR, PYTHONPATH, MATPLOTLIB, RNO-G paths,
+│                             thisroot (macOS), uv, git and vd aliases
+└── zsh: completion menu + list-colors (needs LS_COLORS), then zsh-syntax-highlighting (last, so it wraps all widgets)
+```
+
+The shell-specific part must come first: bash's `history -a` has to be in `PROMPT_COMMAND` before `.env/tools/omp` puts the prompt hook ahead of it (bash < 5.1), bash-completion and zsh's `compinit` before fzf/zoxide, and `shwordsplit` before the bash-style shared files. Profiles run before `.env/shell`, so they can preset variables (`SOFTWARE`, `ENVS_DIR`, `python_module_extra`, ...) that `.env/env` only defaults.
+
 ## Platforms and hosts
 
 The building blocks (shell setup, `.env/*` tool installers, nvim, yazi, prompt themes) are written to work on both macOS and Linux, with OS checks (`$OSTYPE`) where behaviour differs. Anything outside `.zshrc`/`*.zsh` stays bash-compatible.
@@ -11,7 +41,6 @@ Hosts differ through a **profile** (`.env/hosts/<profile>`), not through branche
 | Variable | Effect |
 |----------|--------|
 | `DOTFILES_STOW_IGNORE` | space-separated regexes `install.sh` passes to stow as `--ignore` (e.g. the macOS-only configs on Linux) |
-| `DOTFILES_SHELL` | `zsh` or `bash`: the shell this host should use. If a shell is started the other way (e.g. a bash login shell that can't be changed without root), its rc file hands over with `exec`; unset keeps whatever started. `DOTFILES_NO_HANDOVER=1` skips it. Defaults: `zsh` on macOS, `bash` on Linux, `zsh` on `NuRadioOpt-GPU` |
 | `DOTFILES_AUTO_INSTALL` | `0` stops missing fzf/zoxide/uv/oh-my-posh being installed at shell start (default `1`) |
 | `DOTFILES_NVIM_AI` | AI nvim plugins to load (`claudecode`, `minuet`); the others stay unloaded, their pins stay in `lazy-lock.json` |
 
@@ -43,10 +72,11 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.env/shell` | everything shell-independent, sourced by both: aliases, PATH, colors, fzf, zoxide, prompt, tools, environments |
 | `.zsh/plugins/` | zsh plugins as git submodules (completions, autosuggestions, syntax highlighting) |
 | `.env/env` | coding and software environment, sourced by `.env/shell` |
-| `.env/omp` | [oh-my-posh](https://ohmyposh.dev) prompt setup |
-| `.env/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
-| `.env/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
-| `.env/host`, `.env/hosts/` | host profiles (see above); `.env/local` is for anything else machine-specific |
+| `.env/tools/core` | base PATH, installs fzf, zoxide and uv on first use; shared helpers (`path_append`/`path_prepend`, `_have`, `_unzip`, `_glibc_at_least`) |
+| `.env/tools/omp` | [oh-my-posh](https://ohmyposh.dev) prompt setup |
+| `.env/tools/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
+| `.env/tools/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
+| `.env/host`, `.env/hosts/` | host profiles (see above) |
 | `.config/ghostty/` | [Ghostty](https://ghostty.org) terminal config |
 | `.config/ohmyposh/` | oh-my-posh theme |
 | `.config/yazi/` | yazi config; plugins are pinned in `package.toml` (manage with `ya pkg add/upgrade`) and not tracked in git |

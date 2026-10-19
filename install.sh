@@ -70,12 +70,7 @@ mkdir -p "$HOME/.config"
 DOTFILES_ENV_DIR="$DOTFILES/.env" . "$DOTFILES/.env/host"
 ignore=()
 for r in $DOTFILES_STOW_IGNORE; do ignore+=(--ignore="$r"); done
-# Only link the rc file of the shell the profile selects (both if it selects none)
-case "${DOTFILES_SHELL-}" in
-    zsh) ignore+=(--ignore='\.bashrc$') ;;
-    bash) ignore+=(--ignore='\.zshrc$') ;;
-esac
 
-echo "dotfiles: installing profile '$DOTFILES_PROFILE' (shell: ${DOTFILES_SHELL:-any})"
+echo "dotfiles: installing profile '$DOTFILES_PROFILE'"
 cd "$DOTFILES"
 stow --restow --target="$HOME" ${ignore[@]+"${ignore[@]}"} "$@" .
