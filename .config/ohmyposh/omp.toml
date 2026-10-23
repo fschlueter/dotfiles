@@ -104,7 +104,8 @@ type = 'path'
 style = 'powerline'
 
 [blocks.segments.options]
-style = 'letter'
+style = 'mixed'
+mixed_threshold = 10
 
 [[blocks]]
 type = 'prompt'

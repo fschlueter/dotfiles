@@ -68,7 +68,10 @@ if [[ "$OSTYPE" == darwin* || -r /proc/stat ]]; then
     fi
 fi
 
-export POSH_THEME="$(cat "$omp_dir/theme")"  # persisted by `posh-theme`
+# persisted by `posh-theme`; herdr panes (HERDR_ENV=1) use theme-herdr if it is set
+omp_state="$omp_dir/theme"
+[[ ${HERDR_ENV-} == 1 && -s $omp_dir/theme-herdr ]] && omp_state="$omp_dir/theme-herdr"
+export POSH_THEME="$(cat "$omp_state")"
 # oh-my-posh has no config imports: assemble base config + themes/*.toml
 omp_cfg="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh/config.toml"
 mkdir -p "${omp_cfg%/*}"
@@ -90,12 +93,13 @@ if command -v oh-my-posh >/dev/null; then
         _omp_flatten_prompt_command
     fi
 fi
-unset omp_dir omp_cfg
+unset omp_dir omp_cfg omp_state
 
 # oh-my-posh theme switcher: picks a color palette from themes/*.toml
-# and persists it so new shells keep using it.
+# and persists it so new shells keep using it (inside herdr: only for herdr panes).
 function posh-theme() {
     local state="$HOME/.config/ohmyposh/theme"
+    [[ ${HERDR_ENV-} == 1 ]] && state+="-herdr"
     local themes=($(ls ~/.config/ohmyposh/themes | sed 's/\.toml$//'))
 
     if [[ -z "$1" ]]; then
