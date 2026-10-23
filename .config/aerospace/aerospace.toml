@@ -6,7 +6,7 @@ config-version = 2
 # You can use it to add commands that run after AeroSpace startup.
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = [
-  'exec-and-forget borders active_color=0xff93B259 inactive_color=0xff494d64 width=6.0',
+  'exec-and-forget borders style=round width=8.0 hidpi=on ax_focus=on active_color=0xff93B259 inactive_color=0x00000000',
   # Restore the previous window->workspace layout on startup
   'exec-and-forget /bin/bash -lc ~/.config/aerospace/restore-session.sh',
 ]
@@ -206,16 +206,15 @@ alt-tab = 'workspace-back-and-forth'
 alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 alt-shift-backslash = 'move-node-to-monitor --wrap-around next'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace-back-and-forth
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#mode
-alt-shift-semicolon = 'mode service'
 
 alt-shift-f = "fullscreen"
 alt-shift-g = "balance-sizes"
 
 # Session save / restore (see scripts in ~/.config/aerospace/)
 alt-shift-comma = 'exec-and-forget /bin/bash -lc ~/.config/aerospace/save-session.sh'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#mode
+alt-shift-semicolon = 'mode service'
 
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 [mode.service.binding]
