@@ -17,9 +17,6 @@ alias ssh_greenland="/Users/felix/software/python/start-greenland-session.py"
 alias mount_linux="sudo ext4fuse /dev/disk4s1 Linux/ -o allow_other"
 export HOMEBREW_NO_ENV_HINTS=1
 
-
-export ENVS_DIR="/Users/felix/software/uvenvs/"
-
 # Extra PYTHONPATH modules (relative to $SOFTWARE), added to the default list in .env/env; uncomment as needed
 python_module_extra=(
     "python/radiotools"
@@ -57,3 +54,5 @@ export RNO_G_DATA="${RNO_G_DATA:-$HOME/work/rnog/data/full}"
 export RNO_G_INSTALL_DIR="${SOFTWARE:-$HOME/software}/rnog/daq/install"  # $SOFTWARE is not set yet here
 
 alias cs="~/.claude/scripts/claude-sessions/cs"
+
+export KICONNECT_KEY="$(security find-generic-password -s campus-ki -w)"

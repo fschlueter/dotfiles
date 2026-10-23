@@ -61,6 +61,7 @@ alias st='git status'
 alias co='git checkout'
 alias log='git log'
 alias ga='git add'
+alias gd='git diff'
 
 # uv programs
 alias vd='uvx --with pyarrow visidata'
