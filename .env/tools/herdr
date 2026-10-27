@@ -17,7 +17,8 @@
 #   prefix+h/j/k/l    focus pane           prefix+tab        cycle panes (shift+tab back)
 #   prefix+x          close pane           prefix+z          zoom pane
 #   prefix+r          resize mode          prefix+shift+p    rename pane
-#   prefix+e          edit scrollback      prefix+o          open notification target
+#   prefix+e          herdr-nvim sidebar   prefix+o          herdr-nvim file picker (both custom)
+#   prefix+shift+e    edit scrollback      prefix+shift+o    open notification target (both moved)
 #   prefix+b          toggle sidebar
 
 function dot_install_herdr() {
