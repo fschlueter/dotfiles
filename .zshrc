@@ -24,6 +24,9 @@ ZSH_AUTOSUGGEST_STRATEGY=(completion history)
 source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # set key bindings
+bindkey -e  # emacs keymap (Ctrl+A/E, ...); zsh would pick vi mode when it starts with EDITOR=nvim inherited (e.g. herdr panes)
+bindkey '^[[3~' delete-char          # Delete / Fn+Backspace
+WORDCHARS=${WORDCHARS//\/}           # word motions/kills stop at '/' (path components)
 bindkey '^[[Z' autosuggest-accept   # Shift+Tab
 bindkey '^[[1;5C' forward-word       # Ctrl+Right
 bindkey '^[[1;5D' backward-word      # Ctrl+Left
