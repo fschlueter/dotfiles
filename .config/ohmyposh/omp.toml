@@ -1,7 +1,7 @@
 console_title_template = '{{ .Shell }} in {{ .Folder }}'
 version = 4
 final_space = true
-cursor_style = "blinking_underline"
+#cursor_style = "blinking_underline"  -- set by ghostty
 
 [maps.host_name]
 # Mac = ""
