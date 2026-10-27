@@ -54,6 +54,7 @@ _have zoxide && eval "$(zoxide init "$_sh" --cmd cd)"
 if [[ $_sh == bash ]] && _have uv; then
     eval "$(uv generate-shell-completion bash)"
 fi
+export UV_EXCLUDE_NEWER="3 days"
 
 # prompt engine
 source ~/.env/tools/omp
@@ -66,6 +67,9 @@ source ~/.env/tools/yazi
 # editor (`nvim`)
 source ~/.env/tools/nvim
 alias vim=nvim
+
+# agent multiplexer (`herdr`) + completion
+source ~/.env/tools/herdr
 
 ### Set up working environments
 

@@ -1,0 +1,42 @@
+# shellcheck shell=bash
+# Terminal workspace manager for coding agents (~/.config/herdr/config.toml).
+# herdr is installed on first use with the official installer (checksum-verified binary into ~/.local/bin, no sudo;
+# same on macOS and Linux); `herdr update` updates it in place. Shell completion is cached and regenerated after updates.
+#
+# Key bindings (prefix = ctrl+s; defaults unless noted, full list in config.toml):
+#   prefix+?          help                 prefix+s          settings
+#   prefix+q          detach               prefix+shift+r    reload config
+#   prefix+w          workspace picker     prefix+g          goto
+#   prefix+shift+n    new workspace        prefix+shift+g    new worktree
+#   prefix+shift+w    rename workspace     prefix+shift+d    close workspace
+#   prefix+shift+1..9 workspace N (custom)
+#   prefix+c          new tab              prefix+shift+t    rename tab
+#   prefix+n / p      next / previous tab  prefix+1..9       tab N
+#   prefix+shift+x    close tab
+#   prefix+v          split vertical       prefix+minus      split horizontal
+#   prefix+h/j/k/l    focus pane           prefix+tab        cycle panes (shift+tab back)
+#   prefix+x          close pane           prefix+z          zoom pane
+#   prefix+r          resize mode          prefix+shift+p    rename pane
+#   prefix+e          edit scrollback      prefix+o          open notification target
+#   prefix+b          toggle sidebar
+
+function _install_herdr() {
+	echo "herdr not found, installing ..."
+	curl -fsSL --connect-timeout 10 https://herdr.dev/install.sh | HERDR_INSTALL_DIR="$HOME/.local/bin" sh
+}
+
+function herdr() {
+	_have herdr || _install_herdr || return
+	command herdr "$@"
+}
+
+# Completion (zsh: after compinit, the generated file registers itself via compdef; bash: complete -F)
+if _have herdr; then
+	if [[ -n ${ZSH_VERSION-} ]]; then _herdr_bin="$(whence -p herdr)"; else _herdr_bin="$(type -P herdr)"; fi
+	_herdr_comp="$HOME/.cache/herdr/completion.$_sh"
+	if [[ ! -s "$_herdr_comp" || "$_herdr_bin" -nt "$_herdr_comp" ]]; then
+		mkdir -p "${_herdr_comp%/*}" && "$_herdr_bin" completion "$_sh" >"$_herdr_comp" 2>/dev/null
+	fi
+	[[ -s "$_herdr_comp" ]] && source "$_herdr_comp"
+	unset _herdr_bin _herdr_comp
+fi
