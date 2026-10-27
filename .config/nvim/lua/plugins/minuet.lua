@@ -21,14 +21,20 @@ return {
     request_timeout = 5,
     n_completions = 1,
     context_window = 8000,
+    -- No auto suggestions while editing inside a word
+    enable_predicates = {
+      function()
+        return not require("config.util").cursor_before_word()
+      end,
+    },
     virtualtext = {
       auto_trigger_ft = { "python", "cpp", "c", "lua", "sh" },
+      -- Copilot-style keys; accept-all is <Tab> (via LazyVim's ai_accept in config below)
       keymap = {
-        accept = "<A-A>",
         accept_line = "<A-a>",
         next = "<A-]>",
         prev = "<A-[>",
-        dismiss = "<A-e>",
+        dismiss = "<C-]>",
       },
     },
     provider_options = {
@@ -45,4 +51,16 @@ return {
       },
     },
   },
+  config = function(_, opts)
+    require("minuet").setup(opts)
+    -- <Tab> (blink keymap from LazyVim) accepts a visible suggestion, else jumps snippets / indents
+    LazyVim.cmp.actions.ai_accept = function()
+      local vt = require("minuet.virtualtext").action
+      if vt.is_visible() then
+        LazyVim.create_undo()
+        vt.accept()
+        return true
+      end
+    end
+  end,
 }
