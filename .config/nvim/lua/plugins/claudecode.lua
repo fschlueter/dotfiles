@@ -3,15 +3,6 @@ if true then return {} end
 --- The following is currently disabled
 return {
   {
-    "ggml-org/llama.vim",
-    enabled = false,
-    init = function()
-      vim.g.llama_config = {
-        model_fim = "qwen-coder-3b-fim",
-      }
-    end,
-  },
-  {
     "coder/claudecode.nvim",
     -- `cond` (not `enabled`) keeps the pin in lazy-lock.json on hosts that don't load it
     cond = function()
@@ -47,7 +38,8 @@ return {
       { "<leader>aC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
       { "<leader>am", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
       { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
-      { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
+      { "<leader>as", "<cmd>ClaudeCodeSend<cr><cmd>ClaudeCodeFocus<cr>", mode = "v", desc = "Send to Claude and focus" },
+      { "<leader>aS", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
       {
         "<leader>as",
         "<cmd>ClaudeCodeTreeAdd<cr>",

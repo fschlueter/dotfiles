@@ -16,8 +16,3 @@ for _, jump in ipairs(jumps) do
     vim.keymap.set('i', lhs, '<C-o>' .. jump.motion, { desc = jump.desc })
   end
 end
-
-if require('config.dotfiles').ai('claudecode') then
-  vim.keymap.set('v', '<leader>as', '<cmd>ClaudeCodeSend<cr><cmd>ClaudeCodeFocus<cr>', { desc = 'Send to Claude and focus' })
-  vim.keymap.set('v', '<leader>aS', '<cmd>ClaudeCodeSend<cr>', { desc = 'Send to Claude' })
-end
