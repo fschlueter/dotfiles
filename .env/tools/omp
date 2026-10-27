@@ -4,7 +4,7 @@ omp_dir="$HOME/.config/ohmyposh"
 mkdir -p "$omp_dir"
 touch "$omp_dir/theme"
 
-_install_omp() {
+dot_install_omp() {
     echo "oh-my-posh not found, installing ..."
     local arch
     case "$(uname -m)" in
@@ -25,7 +25,7 @@ if ! command -v oh-my-posh >/dev/null && [[ ${DOTFILES_AUTO_INSTALL-1} != 0 ]]; 
         echo "oh-my-posh not found, installing ..."
         brew install jandedobbeleer/oh-my-posh/oh-my-posh
     else
-        _install_omp
+        dot_install_omp
     fi
 fi
 

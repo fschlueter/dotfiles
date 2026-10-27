@@ -2,13 +2,13 @@
 # Editor: Neovim with LazyVim (~/.config/nvim). lazy.nvim installs the plugins on first start, pinned in lazy-lock.json.
 # nvim and tree-sitter-cli (for nvim-treesitter) are installed on first use of `nvim`
 # (macOS: Homebrew, Linux: official release binaries into ~/.local, no sudo).
-# Checks use `_have` (.env/tools/core): it skips the `nvim` function below and sees new binaries without `rehash`.
+# Checks use `dot_have` (.env/tools/core): it skips the `nvim` function below and sees new binaries without `rehash`.
 
 # Default editor for other programs (yazi, git, ...); they call the binary, not the `nvim` function
 export EDITOR=nvim
 export VISUAL=nvim
 
-function _install_nvim() {
+function dot_install_nvim() {
 	echo "nvim not found, installing ..."
 	if [[ "$OSTYPE" == darwin* ]]; then
 		brew install neovim
@@ -16,7 +16,7 @@ function _install_nvim() {
 	fi
 
 	# The official tarball needs glibc >= 2.34 (RHEL/Alma 9+, Debian 12+, Ubuntu 22.04+)
-	if ! _glibc_at_least 2.34; then
+	if ! dot_glibc_at_least 2.34; then
 		echo "glibc too old for the prebuilt nvim; install Neovim >= 0.11 another way." >&2
 		return 1
 	fi
@@ -40,7 +40,7 @@ function _install_nvim() {
 	return $ret
 }
 
-function _install_tree_sitter() {
+function dot_install_tree_sitter() {
 	echo "tree-sitter not found, installing ..."
 	if [[ "$OSTYPE" == darwin* ]]; then
 		brew install tree-sitter-cli
@@ -48,7 +48,7 @@ function _install_tree_sitter() {
 	fi
 
 	# The prebuilt binary needs glibc >= 2.39 (RHEL/Alma 10, Debian 13, Ubuntu 24.04+); older hosts build it with cargo if present
-	if ! _glibc_at_least 2.39; then
+	if ! dot_glibc_at_least 2.39; then
 		if command -v cargo >/dev/null; then
 			cargo install --locked --root "$HOME/.local" tree-sitter-cli
 		else
@@ -67,7 +67,7 @@ function _install_tree_sitter() {
 	tmp="$(mktemp -d)"
 	curl -fsSL --connect-timeout 10 -o "$tmp/tree-sitter.zip" \
 		"https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-cli-linux-$arch.zip" \
-		&& _unzip "$tmp/tree-sitter.zip" "$tmp" \
+		&& dot_unzip "$tmp/tree-sitter.zip" "$tmp" \
 		&& mkdir -p "$HOME/.local/bin" \
 		&& install -m 755 "$tmp/tree-sitter" "$HOME/.local/bin/"
 	ret=$?
@@ -83,8 +83,8 @@ function _install_tree_sitter() {
 }
 
 function nvim() {
-	_have nvim || _install_nvim || return
+	dot_have nvim || dot_install_nvim || return
 	# tree-sitter is only needed for parsers, so not fatal
-	_have tree-sitter || [[ -e "$HOME/.cache/no-tree-sitter" ]] || _install_tree_sitter
+	dot_have tree-sitter || [[ -e "$HOME/.cache/no-tree-sitter" ]] || dot_install_tree_sitter
 	command nvim "$@"
 }

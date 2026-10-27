@@ -20,18 +20,18 @@
 #   prefix+e          edit scrollback      prefix+o          open notification target
 #   prefix+b          toggle sidebar
 
-function _install_herdr() {
+function dot_install_herdr() {
 	echo "herdr not found, installing ..."
 	curl -fsSL --connect-timeout 10 https://herdr.dev/install.sh | HERDR_INSTALL_DIR="$HOME/.local/bin" sh
 }
 
 function herdr() {
-	_have herdr || _install_herdr || return
+	dot_have herdr || dot_install_herdr || return
 	command herdr "$@"
 }
 
 # Completion (zsh: after compinit, the generated file registers itself via compdef; bash: complete -F)
-if _have herdr; then
+if dot_have herdr; then
 	if [[ -n ${ZSH_VERSION-} ]]; then _herdr_bin="$(whence -p herdr)"; else _herdr_bin="$(type -P herdr)"; fi
 	_herdr_comp="$HOME/.cache/herdr/completion.$_sh"
 	if [[ ! -s "$_herdr_comp" || "$_herdr_bin" -nt "$_herdr_comp" ]]; then

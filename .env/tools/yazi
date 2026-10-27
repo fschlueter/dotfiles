@@ -2,7 +2,7 @@
 # File manager: `y` opens yazi and cd's into its last directory on exit.
 # yazi and its plugins are installed on first use (macOS: Homebrew, Linux: static binaries into ~/.local/bin, no sudo).
 
-function _install_yazi() {
+function dot_install_yazi() {
 	echo "yazi not found, installing ..."
 	if [[ "$OSTYPE" == darwin* ]]; then
 		brew install yazi
@@ -19,7 +19,7 @@ function _install_yazi() {
 	tmp="$(mktemp -d)"
 	curl -fsSL --connect-timeout 10 -o "$tmp/yazi.zip" \
 		"https://github.com/sxyazi/yazi/releases/latest/download/yazi-$arch-unknown-linux-musl.zip" \
-		&& _unzip "$tmp/yazi.zip" "$tmp" \
+		&& dot_unzip "$tmp/yazi.zip" "$tmp" \
 		&& mkdir -p "$HOME/.local/bin" \
 		&& install -m 755 "$tmp"/yazi-*/yazi "$tmp"/yazi-*/ya "$HOME/.local/bin/"
 	ret=$?
@@ -36,7 +36,7 @@ function _sync_yazi_plugins() {
 }
 
 function y() {
-	command -v yazi >/dev/null || _install_yazi || return
+	command -v yazi >/dev/null || dot_install_yazi || return
 	_sync_yazi_plugins
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
 	yazi "$@" --cwd-file="$tmp"

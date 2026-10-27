@@ -19,7 +19,7 @@ fi
 
 ### Helpers, PATH and core tools
 
-# path helpers, _have & co., base PATH; installs fzf, zoxide and uv if missing
+# path helpers, dot_have & co., base PATH; installs fzf, zoxide and uv if missing
 source ~/.env/tools/core
 
 ### Colors
@@ -34,24 +34,24 @@ LS_COLORS+=":fi=92"  # regular files: bright green (Ghostty palette 10)
 
 
 # fuzzy finder
-if _have fzf && _fzf_init="$(fzf "--$_sh" 2>/dev/null)"; then  # fzf < 0.48 has no --bash
+if dot_have fzf && _fzf_init="$(fzf "--$_sh" 2>/dev/null)"; then  # fzf < 0.48 has no --bash
     eval "$_fzf_init"
 fi
 unset _fzf_init
 
 # fd is optional (Debian/Ubuntu name it fdfind); without it fzf falls back to find
-if _have fd; then
+if dot_have fd; then
     export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git --exclude .cache . ~'
-elif _have fdfind; then
+elif dot_have fdfind; then
     export FZF_DEFAULT_COMMAND='fdfind --type f --hidden --exclude .git --exclude .cache . ~'
 fi
 [[ -n ${FZF_DEFAULT_COMMAND-} ]] && export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # replace cd with zoxide
-_have zoxide && eval "$(zoxide init "$_sh" --cmd cd)"
+dot_have zoxide && eval "$(zoxide init "$_sh" --cmd cd)"
 
 # uv completion (bash; the zsh setup has no uv completion yet)
-if [[ $_sh == bash ]] && _have uv; then
+if [[ $_sh == bash ]] && dot_have uv; then
     eval "$(uv generate-shell-completion bash)"
 fi
 export UV_EXCLUDE_NEWER="3 days"

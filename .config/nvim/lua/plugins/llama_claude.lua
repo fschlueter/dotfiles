@@ -1,3 +1,6 @@
+if true then return {} end
+
+--- The following is currently disabled
 return {
   {
     "ggml-org/llama.vim",

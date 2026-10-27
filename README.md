@@ -17,7 +17,7 @@ An interactive shell runs, top to bottom. Every file shown is always sourced, ex
 │   ├── .env/hosts/darwin  OR  .env/hosts/linux     always: the OS default
 │   └── .env/hosts/<name>     at most one, only if it exists, on top: $DOTFILES_HOST > ~/.config/dotfiles/host > FQDN
 ├── .env/shell                aliases (ls/ll/grep), TERM fallback for xterm-ghostty
-│   ├── .env/tools/core       path_append/path_prepend, _have, _unzip, _glibc_at_least;
+│   ├── .env/tools/core       path_append/path_prepend, dot_have, dot_unzip, dot_glibc_at_least;
 │   │                         base PATH; installs fzf, zoxide, uv if missing
 │   ├── (shell)               LS_COLORS, fzf init + FZF_DEFAULT_COMMAND, zoxide (as cd), uv completion (bash)
 │   ├── .env/tools/omp        installs oh-my-posh if missing; CPU/GPU hook; builds ~/.cache/ohmyposh/config.toml
@@ -73,7 +73,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.env/shell` | everything shell-independent, sourced by both: aliases, PATH, colors, fzf, zoxide, prompt, tools, environments |
 | `.zsh/plugins/` | zsh plugins as git submodules (completions, autosuggestions, syntax highlighting) |
 | `.env/env` | coding and software environment, sourced by `.env/shell` |
-| `.env/tools/core` | base PATH, installs fzf, zoxide and uv on first use; shared helpers (`path_append`/`path_prepend`, `_have`, `_unzip`, `_glibc_at_least`) |
+| `.env/tools/core` | base PATH, installs fzf, zoxide and uv on first use; shared helpers (`path_append`/`path_prepend`, `dot_have`, `dot_unzip`, `dot_glibc_at_least`) |
 | `.env/tools/omp` | [oh-my-posh](https://ohmyposh.dev) prompt setup |
 | `.env/tools/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
 | `.env/tools/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
