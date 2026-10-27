@@ -5,12 +5,6 @@ require("git"):setup({
 	order = 1500,
 })
 
--- Skip instead of failing on a host where the plugin is not installed yet
-local ok, omp = pcall(require, "omp")
-if ok then
-	omp:setup({ config = "/home/felix/.config/omp/omp.toml" })
-end
-
 Status:children_add(function(self)
 	local h = self._current.hovered
 	if h and h.link_to then
@@ -33,13 +27,6 @@ Status:children_add(function()
 		" ",
 	})
 end, 500, Status.RIGHT)
-
-Header:children_add(function()
-	if ya.target_family() ~= "unix" then
-		return ""
-	end
-	return ui.Span(ya.user_name() .. "@" .. ya.host_name() .. ":"):fg("blue")
-end, 500, Header.LEFT)
 
 -- Show size and mtime on the right hand side
 function Linemode:size_and_mtime()
