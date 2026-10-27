@@ -25,6 +25,7 @@ An interactive shell runs, top to bottom. Every file shown is always sourced, ex
 │   ├── .env/tools/yazi       defines y() (installs yazi and its plugins on first call)
 │   ├── .env/tools/nvim       EDITOR/VISUAL; defines nvim() (installs nvim and tree-sitter on first call)
 │   ├── (shell)               alias vim
+│   ├── .env/tools/herdr      defines herdr() (installs herdr on first call); cached zsh/bash completion
 │   └── .env/env              SOFTWARE, venv aliases from ENVS_DIR, PYTHONPATH, MATPLOTLIB, RNO-G paths,
 │                             thisroot (macOS), uv, git and vd aliases
 └── zsh: completion menu + list-colors (needs LS_COLORS), then zsh-syntax-highlighting (last, so it wraps all widgets)
@@ -76,9 +77,11 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.env/tools/omp` | [oh-my-posh](https://ohmyposh.dev) prompt setup |
 | `.env/tools/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
 | `.env/tools/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
+| `.env/tools/herdr` | `herdr` wrapper, installs [herdr](https://herdr.dev) on first use (official installer); shell completion; key binding cheat sheet |
 | `.env/host`, `.env/hosts/` | host profiles (see above) |
 | `.config/ghostty/` | [Ghostty](https://ghostty.org) terminal config |
 | `.config/ohmyposh/` | oh-my-posh theme |
+| `.config/herdr/` | [herdr](https://herdr.dev) config (`config.toml`); `~/.config/herdr/` also holds herdr runtime state, so only the files are linked |
 | `.config/yazi/` | yazi config; plugins are pinned in `package.toml` (manage with `ya pkg add/upgrade`) and not tracked in git |
 | `.config/nvim/` | [LazyVim](https://www.lazyvim.org) config (from the starter); plugins are installed by lazy.nvim on first start, pinned in `lazy-lock.json` |
 | `.config/aerospace/` | [AeroSpace](https://github.com/nikitabobko/AeroSpace) window manager config and session save/restore (macOS, see its [README](.config/aerospace/README.md)) |

@@ -24,8 +24,10 @@ Code should work on macOS and Linux; gate OS-specific parts with `$OSTYPE`. Host
 
 ## Themes
 
-Keep nvim, Ghostty and oh-my-posh looks aligned (soft preference): when theming one, check the other two first.
+Keep nvim, Ghostty, oh-my-posh, herdr and Claude Code looks aligned (soft preference): when theming one, check the others first.
 
+- **herdr**: `.config/herdr/config.toml` (`[theme] name = "rose-pine"`). `~/.config/herdr/` itself is a real directory holding herdr's runtime state (sessions, sockets, logs), so it stays a real directory and only the files inside it are linked. Reload with `herdr server reload-config`.
+- **Claude Code**: custom theme `~/.claude/themes/rose-pine.json`, not in this repo; `~/.claude/scripts/statusline.sh` reads its colors.
 - **Ghostty**: `Matrix Contrast` (`.config/ghostty/themes/`, selected in `config.ghostty`) is a tweaked copy of Matrix and deliberately repurposes ANSI slots (1 "red" = amber/yellow, 4 = dark green, 5 = cyan-blue) so git diffs stay readable. Default fg is muted grey-green so untouched lines differ from `+` lines. Reload with Cmd+Shift+,.
 - **oh-my-posh**: edit `.config/ohmyposh/omp.toml`. `.env/tools/omp` concatenates it with `themes/*.toml` (one palette per file) into `~/.cache/ohmyposh/config.toml` at shell start, so open a new shell to see changes. Themes: default, catppuccin, dracula, everforest, gruvbox, matrix, nord, rose-pine; chosen by the `theme` state file. Shells inside herdr panes (`HERDR_ENV=1`) read `theme-herdr` instead when it is non-empty (rose-pine, matching herdr's UI theme); `posh-theme` run inside herdr writes that file. The `matrix` theme is not yet aligned with Matrix Contrast.
   - Segments use purpose-named palette aliases (`p:git-foreground`, ...) that resolve to base `hue-*` colors; don't hardcode hex.
