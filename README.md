@@ -85,6 +85,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.config/ohmyposh/` | oh-my-posh theme |
 | `.config/herdr/` | [herdr](https://herdr.dev) config (`config.toml`); `~/.config/herdr/` also holds herdr runtime state, so only the files are linked |
 | `.config/yazi/` | yazi config; plugins are pinned in `package.toml` (manage with `ya pkg add/upgrade`) and not tracked in git |
+| `.tmux.conf` | tmux: passes image escape codes and `TERM`/`TERM_PROGRAM` through, so yazi image previews work inside tmux; Ctrl+S as a second prefix next to Ctrl+B |
 | `.config/nvim/` | [LazyVim](https://www.lazyvim.org) config (from the starter); plugins are installed by lazy.nvim on first start, pinned in `lazy-lock.json` |
 | `.config/aerospace/` | [AeroSpace](https://github.com/nikitabobko/AeroSpace) window manager config and session save/restore (macOS, see its [README](.config/aerospace/README.md)) |
 
