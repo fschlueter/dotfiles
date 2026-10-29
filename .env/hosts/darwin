@@ -1,6 +1,7 @@
 # shellcheck shell=bash
 # Default profile on macOS (the personal laptop).
 DOTFILES_NVIM_AI="claudecode minuet"
+DEFAULT_ENV="py315"  # Homebrew ROOT is built for Python 3.15
 
 # for desy login
 alias tssh='totp ssh'

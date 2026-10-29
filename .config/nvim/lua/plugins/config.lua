@@ -21,7 +21,12 @@ return {
             pyright = { disableOrganizeImports = true },
             -- python = { analysis = { ignore = { "*" } } }, -- uncomment to drop pyright diagnostics
             python = {
-              pythonPath = vim.fn.expand("~/software/uvenvs/py314/bin/python"),
+              -- $ENVS_DIR/$DEFAULT_ENV from .env/env (defaults if nvim was not started from the dotfiles shell)
+              pythonPath = vim.fn.expand((vim.env.ENVS_DIR or "~/software/envs") .. "/" .. (vim.env.DEFAULT_ENV or "py314") .. "/bin/python"),
+              analysis = {
+                -- local checkouts on PYTHONPATH (pyright does not read PYTHONPATH)
+                extraPaths = vim.split(vim.env.PYTHONPATH or "", ":", { trimempty = true }),
+              },
             },
           },
         },

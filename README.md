@@ -26,7 +26,7 @@ An interactive shell runs, top to bottom. Every file shown is always sourced, ex
 │   ├── .env/tools/nvim       EDITOR/VISUAL; defines nvim() (installs nvim and tree-sitter on first call)
 │   ├── (shell)               alias vim
 │   ├── .env/tools/herdr      defines herdr() (installs herdr on first call); cached zsh/bash completion
-│   └── .env/env              SOFTWARE, venv aliases from ENVS_DIR, PYTHONPATH, MATPLOTLIB, RNO-G paths,
+│   └── .env/env              SOFTWARE, venv aliases from ENVS_DIR, DEFAULT_ENV, PYTHONPATH, MATPLOTLIB, RNO-G paths,
 │                             thisroot (macOS), uv, git and vd aliases
 └── zsh: completion menu + list-colors (needs LS_COLORS), then zsh-syntax-highlighting (last, so it wraps all widgets)
 ```
@@ -44,6 +44,8 @@ Hosts differ through a **profile** (`.env/hosts/<profile>`), not through branche
 | `DOTFILES_STOW_IGNORE` | space-separated regexes `install.sh` passes to stow as `--ignore` (e.g. the macOS-only configs on Linux) |
 | `DOTFILES_AUTO_INSTALL` | `0` stops missing fzf/zoxide/uv/oh-my-posh being installed at shell start (default `1`) |
 | `DOTFILES_NVIM_AI` | AI nvim plugins to load (`claudecode`, `minuet`); the others stay unloaded, their pins stay in `lazy-lock.json` |
+| `ENVS_DIR` | folder holding the Python envs; `.env/env` creates one activation alias per env (default `$SOFTWARE/envs`) |
+| `DEFAULT_ENV` | env in `ENVS_DIR` that tools use, e.g. nvim's pyright (default `py314`; `hosts/darwin` sets `py315`, the Python Homebrew ROOT is built for) |
 
 It can also hold aliases and exports for that host (the laptop's DESY aliases live in `hosts/darwin`). To give a server its own settings, add `.env/hosts/<FQDN>` and re-run `./install.sh`.
 
