@@ -16,7 +16,7 @@ An interactive shell runs, top to bottom. Every file shown is always sourced, ex
 │   │                         exports DOTFILES_* flags, prints the banner. install.sh sources it too.
 │   ├── .env/hosts/darwin  OR  .env/hosts/linux     always: the OS default
 │   └── .env/hosts/<name>     at most one, only if it exists, on top: $DOTFILES_HOST > ~/.config/dotfiles/host > FQDN
-├── .env/shell                aliases (ls/ll/grep), TERM fallback for xterm-ghostty
+├── .env/shell                aliases (ls/ll/la/lt/grep), TERM fallback for xterm-ghostty
 │   ├── .env/tools/core       path_append/path_prepend, dot_have, dot_unzip, dot_glibc_at_least;
 │   │                         base PATH; installs fzf, zoxide, uv if missing
 │   ├── (shell)               LS_COLORS, fzf init + FZF_DEFAULT_COMMAND, zoxide (as cd), uv completion (bash)
@@ -25,6 +25,7 @@ An interactive shell runs, top to bottom. Every file shown is always sourced, ex
 │   ├── .env/tools/yazi       defines y() (installs yazi and its plugins on first call)
 │   ├── .env/tools/nvim       EDITOR/VISUAL; defines nvim() (installs nvim and tree-sitter on first call)
 │   ├── (shell)               alias vim
+│   ├── .env/tools/eza        installs eza if missing; ls-style ls, ll, la, lt, ltree, lsize become eza
 │   ├── .env/tools/herdr      defines herdr() (installs herdr on first call); cached zsh/bash completion
 │   └── .env/env              SOFTWARE, venv aliases from ENVS_DIR, DEFAULT_ENV, PYTHONPATH, MATPLOTLIB, RNO-G paths,
 │                             thisroot (macOS), uv, git and vd aliases
@@ -43,7 +44,7 @@ Hosts differ through a **profile** (`.env/hosts/<profile>`), not through branche
 | Variable | Effect |
 |----------|--------|
 | `DOTFILES_STOW_IGNORE` | space-separated regexes `install.sh` passes to stow as `--ignore` (e.g. the macOS-only configs on Linux) |
-| `DOTFILES_AUTO_INSTALL` | `0` stops missing fzf/zoxide/uv/oh-my-posh being installed at shell start (default `1`) |
+| `DOTFILES_AUTO_INSTALL` | `0` stops missing fzf/zoxide/uv/oh-my-posh/eza being installed at shell start (default `1`) |
 | `DOTFILES_NVIM_AI` | AI nvim plugins to load (`claudecode`, `minuet`); the others stay unloaded, their pins stay in `lazy-lock.json` |
 | `ENVS_DIR` | folder holding the Python envs; `.env/env` creates one activation alias per env (default `$SOFTWARE/envs`) |
 | `DEFAULT_ENV` | env in `ENVS_DIR` that tools use, e.g. nvim's pyright (default `py314`; `hosts/darwin` sets `py315`, the Python Homebrew ROOT is built for) |
@@ -77,6 +78,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.zsh/plugins/` | zsh plugins as git submodules (completions, autosuggestions, syntax highlighting, history substring search: type a prefix, then Up/Down) |
 | `.env/env` | coding and software environment, sourced by `.env/shell` |
 | `.env/tools/core` | base PATH, installs fzf, zoxide and uv on first use; shared helpers (`path_append`/`path_prepend`, `dot_have`, `dot_unzip`, `dot_glibc_at_least`) |
+| `.env/tools/eza` | installs [eza](https://eza.rocks) on first use; `ls` (grid), `ll`/`la` (long, git status), `lt` (newest last), `ltree`, `lsize` use eza; GNU `ls` aliases without it |
 | `.env/tools/omp` | [oh-my-posh](https://ohmyposh.dev) prompt setup |
 | `.env/tools/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
 | `.env/tools/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |

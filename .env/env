@@ -64,7 +64,5 @@ alias log='git log'
 alias ga='git add'
 alias gd='git diff'
 
-alias lt='ls -ltr'
-
 # uv programs
 alias vd='uvx --with pyarrow visidata'

@@ -1,0 +1,45 @@
+# shellcheck shell=bash
+# eza (modern ls) with ls-style aliases; installed if missing when sourced
+# (macOS: Homebrew, Linux: release binary into ~/.local/bin, no sudo). Without eza the GNU ls aliases in .env/shell stay.
+# eza's flags differ from ls (e.g. `ls -ltr` fails: -t takes an argument); `\ls` or `command ls` gives the real ls.
+
+function dot_install_eza() {
+	echo "eza not found, installing ..."
+	if [[ "$OSTYPE" == darwin* ]]; then
+		brew install eza
+		return
+	fi
+
+	# zip, not tar.gz: some servers have no tar. x86_64 is a static musl build, aarch64 needs glibc.
+	local asset tmp ret
+	case "$(uname -m)" in
+		x86_64) asset=eza_x86_64-unknown-linux-musl.zip ;;
+		aarch64 | arm64) asset=eza_aarch64-unknown-linux-gnu.zip ;;
+		*) echo "No prebuilt eza for $(uname -m)." >&2; return 1 ;;
+	esac
+	tmp="$(mktemp -d)"
+	curl -fsSL --connect-timeout 10 -o "$tmp/eza.zip" \
+		"https://github.com/eza-community/eza/releases/latest/download/$asset" \
+		&& dot_unzip "$tmp/eza.zip" "$tmp" \
+		&& mkdir -p "$HOME/.local/bin" \
+		&& install -m 755 "$tmp/eza" "$HOME/.local/bin/"
+	ret=$?
+	rm -rf "$tmp"
+	return $ret
+}
+
+if [[ ${DOTFILES_AUTO_INSTALL-1} != 0 ]]; then
+	dot_have eza || dot_install_eza || echo "eza install failed." >&2
+fi
+
+# Colors come from LS_COLORS (set in .env/shell), so they match ls and the completion menu.
+if dot_have eza; then
+	# Aliases starting with an alias expand it too (bash + zsh), so these build on `ls`.
+	alias ls="eza --icons=auto --group-directories-first"  # grid
+	alias ll="ls -lh --git"                                 # long, header, git status
+	alias la="ll -a"                                        # ll incl. dotfiles
+	alias ltree="ls -T -L 2"                                # tree, 2 levels (ltree -L 4 for more)
+	# Sorted views without --group-directories-first, which would put all folders first
+	alias lt="eza -lh --icons=auto -s modified"             # long, newest last (like ls -ltr)
+	alias lsize="eza -l --icons=auto -s size -r --total-size"  # long, largest first (dir sizes recursive)
+fi

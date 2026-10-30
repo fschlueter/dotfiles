@@ -5,6 +5,8 @@ _sh="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
 
 # Aliases
 alias ll="ls -l"
+alias la="ls -la"
+alias lt="ls -ltr"
 if [[ "$OSTYPE" == darwin* ]]; then
     alias ls="gls --color=auto"  # GNU ls honors LS_COLORS; macOS /bin/ls does not
 else
@@ -67,6 +69,9 @@ source ~/.env/tools/yazi
 # editor (`nvim`)
 source ~/.env/tools/nvim
 alias vim=nvim
+
+# ls replacement: ls/ll/la/lt become eza (plus ltree, lsize), overriding the aliases above
+source ~/.env/tools/eza
 
 # agent multiplexer (`herdr`) + completion
 source ~/.env/tools/herdr
