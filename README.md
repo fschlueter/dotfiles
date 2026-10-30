@@ -28,7 +28,8 @@ An interactive shell runs, top to bottom. Every file shown is always sourced, ex
 │   ├── .env/tools/herdr      defines herdr() (installs herdr on first call); cached zsh/bash completion
 │   └── .env/env              SOFTWARE, venv aliases from ENVS_DIR, DEFAULT_ENV, PYTHONPATH, MATPLOTLIB, RNO-G paths,
 │                             thisroot (macOS), uv, git and vd aliases
-└── zsh: completion menu + list-colors (needs LS_COLORS), then zsh-syntax-highlighting (last, so it wraps all widgets)
+└── zsh: completion menu + list-colors (needs LS_COLORS), then zsh-syntax-highlighting (wraps all widgets defined before it),
+          zsh-history-substring-search (after it, as its README asks) + Up/Down bindings
 ```
 
 The shell-specific part must come first: bash's `history -a` has to be in `PROMPT_COMMAND` before `.env/tools/omp` puts the prompt hook ahead of it (bash < 5.1), bash-completion and zsh's `compinit` before fzf/zoxide, and `shwordsplit` before the bash-style shared files. Profiles run before `.env/shell`, so they can preset variables (`SOFTWARE`, `ENVS_DIR`, `python_module_extra`, ...) that `.env/env` only defaults.
@@ -73,7 +74,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 |------|------|
 | `.zshrc`, `.bashrc` | per-shell parts only: history, completion, plugins, key bindings. Login shells must source `.bashrc`; the stock `~/.profile` (Debian/Ubuntu) and `~/.bash_profile` (RHEL/Alma) already do, so no `.bash_profile` is shipped |
 | `.env/shell` | everything shell-independent, sourced by both: aliases, PATH, colors, fzf, zoxide, prompt, tools, environments |
-| `.zsh/plugins/` | zsh plugins as git submodules (completions, autosuggestions, syntax highlighting) |
+| `.zsh/plugins/` | zsh plugins as git submodules (completions, autosuggestions, syntax highlighting, history substring search: type a prefix, then Up/Down) |
 | `.env/env` | coding and software environment, sourced by `.env/shell` |
 | `.env/tools/core` | base PATH, installs fzf, zoxide and uv on first use; shared helpers (`path_append`/`path_prepend`, `dot_have`, `dot_unzip`, `dot_glibc_at_least`) |
 | `.env/tools/omp` | [oh-my-posh](https://ohmyposh.dev) prompt setup |

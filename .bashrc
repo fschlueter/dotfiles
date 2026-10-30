@@ -28,6 +28,8 @@ bind '"\e[1;3C": forward-word'       # Alt+Right
 bind '"\e[1;3D": backward-word'      # Alt+Left
 bind '"\e[H": beginning-of-line'     # Home / Cmd+Left
 bind '"\e[F": end-of-line'           # End / Cmd+Right
+bind '"\e[A": history-search-backward'  # Up: history entries starting with the typed text (like zsh-history-substring-search)
+bind '"\e[B": history-search-forward'   # Down
 
 ### Shared setup; must come after the bash parts above (history -a ahead of the prompt hook, bash-completion before fzf)
 

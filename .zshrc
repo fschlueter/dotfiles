@@ -50,3 +50,12 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # last: wraps only widgets defined before it (fzf, zoxide, oh-my-posh)
 source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Up/Down search history for the typed text (e.g. `sudo` + Up); after syntax highlighting, as its README asks
+source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+HISTORY_SUBSTRING_SEARCH_PREFIXED=1      # match only at the start of the command
+HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
+bindkey '^[[A' history-substring-search-up    # Up
+bindkey '^[[B' history-substring-search-down  # Down
+bindkey '^[OA' history-substring-search-up    # Up/Down in application cursor mode (e.g. inside tmux)
+bindkey '^[OB' history-substring-search-down
