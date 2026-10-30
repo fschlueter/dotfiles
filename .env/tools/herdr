@@ -26,8 +26,64 @@ function dot_install_herdr() {
 	curl -fsSL --connect-timeout 10 https://herdr.dev/install.sh | HERDR_INSTALL_DIR="$HOME/.local/bin" sh
 }
 
+# Pane colors: while herdr is attached, the outer terminal (Ghostty) uses a different Ghostty theme, set through
+# OSC 4/10/11/12 escape codes and reset afterwards (OSC 104/110/111/112). herdr reads the host colors when it starts.
+# The theme name is persisted by `herdr-theme` in ~/.config/ghostty/theme-herdr (empty or missing: Rose Pine).
+_herdr_theme_state="$HOME/.config/ghostty/theme-herdr"
+
+# Prints the path of Ghostty theme $1 (own themes first, then Ghostty's bundled ones)
+function _herdr_theme_file() {
+	local d
+	for d in "$HOME/.config/ghostty/themes" /Applications/Ghostty.app/Contents/Resources/ghostty/themes \
+		/usr/share/ghostty/themes /usr/local/share/ghostty/themes; do
+		[[ -f "$d/$1" ]] && { echo "$d/$1"; return; }
+	done
+	return 1
+}
+
+function _herdr_colors_set() {
+	local name file e=$'\e' b=$'\a'
+	name="$(cat "$_herdr_theme_state" 2>/dev/null)"
+	file="$(_herdr_theme_file "${name:-Rose Pine}")" || return 0
+	# "palette = 3=#rrggbb" or "palette = 3 = #rrggbb" -> OSC 4; background/foreground/cursor-color -> OSC 11/10/12
+	sed -nE \
+		-e "s/^palette *= *([0-9]+) *= *#?([0-9a-fA-F]{6}).*/${e}]4;\1;#\2${b}/p" \
+		-e "s/^foreground *= *#?([0-9a-fA-F]{6}).*/${e}]10;#\1${b}/p" \
+		-e "s/^background *= *#?([0-9a-fA-F]{6}).*/${e}]11;#\1${b}/p" \
+		-e "s/^cursor-color *= *#?([0-9a-fA-F]{6}).*/${e}]12;#\1${b}/p" \
+		"$file" | tr -d '\n' >/dev/tty
+}
+
+function _herdr_colors_reset() {
+	printf '\e]104\a\e]110\a\e]111\a\e]112\a' >/dev/tty
+}
+
+# Usage: herdr-theme [NAME]. Without NAME: show the current theme. Applies on the next attach (detach: prefix+q).
+function herdr-theme() {
+	if [[ -z ${1-} ]]; then
+		local name
+		name="$(cat "$_herdr_theme_state" 2>/dev/null)"
+		echo "herdr pane theme: ${name:-Rose Pine}"
+		echo "e.g. herdr-theme 'Rose Pine' | 'Rose Pine Moon' | 'Amber Contrast' | 'Trapped in Amber'"
+		return
+	fi
+	_herdr_theme_file "$1" >/dev/null || { echo "No Ghostty theme named '$1'." >&2; return 1; }
+	echo "$1" >"$_herdr_theme_state"
+	echo "Saved; applies the next time herdr attaches."
+}
+
 function herdr() {
 	dot_have herdr || dot_install_herdr || return
+	# Recolor only when this call attaches the TUI (`herdr`, `herdr --session/--remote ...`, `herdr session attach`)
+	# from outside herdr, on a terminal
+	if [[ ${HERDR_ENV-} != 1 && -t 1 ]] && { [[ $# -eq 0 || $1 == --session || $1 == --remote ]] \
+		|| [[ ${1-} == session && ${2-} == attach ]]; }; then
+		_herdr_colors_set
+		command herdr "$@"
+		local ret=$?
+		_herdr_colors_reset
+		return $ret
+	fi
 	command herdr "$@"
 }
 

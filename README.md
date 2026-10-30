@@ -82,7 +82,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.env/tools/omp` | [oh-my-posh](https://ohmyposh.dev) prompt setup |
 | `.env/tools/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
 | `.env/tools/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
-| `.env/tools/herdr` | `herdr` wrapper, installs [herdr](https://herdr.dev) on first use (official installer); shell completion; key binding cheat sheet |
+| `.env/tools/herdr` | `herdr` wrapper, installs [herdr](https://herdr.dev) on first use (official installer); shell completion; key binding cheat sheet; recolors Ghostty with another theme while herdr is attached (`herdr-theme`) |
 | `.env/host`, `.env/hosts/` | host profiles (see above) |
 | `.config/ghostty/` | [Ghostty](https://ghostty.org) terminal config |
 | `.config/ohmyposh/` | oh-my-posh theme |
