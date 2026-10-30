@@ -103,7 +103,7 @@ git clone <repo-url> ~/.dotfiles
 
 1. Needs `git` up front. Installs stow if it is missing: via Homebrew on macOS, on Linux into `~/.local` (no sudo; needs `curl`, `tar` and `perl`, no `make`).
 2. On Linux, installs a static zsh into `~/.local` if zsh is missing.
-3. Initialises the plugin submodules.
+3. Initialises the plugin submodules and enables the pre-commit hook (`.githooks/pre-commit`: secret scan with gitleaks or a regex fallback, `bash -n`/`zsh -n`, shellcheck if installed).
 4. Creates `~/.config` if missing, so stow links its subfolders instead of the whole directory.
 5. Runs `stow --restow --target=$HOME .`, i.e. links every file in this repo to the same path under `$HOME`.
 
@@ -115,6 +115,6 @@ If a real file already exists at a link location (e.g. `~/.zshrc` or `~/.bashrc`
 
 The repo root is a single stow package whose layout mirrors `$HOME`. To add a config, put it at its home-relative path in the repo and re-run `./install.sh`. Stow links whole directories where it can, so new files in e.g. `~/.config/ghostty/` land in the repo directly.
 
-Files that should not be linked (git files, `.DS_Store`, this README, `install.sh`) are listed in [`.stow-local-ignore`](.stow-local-ignore).
+Files that should not be linked (git files, `.DS_Store`, this README, `install.sh`, `.githooks/`, `.shellcheckrc`) are listed in [`.stow-local-ignore`](.stow-local-ignore).
 
 To remove all links: `cd ~/.dotfiles && stow -D --target=$HOME .`
