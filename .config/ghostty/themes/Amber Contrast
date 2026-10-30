@@ -1,0 +1,44 @@
+# Matrix Contrast's slot plan in amber: orange-dominant, but ANSI hues kept distinguishable so diffs,
+# git status and syntax stay readable. See Matrix Contrast for what uses each slot.
+# Used for herdr panes via `herdr-theme 'Amber Contrast'` (.env/tools/herdr); usable as a Ghostty theme too.
+
+# 0 black: zsh-hl comments, dim UI bits
+palette = 0 = #2e2418
+# 1 "red": git removed lines (-), unstaged files, errors
+palette = 1 = #ff4d2e
+# 2 "green" (gold here): git added lines (+), staged files, valid commands
+palette = 2 = #ffc93d
+# 3 yellow (pale): commit hashes, section headers, quoted strings
+palette = 3 = #ffe39a
+# 4 blue (dark amber): directories, globs
+palette = 4 = #d08a2a
+# 5 magenta (cool cyan accent): images/media in ls, redirections
+palette = 5 = #6cc6e0
+# 6 cyan (teal accent): diff hunk headers, symlinks
+palette = 6 = #7ed6c4
+# 7 white: context text (unchanged diff lines)
+palette = 7 = #dccab0
+# 8 bright black: zsh-autosuggestions, other dimmed hints
+palette = 8 = #8c7a64
+# 9 bright red: emphasized removals in word diffs
+palette = 9 = #ff8a6a
+# 10 bright green (light gold): regular files (LS_COLORS fi=92), emphasized additions
+palette = 10 = #ffe2a6
+# 11 bright yellow (deep orange): warnings, search matches
+palette = 11 = #ff7a00
+# 12 bright blue: links and emphasis in TUI tools
+palette = 12 = #8fd3ee
+# 13 bright magenta: emphasized special items
+palette = 13 = #ffb3a1
+# 14 bright cyan: emphasized info
+palette = 14 = #a3eadc
+# 15 bright white: bold headings
+palette = 15 = #fff2dc
+
+background = #17110a
+foreground = #ffa23a
+cursor-color = #ffb000
+cursor-text = #17110a
+
+selection-background = #4a3214
+selection-foreground = #ffd27a
