@@ -71,7 +71,8 @@ fi
 # persisted by `posh-theme`; herdr panes (HERDR_ENV=1) use theme-herdr if it is set
 omp_state="$omp_dir/theme"
 [[ ${HERDR_ENV-} == 1 && -s $omp_dir/theme-herdr ]] && omp_state="$omp_dir/theme-herdr"
-export POSH_THEME="$(cat "$omp_state")"
+POSH_THEME="$(cat "$omp_state")"
+export POSH_THEME
 # oh-my-posh has no config imports: assemble base config + themes/*.toml
 omp_cfg="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh/config.toml"
 mkdir -p "${omp_cfg%/*}"
@@ -100,7 +101,11 @@ unset omp_dir omp_cfg omp_state
 function posh-theme() {
     local state="$HOME/.config/ohmyposh/theme"
     [[ ${HERDR_ENV-} == 1 ]] && state+="-herdr"
-    local themes=($(ls ~/.config/ohmyposh/themes | sed 's/\.toml$//'))
+    local f themes=()
+    for f in ~/.config/ohmyposh/themes/*.toml; do
+        f="${f##*/}"
+        themes+=("${f%.toml}")
+    done
 
     if [[ -z "$1" ]]; then
         echo "Current: ${POSH_THEME:-default}"

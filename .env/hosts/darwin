@@ -47,4 +47,5 @@ export RNO_G_INSTALL_DIR="${SOFTWARE:-$HOME/software}/rnog/daq/install"  # $SOFT
 
 alias cs="~/.claude/scripts/claude-sessions/cs"
 
-export KICONNECT_KEY="$(security find-generic-password -s campus-ki -w)"
+KICONNECT_KEY="$(security find-generic-password -s campus-ki -w)"
+export KICONNECT_KEY
