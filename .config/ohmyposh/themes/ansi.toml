@@ -1,8 +1,8 @@
 [palettes.list.ansi]
-# Terminal ANSI colors instead of hex, so the prompt follows the terminal palette; used inside herdr (theme-herdr),
-# where `herdr-theme` picks the palette. Layout of matrix.toml (comments: its hex). Slots are used by their usual
-# meaning (red = errors, yellow = dirty), as in standard palettes such as Rose Pine.
-# Shading (darken/lighten, gradients) does not work on ANSI names.
+# Terminal ANSI colors instead of hex, so the prompt follows the active Ghostty theme (Matrix Contrast outside
+# herdr, `herdr-theme` inside). Layout of matrix.toml; each hue is the closest Matrix Contrast slot (comments:
+# matrix.toml's hex), e.g. "red" holds yellow there. In standard palettes (Rose Pine) dirty git then shows red
+# and errors gold. Shading (darken/lighten, gradients) does not work on ANSI names.
 hue-black = 'black'       # #0F191C
 hue-grey = 'darkGray'     # #7F9F76
 hue-forest = 'blue'       # #23755A
@@ -11,8 +11,8 @@ hue-green = 'green'       # #82D967
 hue-lime = 'white'        # #C1FF8A
 hue-neon = 'green'        # #11FF25
 hue-cyan = 'cyan'         # #4FE8C8
-hue-yellow = 'yellow'     # #FAFF00
-hue-red = 'red'           # #FF3860
+hue-yellow = 'red'        # #FAFF00
+hue-red = 'lightYellow'   # #FF3860
 hue-crimson = 'lightRed'  # #D8123F
 hue-white = 'lightWhite'  # #D9FFD0
 
