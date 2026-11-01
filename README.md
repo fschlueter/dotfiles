@@ -27,6 +27,7 @@ An interactive shell runs, top to bottom. Every file shown is always sourced, ex
 │   ├── (shell)               alias vim
 │   ├── .env/tools/eza        installs eza if missing; ls-style ls, ll, la, lt, ltree, lsize become eza
 │   ├── .env/tools/herdr      defines herdr() (installs herdr on first call); cached zsh/bash completion
+│   ├── .env/tools/pyright    defines pyright() (installs it on first call; uses the $DEFAULT_ENV interpreter)
 │   └── .env/env              SOFTWARE, venv aliases from ENVS_DIR, DEFAULT_ENV, PYTHONPATH, MATPLOTLIB, RNO-G paths,
 │                             thisroot (macOS), uv, git and vd aliases
 └── zsh: completion menu + list-colors (needs LS_COLORS), then zsh-syntax-highlighting (wraps all widgets defined before it),
@@ -47,7 +48,7 @@ Hosts differ through a **profile** (`.env/hosts/<profile>`), not through branche
 | `DOTFILES_AUTO_INSTALL` | `0` stops missing fzf/zoxide/uv/oh-my-posh/eza being installed at shell start (default `1`) |
 | `DOTFILES_NVIM_AI` | AI nvim plugins to load (`claudecode`, `minuet`); the others stay unloaded, their pins stay in `lazy-lock.json` |
 | `ENVS_DIR` | folder holding the Python envs; `.env/env` creates one activation alias per env (default `$SOFTWARE/envs`) |
-| `DEFAULT_ENV` | env in `ENVS_DIR` that tools use, e.g. nvim's pyright (default `py314`; `hosts/darwin` sets `py315`, the Python Homebrew ROOT is built for) |
+| `DEFAULT_ENV` | env in `ENVS_DIR` that tools use, e.g. pyright (nvim and the `pyright` wrapper) (default `py314`; `hosts/darwin` sets `py315`, the Python Homebrew ROOT is built for) |
 
 It can also hold aliases and exports for that host (the laptop's DESY aliases live in `hosts/darwin`). To give a server its own settings, add `.env/hosts/<FQDN>` and re-run `./install.sh`.
 
@@ -83,6 +84,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.env/tools/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
 | `.env/tools/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
 | `.env/tools/herdr` | `herdr` wrapper, installs [herdr](https://herdr.dev) on first use (official installer); shell completion; key binding cheat sheet; recolors Ghostty with another theme while herdr is attached (`herdr-theme`) |
+| `.env/tools/pyright` | `pyright` wrapper, installs the [pyright](https://github.com/microsoft/pyright) CLI on first use (`uv tool`); passes `--pythonpath $ENVS_DIR/$DEFAULT_ENV/bin/python` unless a project config or `--pythonpath` is given |
 | `.env/host`, `.env/hosts/` | host profiles (see above) |
 | `.config/ghostty/` | [Ghostty](https://ghostty.org) terminal config |
 | `.config/ohmyposh/` | oh-my-posh theme |

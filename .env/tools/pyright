@@ -1,0 +1,24 @@
+# shellcheck shell=bash
+# Type checker: pyright CLI (installed with `uv tool install pyright` on first use).
+# Pyright has no global config: without a project config it uses the `python` on PATH. The wrapper passes the
+# interpreter of $DEFAULT_ENV (in $ENVS_DIR, see .env/env) instead; pyright takes its search paths from it, which
+# include PYTHONPATH and the env's .pth files. A project config (pyrightconfig.json, [tool.pyright] in
+# pyproject.toml) or an explicit --pythonpath is left alone.
+
+function pyright() {
+	if ! dot_have pyright; then
+		echo "pyright not found, installing ..."
+		uv tool install pyright || return
+	fi
+
+	local arg
+	for arg in "$@"; do
+		[[ $arg == --pythonpath* ]] && { command pyright "$@"; return; }
+	done
+	if [[ -f pyrightconfig.json ]] || grep -qs '^\[tool\.pyright\]' pyproject.toml; then
+		command pyright "$@"
+		return
+	fi
+
+	command pyright --pythonpath "$ENVS_DIR/$DEFAULT_ENV/bin/python" "$@"
+}

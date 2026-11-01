@@ -76,6 +76,9 @@ source ~/.env/tools/eza
 # agent multiplexer (`herdr`) + completion
 source ~/.env/tools/herdr
 
+# type checker (`pyright`), runs with the interpreter of $DEFAULT_ENV
+source ~/.env/tools/pyright
+
 ### Set up working environments
 
 source ~/.env/env  # coding and software environment
