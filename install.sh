@@ -108,7 +108,8 @@ git -C "$DOTFILES" config core.hooksPath .githooks
 
 # Stow "folds" missing dirs into a single symlink. Pre-create ~/.config so only its
 # subfolders get linked, otherwise other apps would write their configs into this repo.
-mkdir -p "$HOME/.config"
+# Same for folders whose apps keep runtime state next to the linked config.
+mkdir -p "$HOME/.config/worktrunk" "$HOME/.local/bin"
 
 # Host profile: files to leave unlinked on this host (e.g. macOS-only configs on Linux)
 # shellcheck disable=SC1091

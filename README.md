@@ -27,6 +27,7 @@ An interactive shell runs, top to bottom. Every file shown is always sourced, ex
 │   ├── (shell)               alias vim
 │   ├── .env/tools/eza        installs eza if missing; ls-style ls, ll, la, lt, ltree, lsize become eza
 │   ├── .env/tools/herdr      defines herdr() (installs herdr on first call); cached zsh/bash completion
+│   ├── .env/tools/wt         worktrunk shell integration (wt(), installs wt on first call on macOS), wth
 │   ├── .env/tools/pyright    defines pyright() (installs it on first call; uses the $DEFAULT_ENV interpreter)
 │   └── .env/env              SOFTWARE, venv aliases from ENVS_DIR, DEFAULT_ENV, PYTHONPATH, MATPLOTLIB, RNO-G paths,
 │                             thisroot (macOS), uv, git and vd aliases
@@ -85,11 +86,14 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.env/tools/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
 | `.env/tools/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
 | `.env/tools/herdr` | `herdr` wrapper, installs [herdr](https://herdr.dev) on first use (official installer); shell completion; key binding cheat sheet; recolors Ghostty with another theme while herdr is attached (`herdr-theme`) |
+| `.env/tools/wt` | [worktrunk](https://worktrunk.dev) (`wt`, git worktrees), installed on first use on macOS (Homebrew; on Linux install it yourself); its shell integration (cd after `wt switch`, completion); `wth <branch>` = `wt switch` + open the worktree in its own herdr workspace |
 | `.env/tools/pyright` | `pyright` wrapper, installs the [pyright](https://github.com/microsoft/pyright) CLI on first use (`uv tool`); passes `--pythonpath $ENVS_DIR/$DEFAULT_ENV/bin/python` unless a project config or `--pythonpath` is given |
 | `.env/host`, `.env/hosts/` | host profiles (see above) |
 | `.config/ghostty/` | [Ghostty](https://ghostty.org) terminal config |
 | `.config/ohmyposh/` | oh-my-posh theme |
 | `.config/herdr/` | [herdr](https://herdr.dev) config (`config.toml`); `~/.config/herdr/` also holds herdr runtime state, so only the files are linked |
+| `.config/worktrunk/` | worktrunk user config: worktrees in `~/cowork/<repo>/<branch>`, NuRadioMC hooks (antenna-model symlink, C++ ray tracer build); `~/.config/worktrunk/` also holds approvals, so only the file is linked |
+| `.local/bin/wt-herdr` | opens (or refocuses) a worktree in its own herdr workspace; used by `wth` and as `wt switch -x wt-herdr` |
 | `.config/yazi/` | yazi config; plugins are pinned in `package.toml` (manage with `ya pkg add/upgrade`) and not tracked in git |
 | `.tmux.conf` | tmux: passes image escape codes and `TERM`/`TERM_PROGRAM` through, so yazi image previews work inside tmux; Ctrl+S as a second prefix next to Ctrl+B; plugins via TPM in `$DOTFILES_TMUX_PLUGINS` (vim-tmux-navigator, tmux-power), cloned on first start |
 | `.config/nvim/` | [LazyVim](https://www.lazyvim.org) config (from the starter); plugins are installed by lazy.nvim on first start, pinned in `lazy-lock.json` |

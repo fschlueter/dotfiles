@@ -1,0 +1,15 @@
+# Worktrunk user config (`wt config create --help` lists all options with defaults).
+# Runtime state (approvals.toml, logs) stays out of the repo: only this file is linked.
+
+# One folder per task under ~/cowork/<repo>/ (see ~/.claude/CLAUDE.md, "Workspace")
+worktree-path = "~/cowork/{{ repo }}/{{ branch | sanitize }}"
+
+# NuRadioMC (main checkout ~/software/nuradio)
+[projects."github.com/nu-radio/NuRadioMC".pre-start]
+# Untracked antenna models live only in the main checkout
+antenna-models = "ln -sfn {{ primary_worktree_path }}/NuRadioReco/detector/AntennaModels {{ worktree_path }}/NuRadioReco/detector/AntennaModels"
+
+[projects."github.com/nu-radio/NuRadioMC".post-start]
+# Build the C++ ray tracer; its on-the-fly build calls `python` and silently falls back to the Python ray tracer
+# if that fails (until nu-radio/NuRadioMC#1194 is merged). Log: `wt config state logs`.
+raytracer = "cd NuRadioMC/SignalProp/AnalyticRayTracingImpl/CPPAnalyticRayTracing && GSLDIR=$(gsl-config --prefix) \"${ENVS_DIR:-$HOME/software/envs}/py314/bin/python\" setup.py build_ext --inplace"

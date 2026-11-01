@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Open the git worktree at $1 (default: $PWD) in its own herdr workspace labelled $2 (default: the worktree's folder
+# name) and focus it; a workspace that already has it open is reused (and relabelled). Prints herdr's JSON:
+# .result.already_open, .result.root_pane.pane_id. From worktrunk: `wt switch <branch> --no-cd -x wt-herdr`
+# (shell: `wth <branch>`).
+set -euo pipefail
+[[ ${HERDR_ENV-} == 1 ]] || { echo "wt-herdr: not running inside herdr" >&2; exit 1; }
+
+path="$(git -C "${1:-$PWD}" rev-parse --show-toplevel)"
+repo="$(git -C "$path" worktree list --porcelain | sed -n '1s/^worktree //p')"  # main checkout
+herdr worktree open --cwd "$repo" --path "$path" --label "${2:-${path##*/}}" --focus

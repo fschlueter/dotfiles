@@ -76,6 +76,9 @@ source ~/.env/tools/eza
 # agent multiplexer (`herdr`) + completion
 source ~/.env/tools/herdr
 
+# git worktree manager (`wt`, `wth` opens a worktree in herdr)
+source ~/.env/tools/wt
+
 # type checker (`pyright`), runs with the interpreter of $DEFAULT_ENV
 source ~/.env/tools/pyright
 

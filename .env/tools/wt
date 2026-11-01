@@ -1,0 +1,34 @@
+# shellcheck shell=bash
+# Worktrunk (`wt`): git worktree manager (~/.config/worktrunk/config.toml). Installed on first call if missing
+# (macOS only, via Homebrew; on Linux install it yourself).
+# Its shell integration defines a `wt` function that cd's into the switched-to worktree.
+#   wth <branch> [wt switch args]   switch/create, then open the worktree in its own herdr workspace (wt-herdr)
+
+function dot_install_wt() {
+	if [[ "$OSTYPE" != darwin* ]]; then
+		echo "wt (worktrunk) not found; install it yourself: https://worktrunk.dev/#install" >&2
+		return 1
+	fi
+	echo "wt (worktrunk) not found, installing ..."
+	brew install worktrunk
+}
+
+function _dot_wt_init() {
+	eval "$(command wt config shell init "${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}")"
+}
+
+if dot_have wt; then
+	_dot_wt_init
+else
+	# First call installs wt, replaces this stub with the real integration and runs the command
+	function wt() {
+		dot_install_wt && dot_have wt || return
+		unset -f wt
+		_dot_wt_init
+		wt "$@"
+	}
+fi
+
+function wth() {
+	wt switch --no-cd "$@" -x wt-herdr
+}
