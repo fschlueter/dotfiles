@@ -85,4 +85,7 @@ source ~/.env/tools/pyright
 ### Set up working environments
 
 source ~/.env/env  # coding and software environment
+
+# Claude Code login token (exports CLAUDE_CODE_OAUTH_TOKEN); file is per host, chmod 600, not in the repo
+[[ -r ~/.claude_token ]] && source ~/.claude_token
 unset _sh
