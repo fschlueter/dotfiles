@@ -24,8 +24,9 @@ template = '<p:secondary-prompt-background,transparent></><,p:secondary-promp
 foreground = 'p:secondary-prompt-foreground'
 background = 'transparent'
 
+# ^C is hex red on purpose: Matrix Contrast has no red ANSI slot
 [transient_prompt]
-template = '<p:transient-prompt-background,transparent></><,p:transient-prompt-background> {{ .Folder }} </><p:transient-prompt-background,transparent></> '
+template = '<p:transient-prompt-background,transparent></><,p:transient-prompt-background> {{ if .Interrupted }}<#ff3b3b>^C</> {{ end }}{{ .Folder }} </><p:transient-prompt-background,transparent></> '
 foreground = 'p:transient-prompt-foreground'
 background = 'transparent'
 
