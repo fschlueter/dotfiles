@@ -27,7 +27,7 @@ Code should work on macOS and Linux; gate OS-specific parts with `$OSTYPE`. Host
 **One source: the Ghostty palette** (16 ANSI slots plus text/background/cursor). Ghostty, herdr, oh-my-posh and Claude Code are tied to it by using only ANSI slots, so a palette change recolors all of them; give them new colors as slot names (`red`, `lightBlack`, ...), never hex. The palette has two contexts:
 
 - **Outside herdr**: `Matrix Contrast` (`.config/ghostty/themes/`, selected in `config.ghostty`; reload with Cmd+Shift+,). A tweaked Matrix that repurposes slots so git diffs stay readable: 1 "red" = lime-yellow, 4 = dark green, 5 = cyan-blue, 8 (zsh-autosuggestions) = muted grey-green; default text is teal. The slot comments in the file say what uses each slot.
-- **Inside herdr**: a different Ghostty theme, chosen with `herdr-theme <name>` (state: `~/.config/ghostty/theme-herdr`, default Rose Pine; the repo adds `Amber Contrast`). The `herdr` wrapper (`.env/tools/herdr`) sends that theme's colors via OSC 4/10/11/12 just before attaching and resets them (OSC 104/110-112) on exit, so it applies on the next attach, from a shell that has the current wrapper.
+- **Inside herdr**: a different Ghostty theme, chosen with `herdr-theme <name>` (state: `~/.config/ghostty/theme-herdr`, default Rose Pine; the repo adds `Rose Pine Contrast` and `Amber Contrast`). The `herdr` wrapper (`.env/tools/herdr`) sends that theme's colors via OSC 4/10/11/12 just before attaching and resets them (OSC 104/110-112) on exit, so it applies on the next attach, from a shell that has the current wrapper.
 
 What follows the palette:
 

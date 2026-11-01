@@ -64,7 +64,7 @@ function herdr-theme() {
 		local name
 		name="$(cat "$_herdr_theme_state" 2>/dev/null)"
 		echo "herdr pane theme: ${name:-Rose Pine}"
-		echo "e.g. herdr-theme 'Rose Pine' | 'Rose Pine Moon' | 'Amber Contrast' | 'Trapped in Amber'"
+		echo "e.g. herdr-theme 'Rose Pine' | 'Rose Pine Contrast' | 'Rose Pine Moon' | 'Amber Contrast' | 'Trapped in Amber'"
 		return
 	fi
 	_herdr_theme_file "$1" >/dev/null || { echo "No Ghostty theme named '$1'." >&2; return 1; }
