@@ -1,6 +1,7 @@
 export ENVS_DIR="/scratch/fschlueter/envs"
 
-alias thisroot=". /net/apphome/home/fschlueter/scratch/root/install/bin/thisroot.sh"
+export ROOT_SETUP="$HOME/scratch/root/install/bin/thisroot.sh"  # also used by ~/.claude/scripts/run-with-root.sh
+alias thisroot=". $ROOT_SETUP"
 
 alias parallel="~/.local/bin/parallel"
 alias augerenv='eval "$(/scratch/fschlueter/auger/ape/ape sh externals --rc=/scratch/fschlueter/auger/ape/ape.rc)"'

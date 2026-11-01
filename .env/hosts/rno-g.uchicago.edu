@@ -7,7 +7,8 @@ ENVS_DIR="/mnt/rno-g-0/felix/envs"
 export data="/mnt/rno-g-0/felix"
 export DOTFILES_TMUX_PLUGINS="$HOME/felix/tmux/plugins"  # read by .tmux.conf
 
-alias thisroot=". /mnt/rno-g-0/felix/root/install/bin/thisroot.sh"
+export ROOT_SETUP="/mnt/rno-g-0/felix/root/install/bin/thisroot.sh"  # also used by ~/.claude/scripts/run-with-root.sh
+alias thisroot=". $ROOT_SETUP"
 alias cvmfs="source /cvmfs/rnog.opensciencegrid.org/software/trunk/setup.sh"
 alias rpyroot="pyroot; thisroot"
 alias RNO_G_INSTALL_DIR='export RNO_G_INSTALL_DIR="$HOME/software/rnog/install"'
