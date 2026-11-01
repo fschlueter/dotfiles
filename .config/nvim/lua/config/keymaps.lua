@@ -16,3 +16,10 @@ for _, jump in ipairs(jumps) do
     vim.keymap.set('i', lhs, '<C-o>' .. jump.motion, { desc = jump.desc })
   end
 end
+
+-- Find files in the current file's dir (cwd for non-file buffers); <leader><space> uses the root dir
+vim.keymap.set('n', '<leader>fd', function()
+  local file = vim.api.nvim_buf_get_name(0)
+  local dir = file ~= '' and vim.fs.dirname(file) or nil
+  Snacks.picker.files({ cwd = dir and vim.fn.isdirectory(dir) == 1 and dir or vim.uv.cwd() })
+end, { desc = 'Find Files (file dir)' })
