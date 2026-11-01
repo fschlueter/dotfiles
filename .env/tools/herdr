@@ -87,6 +87,23 @@ function herdr() {
 	command herdr "$@"
 }
 
+# GitHub plugins wanted on every host (herdr plugins run on the server side, so remote hosts need their own copy)
+_herdr_plugins="ChmaraX/herdr-gitview ChmaraX/herdr-nvim furkankly/zoetrope/herdr-plugin persiyanov/herdr-reviewr"
+
+# Usage: herdr-plugins-sync. Installs the plugins above that are missing here (herdr asks before each install).
+function herdr-plugins-sync() {
+	dot_have herdr || dot_install_herdr || return
+	local installed repo
+	installed="$(command herdr plugin list 2>/dev/null)"
+	for repo in $_herdr_plugins; do
+		if [[ $installed == *"github:$repo@"* ]]; then
+			echo "ok: $repo"
+		else
+			command herdr plugin install "$repo" || echo "failed: $repo" >&2
+		fi
+	done
+}
+
 # Completion (zsh: after compinit, the generated file registers itself via compdef; bash: complete -F)
 if dot_have herdr; then
 	if [[ -n ${ZSH_VERSION-} ]]; then _herdr_bin="$(whence -p herdr)"; else _herdr_bin="$(type -P herdr)"; fi
