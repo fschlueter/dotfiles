@@ -87,5 +87,9 @@ source ~/.env/tools/pyright
 source ~/.env/env  # coding and software environment
 
 # Claude Code login token (exports CLAUDE_CODE_OAUTH_TOKEN); file is per host, chmod 600, not in the repo
-[[ -r ~/.claude_token ]] && source ~/.claude_token
+if [[ -r ~/.claude_token ]]; then
+    source ~/.claude_token
+elif [[ -e ~/.claude_token ]]; then
+    echo "warning: ~/.claude_token exists but is not readable" >&2
+fi
 unset _sh
