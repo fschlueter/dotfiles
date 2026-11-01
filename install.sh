@@ -1,10 +1,22 @@
 #!/usr/bin/env bash
 # Install GNU Stow (macOS: Homebrew, Linux: from source into ~/.local) and symlink this repo into $HOME.
 # On Linux also installs zsh into ~/.local if missing.
-# Usage: ./install.sh [stow args], e.g. `./install.sh -n -v` for a dry run.
+# Usage: ./install.sh [--agents] [stow args], e.g. `./install.sh -n -v` for a dry run.
+#   --agents  also clone the private agent config repos (see AGENT_REPOS; needs SSH access)
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+AGENT_REPOS=(
+    "$HOME/.claude ssh://git@codeberg.org/fschlueter/claude-config.git"
+    "$HOME/.agents ssh://git@codeberg.org/fschlueter/agents.git"
+)
+
+agents=0
+stow_args=()
+for a in "$@"; do
+    if [[ "$a" == --agents ]]; then agents=1; else stow_args+=("$a"); fi
+done
 
 # Fail early with the full list of missing tools (no sudo here, so they can't be installed for you)
 require() {
@@ -49,6 +61,39 @@ install_zsh() {
         | sh -s -- -q -d "$HOME/.local" -e no
 }
 
+# Clone repo $2 into $1. An existing non-git $1 is kept (it may hold runtime state such as
+# logins and sessions); only the paths the repo tracks are moved into $1.backup-<date>.
+install_agent_repo() {
+    local dest="$1" url="$2" tmp backup f
+    if [[ -e "$dest/.git" ]]; then
+        if [[ "$(git -C "$dest" remote get-url origin 2>/dev/null)" == "$url" ]]; then
+            echo "agents: $dest already cloned"
+        else
+            echo "agents: $dest is another git repo, skipped" >&2
+        fi
+        return
+    fi
+
+    tmp="$(mktemp -d "$dest.clone.XXXXXX")"
+    git clone --quiet --no-checkout "$url" "$tmp/repo" || { rm -rf "$tmp"; return 1; }
+    mkdir -p "$dest"
+    mv "$tmp/repo/.git" "$dest/.git"
+    rm -rf "$tmp"
+
+    backup="$dest.backup-$(date +%Y%m%d-%H%M%S)"
+    while IFS= read -r f; do
+        if [[ -e "$dest/$f" || -L "$dest/$f" ]]; then
+            mkdir -p "$backup/$(dirname "$f")"
+            mv "$dest/$f" "$backup/$f"
+        fi
+    done < <(git -C "$dest" ls-tree -r --name-only HEAD)
+    git -C "$dest" reset --quiet --hard HEAD
+
+    echo "agents: cloned $url into $dest"
+    [[ -d "$backup" ]] && echo "agents: replaced files moved to $backup"
+    return 0
+}
+
 # So a previous ~/.local install is found (and the fresh one is usable below)
 export PATH="$HOME/.local/bin:$PATH"
 require git
@@ -73,4 +118,11 @@ for r in $DOTFILES_STOW_IGNORE; do ignore+=(--ignore="$r"); done
 
 echo "dotfiles: installing profile '$DOTFILES_PROFILE'"
 cd "$DOTFILES"
-stow --restow --target="$HOME" ${ignore[@]+"${ignore[@]}"} "$@" .
+stow --restow --target="$HOME" ${ignore[@]+"${ignore[@]}"} ${stow_args[@]+"${stow_args[@]}"} .
+
+if ((agents)); then
+    for r in "${AGENT_REPOS[@]}"; do
+        # shellcheck disable=SC2086  # "dest url" pair
+        install_agent_repo $r
+    done
+fi

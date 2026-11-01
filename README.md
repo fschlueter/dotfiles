@@ -112,6 +112,8 @@ git clone <repo-url> ~/.dotfiles
 
 Extra arguments are passed to stow, e.g. `./install.sh -n -v` for a dry run.
 
+Optional: `./install.sh --agents` also clones my private agent configs (needs SSH access to them): `~/.claude` (Claude Code) and `~/.agents` (shared skills), listed in `AGENT_REPOS`. An existing directory is kept, since it may hold logins and sessions; only the files the repo tracks are moved to `<dir>.backup-<date>`. A directory that already is a clone is left alone.
+
 If a real file already exists at a link location (e.g. `~/.zshrc` or `~/.bashrc` on a fresh machine), stow aborts with a conflict. Move the file away, or run `./install.sh --adopt` to move it into the repo, then check `git diff`.
 
 ## How stow is used here
