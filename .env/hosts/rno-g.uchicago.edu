@@ -5,6 +5,7 @@ export PATH="$HOME/bin:$PATH:$HOME/software/rnog/install/bin:$HOME/software/bin"
 # virtualenv aliases are created by .env/env from $ENVS_DIR
 ENVS_DIR="/mnt/rno-g-0/felix/envs"
 export data="/mnt/rno-g-0/felix"
+export DOTFILES_TMUX_PLUGINS="$HOME/felix/tmux/plugins"  # read by .tmux.conf
 
 alias thisroot=". /mnt/rno-g-0/felix/root/install/bin/thisroot.sh"
 alias cvmfs="source /cvmfs/rnog.opensciencegrid.org/software/trunk/setup.sh"
