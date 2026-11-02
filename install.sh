@@ -63,11 +63,17 @@ install_zsh() {
 
 # Clone repo $2 into $1. An existing non-git $1 is kept (it may hold runtime state such as
 # logins and sessions); only the paths the repo tracks are moved into $1.backup-<date>.
+# Activates a repo's tracked .githooks/ dir, if it has one (git never does this on clone).
+use_repo_hooks() {
+    if [[ -d "$1/.githooks" ]]; then git -C "$1" config core.hooksPath .githooks; fi
+}
+
 install_agent_repo() {
     local dest="$1" url="$2" tmp backup f
     if [[ -e "$dest/.git" ]]; then
         if [[ "$(git -C "$dest" remote get-url origin 2>/dev/null)" == "$url" ]]; then
             echo "agents: $dest already cloned"
+            use_repo_hooks "$dest"
         else
             echo "agents: $dest is another git repo, skipped" >&2
         fi
@@ -89,6 +95,7 @@ install_agent_repo() {
     done < <(git -C "$dest" ls-tree -r --name-only HEAD)
     git -C "$dest" reset --quiet --hard HEAD
 
+    use_repo_hooks "$dest"
     echo "agents: cloned $url into $dest"
     [[ -d "$backup" ]] && echo "agents: replaced files moved to $backup"
     return 0

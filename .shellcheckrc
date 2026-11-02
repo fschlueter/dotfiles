@@ -1,4 +1,4 @@
-# Used by .githooks/pre-commit. Everything checked is sourced by bash (and zsh), not executed.
+# Used by .githooks/pre-commit. Most files checked are sourced by bash (and zsh), not executed.
 shell=bash
 # SC1090: `source ~/...` paths are dynamic.
 # SC2034/SC2154: variables are set in one sourced file and read in another (profiles -> .env/shell, ...).
