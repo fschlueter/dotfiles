@@ -93,6 +93,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.config/ohmyposh/` | oh-my-posh theme |
 | `.config/herdr/` | [herdr](https://herdr.dev) config (`config.toml`); `~/.config/herdr/` also holds herdr runtime state, so only the files are linked (`install.sh` pre-creates the folder) |
 | `.config/worktrunk/` | worktrunk user config: worktrees in `~/cowork/<repo>/<branch>`, NuRadioMC hooks (antenna-model symlink, C++ ray tracer build); `~/.config/worktrunk/` also holds approvals, so only the file is linked |
+| `.local/bin/dotsync` | `dotsync [push\|pull\|status]`: pushes or pulls `~/.dotfiles`, `~/.agents`, `~/.claude` (default `$DOTFILES_SYNC`: push on the laptop, pull elsewhere); after pulling dotfile changes it re-runs `install.sh` |
 | `.local/bin/wt-herdr` | opens (or refocuses) a worktree in its own herdr workspace; used by `wth` and as `wt switch -x wt-herdr` |
 | `.config/yazi/` | yazi config; plugins are pinned in `package.toml` (manage with `ya pkg add/upgrade`) and not tracked in git |
 | `.tmux.conf` | tmux: passes image escape codes and `TERM`/`TERM_PROGRAM` through, so yazi image previews work inside tmux; Ctrl+S as a second prefix next to Ctrl+B; plugins via TPM in `$DOTFILES_TMUX_PLUGINS` (vim-tmux-navigator, tmux-power), cloned on first start |

@@ -29,7 +29,7 @@ fi
 while IFS= read -r f; do
     case "$f" in
         .zshrc | *.zsh) shells="zsh" ;;
-        .bashrc | *.sh | .githooks/*) shells="bash" ;;
+        .bashrc | *.sh | .githooks/* | .local/bin/*) shells="bash" ;;
         .env/*) shells="bash zsh" ;;
         *) continue ;;
     esac

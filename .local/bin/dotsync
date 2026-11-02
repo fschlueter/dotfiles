@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Push or pull the config repos ~/.dotfiles, ~/.agents and ~/.claude.
+# Usage: dotsync [push|pull|status]   (default: $DOTFILES_SYNC from the host profile, else pull)
+#   push    git push each repo; warns about uncommitted changes (never commits them)
+#   pull    git pull --ff-only each repo; after a dotfiles update also runs ~/.dotfiles/install.sh
+#   status  fetch and show dirty files and ahead/behind counts
+# Repos that are missing on this host are skipped.
+set -uo pipefail
+
+REPOS=("$HOME/.dotfiles" "$HOME/.agents" "$HOME/.claude")
+mode="${1:-${DOTFILES_SYNC:-pull}}"
+case "$mode" in
+    push | pull | status) ;;
+    *) echo "usage: dotsync [push|pull|status]" >&2; exit 2 ;;
+esac
+
+fail=0
+for r in "${REPOS[@]}"; do
+    name="~${r#"$HOME"}"
+    if [[ ! -e "$r/.git" ]]; then
+        echo "== $name: no git repo, skipped"
+        continue
+    fi
+    echo "== $name"
+    [[ $mode != pull ]] && dirty="$(git -C "$r" status --porcelain)"
+    case "$mode" in
+        push)
+            [[ -n $dirty ]] && printf 'uncommitted (not pushed):\n%s\n' "$dirty"
+            if ! git -C "$r" push; then
+                echo "push failed; if the remote has new commits, run 'dotsync pull' first" >&2
+                fail=1
+            fi
+            ;;
+        pull)
+            before="$(git -C "$r" rev-parse HEAD)"
+            git -C "$r" pull --ff-only || { fail=1; continue; }
+            if [[ $r == "$HOME/.dotfiles" && "$(git -C "$r" rev-parse HEAD)" != "$before" ]]; then
+                "$r/install.sh" || fail=1  # new files need links; also updates submodules
+            fi
+            ;;
+        status)
+            [[ -n $dirty ]] && printf 'uncommitted:\n%s\n' "$dirty"
+            if ! git -C "$r" fetch --quiet; then
+                echo "fetch failed"
+                fail=1
+            elif counts="$(git -C "$r" rev-list --left-right --count '@{u}...HEAD' 2>/dev/null)"; then
+                read -r behind ahead <<<"$counts"
+                echo "ahead $ahead, behind $behind"
+            else
+                echo "no upstream branch"
+            fi
+            ;;
+    esac
+done
+exit "$fail"
