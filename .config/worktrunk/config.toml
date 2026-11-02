@@ -13,3 +13,14 @@ antenna-models = "ln -sfn {{ primary_worktree_path }}/NuRadioReco/detector/Anten
 # Build the C++ ray tracer; its on-the-fly build calls `python` and silently falls back to the Python ray tracer
 # if that fails (until nu-radio/NuRadioMC#1194 is merged). Log: `wt config state logs`.
 raytracer = "cd NuRadioMC/SignalProp/AnalyticRayTracingImpl/CPPAnalyticRayTracing && GSLDIR=$(gsl-config --prefix) \"${ENVS_DIR:-$HOME/software/envs}/py314/bin/python\" setup.py build_ext --inplace"
+
+# mattak (main checkout ~/software/rnog/daq/mattak)
+[projects."github.com/RNO-G/mattak".pre-start]
+# Test data (gitignored, needed for RNO_G_DATA) lives only in the main checkout
+test-data = "ln -sfn {{ primary_worktree_path }}/tests/data {{ worktree_path }}/tests/data"
+
+[projects."github.com/RNO-G/mattak".post-start]
+# Per-worktree libmattak in <worktree>/install. -DRNO_G_INSTALL_DIR is required: the shell's RNO_G_INSTALL_DIR
+# points to the shared install, which `cmake --install` would otherwise overwrite. librno-g OFF: main does not build
+# against the installed librno-g; pybind OFF: pybind11 is in no env. Log: `wt config state logs`.
+build = "cmake -S . -B build -DLIBRNO_G_SUPPORT=OFF -DWITH_PYBIND=OFF -DRNO_G_INSTALL_DIR={{ worktree_path }}/install && cmake --build build -j8 && cmake --install build"

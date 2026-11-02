@@ -14,18 +14,16 @@ if [[ -d $ENVS_DIR ]]; then
     done
 fi
 
-# Set Python enviourment: modules (relative to $SOFTWARE) added to PYTHONPATH. Default list; a host profile
-# (.env/hosts/) can add to it with python_module_extra=(...) or replace it by setting python_module=(...).
+# Set Python enviourment: modules (relative to $SOFTWARE) added to PYTHONPATH. Default list (empty: NuRadio and
+# mattak are editable installs in the envs); a host profile (.env/hosts/) can add to it with python_module_extra=(...)
+# or replace it by setting python_module=(...).
 if [[ -z ${python_module+x} ]]; then
-    python_module=(
-        "nuradio"
-        "rnog/mattak/py"
-    )
+    python_module=()
 fi
 python_module+=(${python_module_extra[@]+"${python_module_extra[@]}"})
 
 # export PYTHONPATH=  # Reset pythonpath
-for m in "${python_module[@]}"; do
+for m in ${python_module[@]+"${python_module[@]}"}; do
     path_append PYTHONPATH "$SOFTWARE/$m"
 done
 

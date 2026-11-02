@@ -26,7 +26,6 @@ python_module_extra=(
     "python/RadioPropa/radiopropa/install/lib/python3.11/site-packages/radiopropa"
     "python/radioanalysis"
     
-    "rnog/daq/mattak/py"
     "rnog/daq/stationrc/"
     "rnog/analysis/analysis-tools"
     "rnog/repos/antenna-positioning"
