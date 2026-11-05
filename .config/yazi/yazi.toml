@@ -17,11 +17,11 @@ cache_dir = "~/.cache/yazi"
 [plugin]
 # Upscale small images to fill the preview pane (local plugin, see plugins/fit.yazi)
 prepend_previewers = [
-  { mime = "image/{png,jpeg,webp,bmp,gif}", run = "fit --timeout=1.5 --threshold=1.1 --keep=50" },
+  { mime = "image/{png,jpeg,webp,bmp,gif}", run = "fit --timeout=1.5 --threshold=1.1 --keep=50 --margin=5" },
 ]
 # Upscale the images on the current page in the background
 prepend_preloaders = [
-  { mime = "image/{png,jpeg,webp,bmp,gif}", run = "fit --timeout=1.5 --threshold=1.1 --keep=50" },
+  { mime = "image/{png,jpeg,webp,bmp,gif}", run = "fit --timeout=1.5 --threshold=1.1 --keep=50 --margin=5" },
 ]
 
 [[plugin.prepend_fetchers]]
