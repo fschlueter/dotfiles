@@ -1,9 +1,13 @@
 font-family = MesloLGL Nerd Font Mono
-macos-titlebar-style = hidden
+font-family = Herdr Agent Icons Max Regular
 
 font-codepoint-map = U+E007=Symbols Nerd Font
+font-codepoint-map = U+E1A0-U+E1BA=Herdr Agent Icons Max
+font-codepoint-map = U+E1C0-U+E1C5=Herdr Agent Icons Max
+
 copy-on-select = clipboard
 
+macos-titlebar-style = hidden
 keybind = ctrl+left=esc:b
 keybind = ctrl+right=esc:f
 
@@ -11,3 +15,4 @@ shell-integration-features = no-ssh-terminfo,ssh-env,no-cursor
 cursor-style = block
 
 theme = Matrix Contrast
+
