@@ -54,12 +54,13 @@ style = 'diamond'
 type = 'prompt'
 alignment = 'left'
 
+# System info: load always; CPU, memory and GPU only at >= 80%.
 [[blocks.segments]]
 type = "sysinfo"
 powerline_symbol = ''
 foreground = "p:sysinfo-foreground"
 background = "p:sysinfo-background"
-template = " \uF0E4 {{ round .Load1 .Precision }}"
+template = " \uF0E4 {{ round .Load1 .Precision }} "
 style = "powerline"
 
 [blocks.segments.options]
@@ -71,14 +72,14 @@ style = "powerline"
 powerline_symbol = "\uE0B0"
 foreground = "p:sysinfo-foreground"
 background = "p:sysinfo-background"
-template = "{{ if .Env.OMP_CPU }} \U000F061A {{ .Env.OMP_CPU }}%{{ end }}"
+template = "{{ if ge (atoi .Env.OMP_CPU) 80 }} \U000F061A {{ .Env.OMP_CPU }}% {{ end }}"
 
 [[blocks.segments]]
 type = "sysinfo"
 powerline_symbol = ""
 foreground = "p:sysinfo-foreground"
 background = "p:sysinfo-background"
-template = " \U000F035B {{ round .PhysicalPercentUsed .Precision }}%"
+template = "{{ if ge .PhysicalPercentUsed 80.0 }} \U000F035B {{ round .PhysicalPercentUsed .Precision }}% {{ end }}"
 style = "powerline"
 
 [blocks.segments.options]
@@ -90,7 +91,7 @@ style = "powerline"
 powerline_symbol = "\uE0B0"
 foreground = "p:sysinfo-foreground"
 background = "p:sysinfo-background"
-template = "{{ if .Env.OMP_GPU }} \U000F0379 {{ .Env.OMP_GPU }}% {{ end }}"
+template = "{{ if ge (atoi .Env.OMP_GPU) 80 }} \U000F0379 {{ .Env.OMP_GPU }}% {{ end }}"
 
 [[blocks]]
 type = 'prompt'
