@@ -4,8 +4,8 @@ Personal shell/app config for macOS (primary) and Linux servers. See `README.md`
 
 ## Layout and stow
 
-- The repo root is one GNU Stow package mirroring `$HOME`; `./install.sh` (idempotent) runs `stow --restow --target=$HOME .`.
-- To add a config, put it at its home-relative path and re-run `./install.sh`. Files that must not be linked go in `.stow-local-ignore` (Perl regexes; it replaces stow's defaults, so git files are listed too).
+- The repo root is one GNU Stow package mirroring `$HOME`; `install.sh` (idempotent) runs `stow --restow --target=$HOME .`.
+- To add a config, put it at its home-relative path and re-run `~/.dotfiles/install.sh` (exactly this form, no `cd`/chain: only it runs outside Claude's sandbox, which blocks writes to `$HOME`). Files that must not be linked go in `.stow-local-ignore` (Perl regexes; it replaces stow's defaults, so git files are listed too).
 - Runtime state is gitignored and stow-ignored (e.g. `.config/ohmyposh/theme`, `.config/yazi/plugins/`, `.config/aerospace/session.tsv`).
 - Zsh plugins are git submodules in `.zsh/plugins/`.
 
