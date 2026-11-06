@@ -100,7 +100,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.tmux.conf` | tmux: passes image escape codes and `TERM`/`TERM_PROGRAM` through, so yazi image previews work inside tmux; Ctrl+S as a second prefix next to Ctrl+B; plugins via TPM in `$DOTFILES_TMUX_PLUGINS` (vim-tmux-navigator, tmux-power), cloned on first start |
 | `.config/nvim/` | [LazyVim](https://www.lazyvim.org) config (from the starter); plugins are installed by lazy.nvim on first start, pinned in `lazy-lock.json` |
 | `.config/aerospace/` | [AeroSpace](https://github.com/nikitabobko/AeroSpace) window manager config and session save/restore (macOS, see its [README](.config/aerospace/README.md)) |
-| `.config/borders/` | [JankyBorders](https://github.com/FelixKratz/JankyBorders) window borders, started by AeroSpace; `bordersrc` takes the active color from palette slot 2 of the Ghostty theme, no border on floating, accordion, fullscreen or lone windows (AeroSpace reruns it on focus/layout change); `borders-reload` reapplies it (macOS) |
+| `.config/borders/` | [JankyBorders](https://github.com/FelixKratz/JankyBorders) window borders, started by AeroSpace; `bordersrc` colors them like herdr's pane borders (slots 5/7 of the herdr theme, reapplied by `herdr-theme`), no focused border on floating, accordion, fullscreen or lone windows (AeroSpace reruns it on focus/layout change); `borders-reload` reapplies it (macOS) |
 | `.raycast/scripts/` | [Raycast](https://www.raycast.com) script commands: `yazi` (floating kitty window), `rnog` (copies a Keychain password, clears the clipboard after 30 s) (macOS) |
 
 ## Install

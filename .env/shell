@@ -14,7 +14,7 @@ else
 fi
 alias grep="grep --color=auto"
 if [[ "$OSTYPE" == darwin* ]]; then
-    alias borders-reload="~/.config/borders/bordersrc"  # re-color window borders after a Ghostty theme change
+    alias borders-reload="~/.config/borders/bordersrc"  # reapply window borders (bordersrc)
 fi
 
 # Ghostty on the laptop sets TERM=xterm-ghostty, which servers usually have no terminfo for

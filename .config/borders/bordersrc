@@ -1,29 +1,33 @@
 #!/bin/bash
 # JankyBorders config, run by `borders` at start (no args). Rerun to apply changes live (alias borders-reload):
 # calling `borders <args>` while it runs updates the running instance.
-# Active border = palette slot $ACCENT_SLOT of the Ghostty theme selected in config.ghostty; inactive = none.
+# Colors as herdr draws its pane borders with theme "terminal" (focused: accent = magenta = slot 5,
+# others: ratatui Gray = slot 7), taken from the herdr Ghostty theme (`herdr-theme`, default Rose Pine).
 
-ACCENT_SLOT=2
-FALLBACK=39ff14
+ACTIVE_SLOT=5
+INACTIVE_SLOT=7
 
-# Ghostty theme name ("theme = light:A,dark:B" -> B)
-theme="$(sed -nE 's/^theme *= *"?([^"]*)"?.*/\1/p' "$HOME/.config/ghostty/config.ghostty" | tail -1)"
-[[ "$theme" == *dark:* ]] && theme="${theme#*dark:}"
-theme="${theme%%,*}"
+theme="$(cat "$HOME/.config/ghostty/theme-herdr" 2>/dev/null)"
+theme="${theme:-Rose Pine}"
 
-hex=""
-for d in "$HOME/.config/ghostty/themes" /Applications/Ghostty.app/Contents/Resources/ghostty/themes; do
-	[[ -n "$theme" && -f "$d/$theme" ]] || continue
-	hex="$(sed -nE "s/^palette *= *$ACCENT_SLOT *= *#?([0-9a-fA-F]{6}).*/\1/p" "$d/$theme" | tail -1)"
-	break
-done
+# Prints palette slot $1 of the theme as rrggbb
+slot() {
+	local d
+	for d in "$HOME/.config/ghostty/themes" /Applications/Ghostty.app/Contents/Resources/ghostty/themes; do
+		[[ -f "$d/$theme" ]] || continue
+		sed -nE "s/^palette *= *$1 *= *#?([0-9a-fA-F]{6}).*/\1/p" "$d/$theme" | tail -1
+		return
+	done
+}
+active_hex="$(slot "$ACTIVE_SLOT")"
+inactive_hex="$(slot "$INACTIVE_SLOT")"
 
-# No border where it adds nothing: focused window floating, in an accordion, AeroSpace-fullscreen
+# No focused border where it adds nothing: focused window floating, in an accordion, AeroSpace-fullscreen
 # or the only tiled window on its workspace.
 # AeroSpace runs this with "hook" on focus change and after layout/fullscreen bindings; a closed window can
 # still be listed at that moment, so the hook checks once more shortly after.
 apply() {
-	local active="0xe6${hex:-$FALLBACK}" state tiled log  # 0xAARRGGBB
+	local active="0xe6${active_hex:-c4a7e7}" state tiled  # 0xAARRGGBB
 	state="$(aerospace list-windows --focused --format '%{window-parent-container-layout} %{window-is-fullscreen}' 2>/dev/null)"
 	tiled="$(aerospace list-windows --workspace focused --format '%{window-parent-container-layout}' 2>/dev/null |
 		grep -cv '^floating')"
@@ -31,15 +35,12 @@ apply() {
 		floating* | *accordion* | *true) active=0x00000000 ;;
 		*) [[ "$tiled" -le 1 ]] && active=0x00000000 ;;
 	esac
-	# debug log, only while its folder exists
-	log="$HOME/cowork/scratchpad/borders/events.log"
-	[[ -d "${log%/*}" ]] && echo "$(date +%T) ${1:-start} state='$state' tiled=$tiled -> $active" >>"$log"
 	borders style=round width=5.0 hidpi=on ax_focus=on \
-		active_color="$active" inactive_color=0x00000000
+		active_color="$active" inactive_color="0xe6${inactive_hex:-e0def4}"
 }
 
-apply "$1"
+apply
 if [[ "$1" == hook ]]; then
 	sleep 0.3
-	apply hook-recheck
+	apply
 fi

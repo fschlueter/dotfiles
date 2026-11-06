@@ -69,6 +69,8 @@ function herdr-theme() {
 	fi
 	_herdr_theme_file "$1" >/dev/null || { echo "No Ghostty theme named '$1'." >&2; return 1; }
 	echo "$1" >"$_herdr_theme_state"
+	# window borders use the herdr theme too
+	[[ -x ~/.config/borders/bordersrc ]] && ~/.config/borders/bordersrc
 	echo "Saved; applies the next time herdr attaches."
 }
 
