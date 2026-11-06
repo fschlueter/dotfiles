@@ -53,6 +53,8 @@ fi
 
 alias pip="uv pip"
 alias venv="uv venv"
+# python with a git worktree's packages shadowing the main checkout's (pyw --env NAME ...)
+alias pyw='$HOME/.claude/scripts/pyw'
 
 alias gitclean='git branch --merged | grep -Ev "(^\*|master|main|develop)" | xargs git branch -d'
 alias gitadd='git ls-files --modified | xargs git add'
