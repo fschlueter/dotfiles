@@ -93,12 +93,12 @@ key-mapping.preset = 'qwerty'
 #                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
 #                 See:
 #                 https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
-gaps.inner.horizontal = 10
-gaps.inner.vertical = 10
-gaps.outer.left = 5
-gaps.outer.bottom = 3
-gaps.outer.top = 5
-gaps.outer.right = 5
+gaps.inner.horizontal = 15
+gaps.inner.vertical = 15
+gaps.outer.left = 10
+gaps.outer.bottom = 10
+gaps.outer.top = 12
+gaps.outer.right = 10
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -212,10 +212,6 @@ alt-shift-backslash = 'move-node-to-monitor --wrap-around next'
 
 
 alt-shift-f = ['fullscreen', 'exec-and-forget ~/.config/borders/bordersrc hook']
-alt-shift-g = "balance-sizes"
-
-# Session save / restore (see scripts in ~/.config/aerospace/)
-alt-shift-comma = 'exec-and-forget /bin/bash -lc ~/.config/aerospace/save-session.sh'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 alt-shift-semicolon = 'mode service'
@@ -224,15 +220,20 @@ alt-shift-semicolon = 'mode service'
 [mode.service.binding]
 esc = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'exec-and-forget ~/.config/borders/bordersrc hook', 'mode main'] # reset layout
+
 f = [
   'layout floating tiling',
   'exec-and-forget ~/.config/borders/bordersrc hook',
   'mode main',
-] # Toggle between floating and tiling layout
-backspace = ['close-all-windows-but-current', 'mode main']
+] 
 
 # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
 #s = ['layout sticky tiling', 'mode main']
+
+b = ["balance-sizes", "mode main"]
+
+# Session save / restore (see scripts in ~/.config/aerospace/)
+s = ['exec-and-forget /bin/bash -lc ~/.config/aerospace/save-session.sh', 'mode main']
 
 alt-shift-h = ['join-with left', 'mode main']
 alt-shift-j = ['join-with down', 'mode main']
