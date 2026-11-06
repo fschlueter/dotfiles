@@ -59,3 +59,5 @@ bindkey '^[[A' history-substring-search-up    # Up
 bindkey '^[[B' history-substring-search-down  # Down
 bindkey '^[OA' history-substring-search-up    # Up/Down in application cursor mode (e.g. inside tmux)
 bindkey '^[OB' history-substring-search-down
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
