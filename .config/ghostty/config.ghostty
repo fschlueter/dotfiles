@@ -10,6 +10,8 @@ copy-on-select = clipboard
 macos-titlebar-style = hidden
 keybind = ctrl+left=esc:b
 keybind = ctrl+right=esc:f
+# cmd+a: focus Claude Code's band above the prompt (open questions); sends ctrl+x tab, replaces select-all
+keybind = cmd+a=text:\x18\x09
 
 shell-integration-features = no-ssh-terminfo,ssh-env,no-cursor
 cursor-style = block
