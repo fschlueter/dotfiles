@@ -2,8 +2,8 @@
 # git status and syntax stay readable. See Matrix Contrast for what uses each slot.
 # Used for herdr panes via `herdr-theme 'Amber Contrast'` (.env/tools/herdr); usable as a Ghostty theme too.
 
-# 0 black: zsh-hl comments, dim UI bits
-palette = 0 = #2e2418
+# 0 black: zsh-hl comments, dim UI bits, herdr active sidebar row (raised from #2e2418 for that)
+palette = 0 = #3e3020
 # 1 "red": git removed lines (-), unstaged files, errors
 palette = 1 = #ff4d2e
 # 2 "green" (gold here): git added lines (+), staged files, valid commands

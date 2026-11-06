@@ -2,7 +2,8 @@
 # background, now 6.2:1 like red (-). All other colors unchanged.
 # Used for herdr panes via `herdr-theme 'Rose Pine Contrast'` (.env/tools/herdr); usable as a Ghostty theme too.
 
-palette = 0 = #26233a
+# 0: raised from Rose Pine's #26233a so herdr's active sidebar row stands out
+palette = 0 = #34304d
 palette = 1 = #eb6f92
 # 2 "green" (pine): git added lines (+), staged files, valid commands; bundled: #31748f
 palette = 2 = #4fa3c4

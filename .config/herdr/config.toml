@@ -38,6 +38,11 @@ name = "terminal"  # follow the pane palette, which `herdr-theme` (.env/tools/he
 # text = "#cdd6f4"
 
 auto_switch = false
+
+# Active sidebar row: the terminal theme's default DarkGray (slot 8) is too bright behind the text; slot 0 instead
+[theme.custom]
+active_row_bg = "black"
+
 [terminal]
 # Executable used for new interactive panes.
 # Empty means $SHELL, then /bin/sh.
