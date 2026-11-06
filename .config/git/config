@@ -1,0 +1,12 @@
+[user]
+	name = Felix Schlüter
+	email = felix.schluter@icecube.wisc.edu
+[init]
+	defaultBranch = main
+[core]
+	autocrlf = false
+[pager]
+	branch = false
+[color "diff"]
+	# Unchanged lines: default text, drawn faint (SGR 2), so +/- lines stand out in any palette.
+	context = normal dim

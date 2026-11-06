@@ -89,6 +89,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.env/tools/wt` | [worktrunk](https://worktrunk.dev) (`wt`, git worktrees), installed on first use on macOS (Homebrew; on Linux install it yourself); its shell integration (cd after `wt switch`, completion); `wth <branch>` = `wt switch` + open the worktree in its own herdr workspace |
 | `.env/tools/pyright` | `pyright` wrapper, installs the [pyright](https://github.com/microsoft/pyright) CLI on first use (`uv tool`); passes `--pythonpath $ENVS_DIR/$DEFAULT_ENV/bin/python` unless a project config or `--pythonpath` is given |
 | `.env/host`, `.env/hosts/` | host profiles (see above) |
+| `.config/git/` | git user config (`config`: identity, diff context lines drawn faint) and global ignore (`ignore`); a host's `~/.gitconfig`, if present, overrides `config` |
 | `.config/ghostty/` | [Ghostty](https://ghostty.org) terminal config |
 | `.config/kitty/` | [kitty](https://sw.kovidgoyal.net/kitty/) config, used for the floating yazi window (macOS) |
 | `.config/ohmyposh/` | oh-my-posh theme |
