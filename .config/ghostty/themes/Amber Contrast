@@ -16,7 +16,7 @@ palette = 4 = #d08a2a
 palette = 5 = #6cc6e0
 # 6 cyan (teal accent): diff hunk headers, symlinks
 palette = 6 = #7ed6c4
-# 7 white: context text (unchanged diff lines)
+# 7 white: default text where programs set it explicitly (git diff context lines use the default foreground, dimmed)
 palette = 7 = #dccab0
 # 8 bright black: zsh-autosuggestions, other dimmed hints
 palette = 8 = #8c7a64
