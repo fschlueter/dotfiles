@@ -1,38 +1,42 @@
 local colors = require("colors")
-local icons = require("icons")
 local settings = require("settings")
 
--- Padding item required because of bracket
-sbar.add("item", { width = 10 })
-
-local apple = sbar.add("alias", "Control Centre,BentoBox-0", {
+-- Control Center: SF Symbol switch.2 (themed glyph instead of an alias of the
+-- system icon); click opens the real Control Center menu bar extra.
+local control = sbar.add("item", "control", {
   position = "right",
-  -- icon = {
-  --   font = { size = 16.0 },
-  --   string = icons.apple,
-  --   color = colors.accent,
-  --   padding_right = 8,
-  --   padding_left = 8,
-  -- },
-  -- label = { drawing = false },
-  -- background = {
-  --   color = colors.bg2,
-  --   border_color = colors.accent,
-  --   border_width = 1
-  -- },
-  padding_left = 1,
-  padding_right = 1,
-  click_script = "$CONFIG_DIR/helpers/menus/bin/menus -s 'Control Centre,BentoBox-0'",
+  icon = {
+    string = "\u{10070A}",
+    color = colors.fg,
+    font = { style = settings.font.style_map["Regular"], size = 14.0 },
+    padding_left = 8,
+    padding_right = 8,
+  },
+  label = { drawing = false },
+  background = { color = colors.bg1, border_color = colors.dim },
 })
 
--- Double border for apple using a single item bracket
-sbar.add("bracket", { apple.name }, {
-  background = {
-    color = colors.transparent,
-    height = 30,
-    border_color = colors.dim,
-  }
+sbar.add("item", "control.padding", {
+  position = "right",
+  width = settings.group_paddings,
 })
 
--- Padding item required because of bracket
-sbar.add("item", { width = 12 })
+-- Highlighted (accent) while Control Center is presumably open: toggled by
+-- clicks, reset when another app takes focus (closing it is not observable).
+local open = false
+local function highlight(on)
+  open = on
+  control:set({
+    icon = { color = on and colors.accent or colors.fg },
+    background = { border_color = on and colors.accent or colors.dim },
+  })
+end
+
+control:subscribe("mouse.clicked", function(_)
+  highlight(not open)
+  sbar.exec("$CONFIG_DIR/helpers/menus/bin/menus -s 'Control Centre,BentoBox-0'")
+end)
+
+control:subscribe("front_app_switched", function(_)
+  if open then highlight(false) end
+end)
