@@ -1,5 +1,5 @@
 -- Volume widget: speaker icon only (no percentage), shape follows the volume.
---   muted: inverted cell (red background); sketchybar reports mute as volume 0,
+--   muted: dim icon, otherwise magenta; sketchybar reports mute as volume 0,
 --          so a 0 is checked with osascript.
 --   left click: popup listing the programs playing audio; click one to focus it.
 --   right click: Sound settings.  scroll: change volume (ctrl: 10x finer).
@@ -48,8 +48,7 @@ local function show(vol, muted)
     icon = icons.volume._10
   end
   volume:set({
-    icon = { string = icon, color = muted and colors.bg or colors.magenta },
-    background = { color = muted and colors.red or colors.bg1 },
+    icon = { string = icon, color = muted and colors.dim or colors.magenta },
   })
 end
 
