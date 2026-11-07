@@ -4,7 +4,7 @@ local colors = require("colors")
 -- Padding item required because of bracket
 sbar.add("item", { position = "right", width = 10 })
 
-local cal = sbar.add("item", {
+local cal = sbar.add("item", "calendar", {
   icon = {
     color = colors.fg,
     padding_left = 8,
@@ -25,6 +25,7 @@ local cal = sbar.add("item", {
   },
   position = "right",
   update_freq = 30,
+  popup = { align = "right" },
   padding_left = 1,
   padding_right = 1,
   background = {
@@ -49,3 +50,5 @@ sbar.add("item", { position = "right", width = settings.group_paddings })
 cal:subscribe({ "forced", "routine", "system_woke" }, function(env)
   cal:set({ icon = os.date("%a. %d %b."), label = os.date("%H:%M") })
 end)
+
+require("items.calendar_popup")(cal)

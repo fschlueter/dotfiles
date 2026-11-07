@@ -5,7 +5,7 @@ local cell = require("helpers.cell")
 sbar.add("item", { position = "right", width = settings.group_paddings })
 
 -- Time above weekday and day
-local cal = sbar.add("item", cell({
+local cal = sbar.add("item", "calendar", cell({
   position = "right",
   update_freq = 30,
   icon = {
@@ -32,3 +32,5 @@ sbar.add("item", { position = "right", width = settings.group_paddings })
 cal:subscribe({ "forced", "routine", "system_woke" }, function(env)
   cal:set({ icon = os.date("%H:%M"), label = os.date("%a %d") })
 end)
+
+require("items.calendar_popup")(cal)
