@@ -24,10 +24,12 @@ Code should work on macOS and Linux; gate OS-specific parts with `$OSTYPE`. Host
 
 ## Themes
 
-**One source: the Ghostty palette** (16 ANSI slots plus text/background/cursor). Ghostty, herdr, oh-my-posh and Claude Code are tied to it by using only ANSI slots, so a palette change recolors all of them; give them new colors as slot names (`red`, `lightBlack`, ...), never hex. The palette has two contexts:
+**One source: the Ghostty palette** (16 ANSI slots plus text/background/cursor). Ghostty, herdr, oh-my-posh and Claude Code are tied to it by using only ANSI slots, so a palette change recolors all of them; give them new colors as slot names (`red`, `lightBlack`, ...), never hex. Programs that need hex (borders, sketchybar, the herdr wrapper) read the selected theme file via `theme --file terminal|herdr`.
 
-- **Outside herdr**: `Matrix Contrast` (`.config/ghostty/themes/`, selected in `config.ghostty`; reload with Cmd+Shift+,). A tweaked Matrix that repurposes slots so git diffs stay readable: 1 "red" = lime-yellow, 4 = dark green, 5 = cyan-blue, 8 (zsh-autosuggestions) = muted grey-green; default text is teal. The slot comments in the file say what uses each slot.
-- **Inside herdr**: a different Ghostty theme, chosen with `herdr-theme <name>` (state: `~/.config/ghostty/theme-herdr`, default Rose Pine; the repo adds `Rose Pine Contrast` and `Amber Contrast`). The `herdr` wrapper (`.env/tools/herdr`) sends that theme's colors via OSC 4/10/11/12 just before attaching and resets them (OSC 104/110-112) on exit, so it applies on the next attach, from a shell that has the current wrapper.
+**Selecting a theme: `theme`** (`.local/bin/theme`; without args it shows the current ones). Themes live in `.config/ghostty/themes/` (plus Ghostty's bundled ones). Two contexts:
+
+- **Terminal** (Ghostty outside herdr): `theme NAME` writes the gitignored include `~/.config/ghostty/theme.ghostty`, which overrides the default `theme = Matrix Contrast` in `config.ghostty`; reload Ghostty with Cmd+Shift+,. Matrix Contrast is a tweaked Matrix that repurposes slots so git diffs stay readable: 1 "red" = lime-yellow, 4 = dark green, 5 = cyan-blue, 8 (zsh-autosuggestions) = muted grey-green; default text is teal. The slot comments in the file say what uses each slot.
+- **Inside herdr**: `theme --herdr NAME|same` (alias `herdr-theme`; state `~/.config/ghostty/theme-herdr`, empty = `same` = the terminal theme). When it differs from the terminal theme, the `herdr` wrapper (`.env/tools/herdr`) sends its colors via OSC 4/10/11/12 just before attaching and resets them (OSC 104/110-112) on exit, so it applies on the next attach, from a shell that has the current wrapper.
 
 What follows the palette:
 
@@ -38,6 +40,8 @@ What follows the palette:
   - `parentBackground`/`parentForeground` only resolve within the same `[[blocks]]`; separate blocks give the visible gap between groups. Powerline segments fade out on their own when last, so no extra "end" segment is needed.
   - Slow metrics (CPU/GPU) use the async cache pattern: `_omp_sysload` precmd hook in `.env/tools/omp` reads `~/.cache/ohmyposh/sysload` and refreshes it in a background job (`ps`/`ioreg` on macOS, `/proc/stat` deltas on Linux; GPU is macOS only), exposed as `OMP_CPU`/`OMP_GPU`. Bash and zsh compatible (zsh `precmd` / bash `PROMPT_COMMAND`); avoid zsh-only `&!`. Reuse it for any expensive prompt metric.
 - **Claude Code**: theme `custom:ansi-contrast` (`~/.claude/themes/ansi-contrast.json`, not in this repo): `dark-ansi` with the prompt, sidebar and memory backgrounds moved from slot 8 (too bright behind text) to slot 0. `~/.claude/scripts/statusline.sh` uses ANSI colors unless a custom theme is selected; the earlier custom theme `~/.claude/themes/rose-pine.json` (`custom:rose-pine`) is kept.
+- **sketchybar**: `colors.lua` maps roles to slots of the terminal theme (`theme_source` in `settings.lua`); `theme_watch.lua` reloads the bar within ~5 s when the selection or a theme file changes.
+- **Window borders**: `bordersrc` uses slots 5/7 of the herdr theme; `theme` reruns it.
 - **Shell output**: zsh-syntax-highlighting, zsh-autosuggestions (slot 8), `ls`/completion via `LS_COLORS`, git.
 
 **On their own (for now)**: Neovim and yazi use their own Everforest colorschemes and ignore the palette.

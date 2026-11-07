@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# Select the Ghostty color theme that the terminal, herdr, borders and sketchybar follow.
+# Usage: theme                      show the current themes and the repo's own ones
+#        theme NAME                 terminal theme (Ghostty outside herdr; also herdr when it is "same")
+#        theme --herdr NAME|same    herdr pane theme ("same": follow the terminal theme)
+#        theme --name terminal|herdr   print the effective theme name (for scripts)
+#        theme --file terminal|herdr   print the effective theme file (for scripts)
+# State: ~/.config/ghostty/theme.ghostty (`theme = NAME`, included by config.ghostty)
+#        and ~/.config/ghostty/theme-herdr (NAME, or empty/"same"). Both are gitignored.
+set -euo pipefail
+
+dir="$HOME/.config/ghostty"
+terminal_state="$dir/theme.ghostty"
+herdr_state="$dir/theme-herdr"
+theme_dirs=("$dir/themes" /Applications/Ghostty.app/Contents/Resources/ghostty/themes
+    /usr/share/ghostty/themes /usr/local/share/ghostty/themes)
+
+# Prints the file of theme $1 (own themes first, then Ghostty's bundled ones)
+theme_file() {
+    local d
+    for d in "${theme_dirs[@]}"; do
+        [[ -f "$d/$1" ]] && { echo "$d/$1"; return; }
+    done
+    return 1
+}
+
+# Last `theme = NAME` line of file $1
+theme_line() {
+    sed -nE 's/^theme *= *(.*[^ ]) *$/\1/p' "$1" 2>/dev/null | tail -1
+}
+
+terminal_name() {
+    local name
+    name="$(theme_line "$terminal_state")"
+    [[ -z $name ]] && name="$(theme_line "$dir/config.ghostty")"
+    echo "${name:-Matrix Contrast}"
+}
+
+herdr_name() {
+    local name
+    name="$(cat "$herdr_state" 2>/dev/null || true)"
+    if [[ -z $name || $name == same ]]; then terminal_name; else echo "$name"; fi
+}
+
+name_of() {
+    case "${1-}" in
+        terminal) terminal_name ;;
+        herdr) herdr_name ;;
+        *) echo "expected terminal or herdr, got '${1-}'" >&2; exit 2 ;;
+    esac
+}
+
+# Effects outside the state files: window borders use the herdr theme
+apply() {
+    [[ -x "$HOME/.config/borders/bordersrc" ]] && "$HOME/.config/borders/bordersrc" >/dev/null 2>&1 || true
+}
+
+check() {
+    theme_file "$1" >/dev/null || { echo "No Ghostty theme named '$1'." >&2; exit 1; }
+}
+
+case "${1-}" in
+    "")
+        herdr_raw="$(cat "$herdr_state" 2>/dev/null || true)"
+        echo "terminal: $(terminal_name)"
+        echo "herdr:    $(herdr_name)$([[ -z $herdr_raw || $herdr_raw == same ]] && echo ' (same)')"
+        own=("$dir"/themes/*)
+        own=("${own[@]##*/}")
+        printf 'own themes: %s' "${own[0]}"; printf ', %s' "${own[@]:1}"; echo
+        echo "(plus Ghostty's bundled ones: ghostty +list-themes)"
+        ;;
+    --name) name_of "${2-}" ;;
+    --file) theme_file "$(name_of "${2-}")" ;;
+    --herdr)
+        [[ -n ${2-} ]] || { echo "usage: theme --herdr NAME|same" >&2; exit 2; }
+        [[ $2 == same ]] || check "$2"
+        echo "$2" >"$herdr_state"
+        apply
+        echo "herdr: $(herdr_name); applies the next time herdr attaches."
+        ;;
+    -h | --help) sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//' ;;
+    -*) echo "unknown option '$1' (see theme --help)" >&2; exit 2 ;;
+    *)
+        check "$1"
+        printf '# Written by the theme script (~/.local/bin/theme); gitignored.\ntheme = %s\n' "$1" >"$terminal_state"
+        apply
+        echo "terminal: $1. Reload Ghostty with Cmd+Shift+, ; herdr follows on its next attach if it is 'same'."
+        ;;
+esac

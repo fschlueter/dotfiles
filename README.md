@@ -85,7 +85,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.env/tools/omp` | [oh-my-posh](https://ohmyposh.dev) prompt setup |
 | `.env/tools/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
 | `.env/tools/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
-| `.env/tools/herdr` | `herdr` wrapper, installs [herdr](https://herdr.dev) on first use (official installer); shell completion; key binding cheat sheet; recolors Ghostty with another theme while herdr is attached (`herdr-theme`); `herdr-plugins-sync` installs the GitHub plugins missing on this host (remote servers need their own) |
+| `.env/tools/herdr` | `herdr` wrapper, installs [herdr](https://herdr.dev) on first use (official installer); shell completion; key binding cheat sheet; recolors Ghostty with another theme while herdr is attached (`theme --herdr`, alias `herdr-theme`); `herdr-plugins-sync` installs the GitHub plugins missing on this host (remote servers need their own) |
 | `.env/tools/wt` | [worktrunk](https://worktrunk.dev) (`wt`, git worktrees), installed on first use on macOS (Homebrew; on Linux install it yourself); its shell integration (cd after `wt switch`, completion); `wth <branch>` = `wt switch` + open the worktree in its own herdr workspace |
 | `.env/tools/pyright` | `pyright` wrapper, installs the [pyright](https://github.com/microsoft/pyright) CLI on first use (`uv tool`); passes `--pythonpath $ENVS_DIR/$DEFAULT_ENV/bin/python` unless a project config or `--pythonpath` is given |
 | `.env/host`, `.env/hosts/` | host profiles (see above) |
@@ -96,13 +96,14 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.config/herdr/` | [herdr](https://herdr.dev) config (`config.toml`); `~/.config/herdr/` also holds herdr runtime state, so only the files are linked (`install.sh` pre-creates the folder) |
 | `.config/worktrunk/` | worktrunk user config: worktrees in `~/cowork/<repo>/<branch>`, NuRadioMC hooks (antenna-model symlink, C++ ray tracer build); `~/.config/worktrunk/` also holds approvals, so only the file is linked |
 | `.local/bin/dotsync` | `dotsync [push\|pull\|status]`: pushes or pulls `~/.dotfiles`, `~/.agents`, `~/.claude` (default `$DOTFILES_SYNC`: push on the laptop, pull elsewhere); after pulling dotfile changes it re-runs `install.sh` |
+| `.local/bin/theme` | `theme [NAME]`, `theme --herdr NAME\|same`: selects the Ghostty theme for the terminal and for herdr panes; borders and sketchybar follow it |
 | `.local/bin/wt-herdr` | opens (or refocuses) a worktree in its own herdr workspace; used by `wth` and as `wt switch -x wt-herdr` |
 | `.config/yazi/` | yazi config; plugins are pinned in `package.toml` (manage with `ya pkg add/upgrade`) and not tracked in git |
 | `.tmux.conf` | tmux: passes image escape codes and `TERM`/`TERM_PROGRAM` through, so yazi image previews work inside tmux; Ctrl+S as a second prefix next to Ctrl+B; plugins via TPM in `$DOTFILES_TMUX_PLUGINS` (vim-tmux-navigator, tmux-power), cloned on first start |
 | `.config/nvim/` | [LazyVim](https://www.lazyvim.org) config (from the starter); plugins are installed by lazy.nvim on first start, pinned in `lazy-lock.json` |
 | `.config/aerospace/` | [AeroSpace](https://github.com/nikitabobko/AeroSpace) window manager config and session save/restore (macOS, see its [README](.config/aerospace/README.md)) |
-| `.config/sketchybar/` | [SketchyBar](https://github.com/FelixKratz/SketchyBar) Lua config (SbarLua) with two layouts: horizontal at the top (`items/`) and vertical on the left (`items_left/`); `sbl [top\|left\|toggle]` (`layout.sh`) or right-clicking the Apple item switches them and sets AeroSpace's left gap (macOS) |
-| `.config/borders/` | [JankyBorders](https://github.com/FelixKratz/JankyBorders) window borders, started by AeroSpace; `bordersrc` colors them like herdr's pane borders (slots 5/7 of the herdr theme, reapplied by `herdr-theme`), no focused border on floating, accordion, fullscreen or lone windows (AeroSpace reruns it on focus/layout change); `borders-reload` reapplies it (macOS) |
+| `.config/sketchybar/` | [SketchyBar](https://github.com/FelixKratz/SketchyBar) Lua config (SbarLua) with two layouts: horizontal at the top (`items/`) and vertical on the left (`items_left/`); `sbl [top\|left\|toggle]` (`layout.sh`) or right-clicking the Apple item switches them and sets AeroSpace's left gap; colors follow the `theme` selection (macOS) |
+| `.config/borders/` | [JankyBorders](https://github.com/FelixKratz/JankyBorders) window borders, started by AeroSpace; `bordersrc` colors them like herdr's pane borders (slots 5/7 of the herdr theme, reapplied by `theme`), no focused border on floating, accordion, fullscreen or lone windows (AeroSpace reruns it on focus/layout change); `borders-reload` reapplies it (macOS) |
 | `.raycast/scripts/` | [Raycast](https://www.raycast.com) script commands: `yazi` (floating kitty window), `rnog` (copies a Keychain password, clears the clipboard after 30 s) (macOS) |
 
 ## Install
