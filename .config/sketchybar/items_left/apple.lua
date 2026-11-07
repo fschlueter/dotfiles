@@ -1,10 +1,11 @@
 local colors = require("colors")
 local icons = require("icons")
 local settings = require("settings")
+local apple_menu = require("items.apple_menu")
 
 sbar.add("item", { width = settings.group_paddings })
 
-sbar.add("item", {
+local apple = sbar.add("item", {
   icon = {
     font = { size = 16.0 },
     string = icons.apple,
@@ -21,9 +22,9 @@ sbar.add("item", {
     border_width = 1,
     height = 30,
   },
-  -- left click: Apple menu; right click: switch bar layout (top <-> left)
-  click_script = 'if [ "$BUTTON" = right ]; then "$CONFIG_DIR/layout.sh" toggle; '
-                 .. 'else "$CONFIG_DIR/helpers/menus/bin/menus" -s 0; fi',
 })
 
 sbar.add("item", { width = settings.group_paddings })
+
+-- left click: popup menu; right click: switch bar layout (top <-> left)
+apple_menu.attach(apple)
