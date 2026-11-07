@@ -9,7 +9,7 @@ local cal = sbar.add("item", cell({
   position = "right",
   update_freq = 30,
   icon = {
-    color = colors.fg,
+    color = colors.accent,
     font = {
       family = settings.font.numbers,
       style = settings.font.style_map["Bold"],
@@ -22,10 +22,9 @@ local cal = sbar.add("item", cell({
   },
   background = {
     color = colors.bg2,
-    border_color = colors.dim,
+    border_color = colors.accent,
     border_width = 1,
   },
-  -- click_script = "open -a 'Calendar'"
 }))
 
 sbar.add("item", { position = "right", width = settings.group_paddings })

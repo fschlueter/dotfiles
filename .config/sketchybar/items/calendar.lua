@@ -14,11 +14,14 @@ local cal = sbar.add("item", {
     },
   },
   label = {
-    color = colors.fg,
+    color = colors.accent,
     padding_right = 8,
     width = 49,
     align = "right",
-    font = { family = settings.font.numbers },
+    font = {
+      family = settings.font.numbers,
+      style = settings.font.style_map["Bold"],
+    },
   },
   position = "right",
   update_freq = 30,
@@ -26,10 +29,9 @@ local cal = sbar.add("item", {
   padding_right = 1,
   background = {
     color = colors.bg2,
-    border_color = colors.black,
+    border_color = colors.accent,
     border_width = 1
   },
-  -- click_script = "open -a 'Calendar'"
 })
 
 -- Double border for calendar using a single item bracket
