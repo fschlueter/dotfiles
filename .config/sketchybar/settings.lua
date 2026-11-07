@@ -11,6 +11,8 @@ end
 
 return {
   layout = read_layout(),
+  -- Colors: the theme selected with `theme` for the "terminal" or for "herdr"
+  theme_source = "terminal",
   paddings = 3,
   group_paddings = 5,
 

@@ -69,7 +69,7 @@ local ssid = sbar.add("item", {
   },
   background = {
     height = 2,
-    color = colors.grey,
+    color = colors.dim,
     y_offset = -15
   }
 })
@@ -139,11 +139,11 @@ net:subscribe("network_update", function(env)
   net:set({
     icon = {
       string = short(env.upload),
-      color = (env.upload == "000 Bps") and colors.grey or colors.red,
+      color = (env.upload == "000 Bps") and colors.dim or colors.red,
     },
     label = {
       string = short(env.download),
-      color = (env.download == "000 Bps") and colors.grey or colors.blue,
+      color = (env.download == "000 Bps") and colors.dim or colors.blue,
     },
   })
 end)
@@ -154,7 +154,7 @@ wifi:subscribe({"wifi_change", "system_woke"}, function(env)
     wifi:set({
       icon = {
         string = connected and icons.wifi.connected or icons.wifi.disconnected,
-        color = connected and colors.white or colors.red,
+        color = connected and colors.fg or colors.red,
       },
     })
   end)

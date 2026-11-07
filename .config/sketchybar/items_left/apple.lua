@@ -8,7 +8,7 @@ sbar.add("item", {
   icon = {
     font = { size = 16.0 },
     string = icons.apple,
-    color = colors.orange,
+    color = colors.accent,
     width = settings.cell_width,
     align = "center",
     padding_left = 0,
@@ -17,7 +17,7 @@ sbar.add("item", {
   label = { drawing = false },
   background = {
     color = colors.bg2,
-    border_color = colors.orange,
+    border_color = colors.accent,
     border_width = 1,
     height = 30,
   },

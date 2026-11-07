@@ -32,7 +32,7 @@ local media_info = sbar.add("item", {
   },
   label = {
     font = { size = 9 },
-    color = colors.with_alpha(colors.white, 0.6),
+    color = colors.with_alpha(colors.fg, 0.6),
     max_chars = 24,
   },
 })

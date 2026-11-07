@@ -9,6 +9,7 @@ sbar.begin_config()
 require("bar")
 require("default")
 require(require("settings").layout == "left" and "items_left" or "items")
+require("theme_watch")
 sbar.end_config()
 
 -- Run the event loop of the sketchybar module (without this there will be no

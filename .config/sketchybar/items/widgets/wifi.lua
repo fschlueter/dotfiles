@@ -90,7 +90,7 @@ local ssid = sbar.add("item", {
   },
   background = {
     height = 2,
-    color = colors.grey,
+    color = colors.dim,
     y_offset = -15
   }
 })
@@ -155,8 +155,8 @@ local router = sbar.add("item", {
 sbar.add("item", { position = "right", width = settings.group_paddings })
 
 wifi_up:subscribe("network_update", function(env)
-  local up_color = (env.upload == "000 Bps") and colors.grey or colors.red
-  local down_color = (env.download == "000 Bps") and colors.grey or colors.blue
+  local up_color = (env.upload == "000 Bps") and colors.dim or colors.red
+  local down_color = (env.download == "000 Bps") and colors.dim or colors.blue
   wifi_up:set({
     icon = { color = up_color },
     label = {
@@ -179,7 +179,7 @@ wifi:subscribe({"wifi_change", "system_woke"}, function(env)
     wifi:set({
       icon = {
         string = connected and icons.wifi.connected or icons.wifi.disconnected,
-        color = connected and colors.white or colors.red,
+        color = connected and colors.fg or colors.red,
       },
     })
   end)
