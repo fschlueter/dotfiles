@@ -58,9 +58,10 @@ void ax_select_menu_option(AXUIElementRef app, int id) {
   }
 }
 
-void ax_print_menu_options(AXUIElementRef app) {
+// Prints the titles of the front app's menus (without the Apple menu), one per
+// line; with `geometry` as "title<TAB>x<TAB>width" (points, from AX position/size).
+void ax_print_menu_options(AXUIElementRef app, bool geometry) {
   AXUIElementRef menubars_ref = NULL;
-  CFTypeRef menubar = NULL;
   CFArrayRef children_ref = NULL;
 
   AXError error = AXUIElementCopyAttributeValue(app,
@@ -82,7 +83,25 @@ void ax_print_menu_options(AXUIElementRef app) {
           uint32_t buffer_len = 2*CFStringGetLength(title);
           char buffer[2*CFStringGetLength(title)];
           CFStringGetCString(title, buffer, buffer_len, kCFStringEncodingUTF8);
-          printf("%s\n", buffer);
+          if (geometry) {
+            CGPoint position = CGPointZero;
+            CGSize size = CGSizeZero;
+            CFTypeRef position_ref = NULL;
+            CFTypeRef size_ref = NULL;
+            AXUIElementCopyAttributeValue(item, kAXPositionAttribute, &position_ref);
+            AXUIElementCopyAttributeValue(item, kAXSizeAttribute, &size_ref);
+            if (position_ref) {
+              AXValueGetValue(position_ref, kAXValueCGPointType, &position);
+              CFRelease(position_ref);
+            }
+            if (size_ref) {
+              AXValueGetValue(size_ref, kAXValueCGSizeType, &size);
+              CFRelease(size_ref);
+            }
+            printf("%s\t%d\t%d\n", buffer, (int)position.x, (int)size.width);
+          } else {
+            printf("%s\n", buffer);
+          }
           CFRelease(title);
         }
       }
@@ -226,14 +245,14 @@ AXUIElementRef ax_get_front_app() {
 
 int main (int argc, char **argv) {
   if (argc == 1) {
-    printf("Usage: %s [-l | -s id/alias ]\n", argv[0]);
+    printf("Usage: %s [-l | -L | -s id/alias ]\n", argv[0]);
     exit(0);
   }
   ax_init();
-  if (strcmp(argv[1], "-l") == 0) {
+  if (strcmp(argv[1], "-l") == 0 || strcmp(argv[1], "-L") == 0) {
     AXUIElementRef app = ax_get_front_app();
     if (!app) return 1;
-    ax_print_menu_options(app);
+    ax_print_menu_options(app, strcmp(argv[1], "-L") == 0);
     CFRelease(app);
   } else if (argc == 3 && strcmp(argv[1], "-s") == 0) {
     int id = 0;
