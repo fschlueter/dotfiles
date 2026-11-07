@@ -1,3 +1,15 @@
+-- Volume widget: speaker icon only (no percentage), shape follows the volume.
+--   muted: inverted cell (red background); sketchybar reports mute as volume 0,
+--          so a 0 is checked with osascript.
+--   left click: popup listing the programs playing audio; click one to focus it.
+--   right click: Sound settings.  scroll: change volume (ctrl: 10x finer).
+-- Programs playing audio come from coreaudiod's "audio-out" power assertions
+-- (`pmset -g assertions`). Their owning app is resolved by a small C helper
+-- (source embedded below, see owner_src) that is compiled with `cc` (Xcode
+-- command line tools) into ~/.cache/sketchybar/ on first load; without it the
+-- raw process names from `ps` are shown.
+-- Same as items/widgets/volume.lua except the item layout (cell()).
+
 local colors = require("colors")
 local icons = require("icons")
 local settings = require("settings")
@@ -6,7 +18,6 @@ local cell = require("helpers.cell")
 local popup_width = 250
 local icon_font = { style = settings.font.style_map["Regular"], size = 14.0 }
 
--- Icon only; muted = inverted red cell. Popup: apps playing audio.
 local volume = sbar.add("item", "widgets.volume", cell({
   position = "right",
   icon = {
@@ -63,6 +74,10 @@ local function add_row(props)
   sbar.add("item", "widgets.volume.popup." .. rows, props)
 end
 
+local function add_header(text)
+  add_row({ icon = { string = text, color = colors.dim, font = { size = 11.0 } }, label = { drawing = false } })
+end
+
 -- tracked here: query() has no "popup" key while the popup is empty
 local is_open = false
 local function collapse()
@@ -73,29 +88,60 @@ local function collapse()
   rows = 0
 end
 
+-- Audio often plays in a helper/XPC process (WebKit.GPU for Safari and web views,
+-- Chrome helpers), not in the app itself. macOS records the app responsible for
+-- each process; it is readable only via the private libsystem call
+-- responsibility_get_pid_responsible_for_pid. The helper prints the responsible
+-- app's executable path for each pid argument. Bump the _vN suffix when
+-- owner_src changes so it is recompiled.
+local owner_bin = os.getenv("HOME") .. "/.cache/sketchybar/volume_owner_v1"
+local owner_src = [==[
+#include <libproc.h>
+#include <stdio.h>
+#include <stdlib.h>
+extern pid_t responsibility_get_pid_responsible_for_pid(pid_t);
+int main(int argc, char **argv) {
+  char path[PROC_PIDPATHINFO_MAXSIZE];
+  for (int i = 1; i < argc; i++) {
+    pid_t pid = atoi(argv[i]), owner = responsibility_get_pid_responsible_for_pid(pid);
+    if (owner <= 0) owner = pid;
+    if (proc_pidpath(owner, path, sizeof(path)) > 0) printf("%s\n", path);
+  }
+  return 0;
+}
+]==]
+if not io.open(owner_bin, "r") then
+  os.execute('mkdir -p "' .. owner_bin:match("(.*)/") .. '"')
+  local f = io.open(owner_bin .. ".c", "w")
+  f:write(owner_src)
+  f:close()
+  sbar.exec('cc -O2 -o "' .. owner_bin .. '" "' .. owner_bin .. '.c"')
+end
+
 -- coreaudiod holds an "audio-out" power assertion per process playing sound
-local playing_cmd = [[pids=$(pmset -g assertions | awk '/Created for PID/ {p=$4; sub(/\./, "", p)} /Resources:.*audio-out/ {print p}' | sort -u | paste -sd, -); [ -n "$pids" ] && ps -o comm= -p "$pids"]]
+local playing_cmd = [[pids=$(pmset -g assertions | awk '/Created for PID/ {p=$4; sub(/\./, "", p)} /Resources:.*audio-out/ {print p}' | sort -u | tr '\n' ' ')
+[ -z "$pids" ] && exit 0
+if [ -x "]] .. owner_bin .. [[" ]; then "]] .. owner_bin .. [[" $pids; else ps -o comm= -p "$(echo $pids | tr ' ' ,)"; fi]]
 
 local function add_playing()
   sbar.exec(playing_cmd, function(out)
+    add_header("Playing")
     local seen = {}
     for path in string.gmatch(out or "", "[^\r\n]+") do
       local app = path:match("/([^/]+)%.app/")
-      -- WebKit plays audio in a shared XPC service; its owner is not visible, assume Safari
-      if not app and path:find("/WebKit.framework/", 1, true) then app = "Safari" end
       local clickable = app ~= nil
       app = app or path:match("([^/]+)$")
       if app and not seen[app] then
         seen[app] = true
         add_row({
           icon = { drawing = false },
-          label = { string = app, color = colors.fg, padding_left = 8 },
+          label = { string = app, color = colors.fg, padding_left = 12 },
           click_script = clickable and ('open -a "' .. app .. '"') or nil,
         })
       end
     end
     if next(seen) == nil then
-      add_row({ icon = { drawing = false }, label = { string = "nothing", color = colors.dim, padding_left = 8 } })
+      add_row({ icon = { drawing = false }, label = { string = "nothing", color = colors.dim, padding_left = 12 } })
     end
   end)
 end
