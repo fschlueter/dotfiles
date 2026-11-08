@@ -164,13 +164,14 @@ function M.attach(apple)
       position = "popup." .. apple.name,
       icon = {
         string = "",
-        width = 18,
-        padding_left = 8,
-        padding_right = 20,
+        -- a fixed icon width ignores the icon paddings: the gap to the label
+        -- is width - padding_left - 18 (art width at scale 1.5)
+        width = 44,
         background = {
           color = colors.transparent,
           image = {
             string = path,
+            padding_left = 8,
             scale = 1.5,
             corner_radius = 0,
             border_width = 0,
