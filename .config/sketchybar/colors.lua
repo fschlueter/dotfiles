@@ -25,6 +25,7 @@ if t then
     orange = s[11],                       -- warning
     blue = s[4],                          -- info: graphs, rates, sliders
     magenta = s[5],
+    light = s[7],                         -- bright neutral: bar border
     bg = t.background,
     bg1 = s[0],                           -- item cells
     bg2 = t["selection-background"] or s[0], -- raised cells (Apple, calendar)
@@ -41,6 +42,7 @@ else
     orange = 0xfff39660,
     blue = 0xff76cce0,
     magenta = 0xffb39df3,
+    light = 0xffe2e2e3,
     bg = 0xff2c2e34,
     bg1 = 0xff363944,
     bg2 = 0xff414550,
@@ -48,7 +50,7 @@ else
 end
 
 c.transparent = 0x00000000
-c.bar = { bg = with_alpha(c.bg, 0.94), border = c.bg }
+c.bar = { bg = with_alpha(c.bg, 0.94), border = c.light }
 c.popup = { bg = with_alpha(c.bg, 0.75), border = c.dim }
 c.with_alpha = with_alpha
 
