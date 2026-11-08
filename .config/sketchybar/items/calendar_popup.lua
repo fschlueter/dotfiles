@@ -12,7 +12,7 @@ local settings = require("settings")
 local zones = {
   { local_zone = true },
   { name = "UTC", tz = "UTC", band = { -7.5, 7.5 }, dot = { -0.13, 51.5 } },
-  { name = "CT", tz = "America/Chicago", band = { -97.5, -82.5 }, dot = { -87.6, 41.9 } },
+  { name = "CT", tz = "America/Chicago", band = { -99.5, -82.5 }, dot = { -87.6, 41.9 } },
 }
 local max_events = 5
 local max_rows = 10        -- event rows incl. wrapped continuation lines
@@ -123,7 +123,8 @@ return function(cal)
       icon = {
         string = zone.name or "",
         color = colors.accent,
-        width = row_width / 2 - 20,
+        width = row_width / 2 - 10,
+
         align = "right",
         padding_right = 40,
         font = {
