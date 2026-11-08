@@ -5,8 +5,6 @@ local app_icons = require("helpers.app_icons")
 -- Icon + name of the focused app; click toggles the name with the app's menus (items/menus.lua)
 local front_app = sbar.add("item", "front_app", {
   display = "active",
-  -- Shifted right so the logo sits next to the menu row, which starts at the native x
-  padding_left = 22,
   icon = {
     font = "sketchybar-app-font:Regular:16.0",
     color = colors.accent,
