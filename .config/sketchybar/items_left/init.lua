@@ -1,5 +1,6 @@
 require("items_left.apple")
 require("items_left.front_app")
+require("items_left.spaces")
 require("items_left.menus")
 require("items_left.calendar")
 -- require("items_left.control")
