@@ -7,7 +7,7 @@
 ## Structure
 
 - `sketchybarrc` → `helpers/init.lua` (adds SbarLua to the path, runs `make` for the C helpers)
-  → `init.lua`: `bar.lua`, `default.lua`, `events.lua`, then `items/` or `items_left/`, then
+  → `init.lua`: `bar.lua`, `default.lua`, then `items/` or `items_left/`, then
   `theme_watch.lua`.
 - **Two layouts**, switched with `sbl top|left|toggle` (`layout.sh`, alias in `.env/shell`) or a
   right click on the Apple logo. State: the gitignored file `layout` (missing: top).
@@ -27,13 +27,10 @@
   slots (`fg`, `dim`, `light`, `accent`, `red`/`orange`/`yellow`/`green`, `blue`, `bg1`, `bg2`,
   `bar`, `popup`). Item files use these roles, never hex. `theme_watch.lua` reloads the bar within
   ~5 s when the selection or a theme file changes.
-- **Shared events** (`events.lua`): `global_click` (provider
-  `helpers/event_providers/global_click`, a listen-only event tap) fires on every mouse down with
-  `x`, `y`, `button` and `on_bar` (`"1"` if the click hit a sketchybar window). Items close their
-  popups on it when `on_bar == "0"`.
+- **Popups** close when the mouse leaves the item and its popup (`mouse.exited.global`).
 - **Helpers** (C, built into gitignored `bin/` on every load): `menus` (`-l`/`-L` list the front
   app's menus, `-s N|owner,name` clicks a menu or menu bar extra), event providers `cpu_load`,
-  `network_load`, `global_click`.
+  `network_load`.
 - `tools/speedtest.sh`: reload time, timers and CPU/memory of the bar and its helpers.
 - Fonts: SF Pro / SF Mono, `sketchybar-app-font` v3.0.20 (`~/Library/Fonts`, matches
   `helpers/app_icons.lua`).
@@ -66,8 +63,7 @@ The sections below were written by the agent that built each item.
   - Shut Down… (power): `loginwindow` `«event aevtrsdn»` (macOS asks for confirmation)
   - Apple Menu (apple): opens the real Apple menu (`helpers/menus/bin/menus -s 0`)
 - Hover on an entry: `bg2` highlight. Click on an entry runs it and closes the popup.
-- Popup closes on `mouse.exited.global` (mouse leaves logo/popup) and on `global_click` with
-  `on_bar == "0"` (click outside the bar).
+- Popup closes on `mouse.exited.global` (mouse leaves logo/popup).
 - Right click: `layout.sh toggle` (switch top <-> left layout, sets AeroSpace's left gap, reloads).
 
 #### Implementation
@@ -81,7 +77,7 @@ The sections below were written by the agent that built each item.
   Retina; sketchybar draws file images without smoothing).
 - Spacing: the icon has a fixed `width = 44`, which makes sketchybar ignore icon paddings; the
   image's own `padding_left = 8` sets the left margin, the gap to the label is `44 - 8 - 18`.
-- Events subscribed: `mouse.clicked`, `mouse.exited.global`, `global_click` (logo);
+- Events subscribed: `mouse.clicked`, `mouse.exited.global` (logo);
   `mouse.clicked`, `mouse.entered`, `mouse.exited` (entries).
 - Permissions: Force Quit and the Apple Menu entry need Accessibility for sketchybar (System
   Events keystroke / AX menu helper).
@@ -109,8 +105,7 @@ The sections below were written by the agent that built each item.
 - Top bar, right click on `front_app`: opens the native app-name menu (About, Settings, Quit; `menus -s 1`).
 - Top bar, click on `menu.i`: opens that native menu (`menus -s i`). Arrow keys move between menus.
 - Left bar, click on `front_app`: opens the native app-name menu at the top of the screen (`menus -s 1`).
-- No sketchybar popups, no scroll or hover actions. Native menus close themselves on an outside click,
-  so the `global_click` event is not used.
+- No sketchybar popups, no scroll or hover actions. Native menus close themselves on an outside click.
 
 #### Files, items, events
 
@@ -158,7 +153,7 @@ The sections below were written by the agent that built each item.
 - Click (any mouse button): `aerospace workspace <name>`.
 - Top bar: hidden while `front_app` shows the app menus (follows the `swap_menus_and_spaces` event
   from `items/menus.lua`).
-- No popup, scroll or hover action (so no `global_click` subscription).
+- No popup, scroll or hover action.
 
 #### Files and wiring
 
@@ -199,8 +194,7 @@ The sections below were written by the agent that built each item.
 #### Interactions
 
 - **Left click**: toggles the popup (no app is opened). No right click, scroll or hover action.
-- **Popup closes** when the mouse leaves the item and popup (`mouse.exited.global`) or on a click
-  outside the bar (`global_click` with `on_bar == "0"`).
+- **Popup closes** when the mouse leaves the item and popup (`mouse.exited.global`).
 - **Popup contents** (top to bottom, `items/calendar_popup.lua`, shared by both layouts):
   - World map (240 pt wide): coastlines in `dim`; the local, UTC and CT zones as faint `accent`
     bands with their coast in `accent`, a dot at Greenwich and Chicago (none for local: its
@@ -232,8 +226,7 @@ The sections below were written by the agent that built each item.
 - `items/calendar_worldmap.mask`: land mask (Natural Earth 110m land, public domain,
   equirectangular, lat 84..-58, 480 px), one RLE row per line. Built once by
   `~/cowork/scratchpad/sketchybar/worldmap/build_mask.py` (scratchpad, may be gone).
-- Events: `routine`, `forced`, `system_woke`, `mouse.clicked`, `mouse.exited.global`,
-  `global_click` (shared, `events.lua`).
+- Events: `routine`, `forced`, `system_woke`, `mouse.clicked`, `mouse.exited.global`.
 - External commands: `date` (zone times, `TZ=...`), `icalBuddy` (`brew install ical-buddy`;
   called with `-n -nc -ea -iep datetime,title -tf %H:%M -li 5 eventsToday`, looked up in
   `/opt/homebrew/bin`), `/usr/bin/python3`.
@@ -266,7 +259,7 @@ The sections below were written by the agent that built each item.
 
 - Left click on the item toggles the popup (same in both layouts; on the left bar it opens to
   the right of the bar). Opening it re-reads the remaining time and the energy mode.
-- A click outside the bar (`global_click` with `on_bar == "0"`) closes the popup.
+- The popup closes when the mouse leaves the item and popup (`mouse.exited.global`).
 - Popup (vertical, fixed 190 px content width, everything centred):
   - `Time remaining: H:MMh` (or `no estimate`),
   - a 1 px `dim` separator,
@@ -284,7 +277,7 @@ The sections below were written by the agent that built each item.
   popup: an unnamed time-remaining item, `widgets.battery.separator`,
   `widgets.battery.mode.{0,1,2}` (pmset powermode values).
 - Events: `routine` (`update_freq = 180`), `power_source_change`, `system_woke`,
-  `mouse.clicked`, `global_click` (`events.lua`). After a mode switch the item triggers
+  `mouse.clicked`, `mouse.exited.global`. After a mode switch the item triggers
   `power_source_change` to recolour the icon.
 - Popup cell size is `popup.height = 9` (keeps the separator thin); the other rows get their
   26 px height from a transparent, borderless background.
@@ -320,13 +313,13 @@ The sections below were written by the agent that built each item.
 - Left click: toggles a popup (250 px wide) with a dim "Playing" header and one row per program currently playing audio ("nothing" if none). Clicking a row focuses that app (`open -a`); rows without an `.app` (e.g. `afplay`) aren't clickable.
 - Right click: opens Sound settings.
 - Scroll: changes the output volume (scroll delta ×10; with ctrl ×1).
-- Popup closes on hover-out (`mouse.exited.global`), a click outside the bar (`global_click` with `on_bar == "0"`), or another left click.
+- Popup closes on hover-out (`mouse.exited.global`) or another left click.
 
 #### Implementation
 
 - Files: `items/widgets/volume.lua` (top), `items_left/widgets/volume.lua` (left). Same logic, only the item layout differs; keep them in sync.
 - Items: `widgets.volume`, `widgets.volume.padding`, popup rows `widgets.volume.popup.<n>` (recreated on each open, removed on close).
-- Events: `volume_change` (built in), `mouse.clicked`, `mouse.scrolled`, `mouse.exited.global`, `global_click` (shared, `events.lua`).
+- Events: `volume_change` (built in), `mouse.clicked`, `mouse.scrolled`, `mouse.exited.global`.
 - Mute: sketchybar's `volume_change` reports mute as volume 0, so a 0 is checked with `osascript -e "output muted of (get volume settings)"`.
 - Open state is tracked in Lua (`is_open`): `--query` has no `popup` key while the popup has no items, so it can't be queried.
 - Playing programs: coreaudiod holds a power assertion with `Resources: audio-out` for each process playing sound; its "Created for PID" line gives the pid (`pmset -g assertions`). Input-only assertions (`audio-in`, e.g. Siri's corespeechd) are ignored.
@@ -355,7 +348,7 @@ The sections below were written by the agent that built each item.
   - the **saved networks in range**, strongest first, max. 12, with signal bars `▂▄▆█` (≥ −55 / −67 / −75 dBm); the current one in `accent`. Click one to join it (`networksetup -setairportnetwork en0 <ssid>`, password from the keychain); errors come as a notification;
   - **Wi-Fi Menu…**: opens Control Centre's Wi-Fi menu.
 - **Right click**: popup with the current SSID as header, then hostname, IP, subnet mask, router. Clicking a row copies its value (label shows a clipboard glyph for 1 s).
-- Clicking the same button again closes the popup; it also closes on hover-out (`mouse.exited.global`) and on a click outside the bar (`global_click`, `on_bar == "0"`).
+- Clicking the same button again closes the popup; it also closes on hover-out (`mouse.exited.global`).
 - No scroll action.
 
 #### Files and names
@@ -366,7 +359,7 @@ The sections below were written by the agent that built each item.
   - top: `widgets.wifi1` (upload), `widgets.wifi2` (download), `widgets.wifi.padding` (the Wi-Fi icon, despite the name), `widgets.wifi.bracket` (popup owner), an unnamed group padding.
   - left: `widgets.wifi` (icon, popup owner), `widgets.wifi.padding`.
   - popup (both): `widgets.wifi.header`, `widgets.wifi.net.1`…`12`, `widgets.wifi.menu`, `widgets.wifi.hostname`, `.ip`, `.mask`, `.router`.
-- Events: `network_update` (top only; from `helpers/event_providers/network_load`, `bin/network_load en0 network_update 2.0`, env `upload`, `download`), `wifi_change`, `system_woke`, `mouse.clicked`, `mouse.exited.global`, `global_click`.
+- Events: `network_update` (top only; from `helpers/event_providers/network_load`, `bin/network_load en0 network_update 2.0`, env `upload`, `download`), `wifi_change`, `system_woke`, `mouse.clicked`, `mouse.exited.global`.
 - External commands: `networksetup`, `ipconfig`, `osascript` (notifications), `open`, `make`/`swiftc`/`codesign`, `helpers/menus/bin/menus -s 'Control Centre,WiFi'`.
 
 #### Permissions
@@ -398,14 +391,14 @@ The sections below were written by the agent that built each item.
   - paired devices (max. 12), connected first: device-type glyph (headphones, headset, keyboard, mouse, trackpad, speaker, gamepad, other) in `accent`, name in `fg`, plus battery % (AirPods: the lower earbud); not connected ones `dim`. Hidden while Bluetooth is off. Click a device to connect / disconnect it; errors come as a notification; the state is re-read right away and after 3 s;
   - **Turn Bluetooth Off/On**;
   - **Bluetooth Menu…**: opens Control Centre's Bluetooth menu.
-- The popup closes on a second click, on hover-out (`mouse.exited.global`) and on a click outside the bar (`global_click`, `on_bar == "0"`).
+- The popup closes on a second click, on hover-out (`mouse.exited.global`).
 - No right click or scroll action.
 
 #### Files and names
 
 - `items/widgets/bluetooth.lua`, `items_left/widgets/bluetooth.lua`: identical below the item definition (marked in the file). Required from `items*/widgets/init.lua` after `wifi`.
 - Items: `widgets.bluetooth` (icon, popup owner), `widgets.bluetooth.padding`; popup: `widgets.bluetooth.header`, `widgets.bluetooth.device.1`…`12`, `widgets.bluetooth.power`, `widgets.bluetooth.menu`.
-- Events: `routine` (`update_freq = 30`), `forced`, `system_woke`, `mouse.clicked`, `mouse.exited.global`, `global_click`.
+- Events: `routine` (`update_freq = 30`), `forced`, `system_woke`, `mouse.clicked`, `mouse.exited.global`.
 - External commands:
   - `system_profiler SPBluetoothDataType` (text output, ~0.2 s, no permission): power state, connected / not connected devices, address, minor type, battery levels. Parsed by indentation (6 spaces: section, 10: device, 14: property).
   - `blueutil` (`brew install blueutil`, path `/opt/homebrew/bin/blueutil`): `--connect ID`, `--disconnect ID`, `--power 0|1`.
@@ -433,7 +426,7 @@ Three graph items side by side, each with a name, a value and a history graph (o
 
 #### Interactions
 
-- None: no click action, no scroll, no hover, no popups (so no `global_click` subscription).
+- None: no click action, no scroll, no hover, no popups.
 
 #### Files and names
 

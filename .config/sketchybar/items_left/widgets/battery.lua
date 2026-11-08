@@ -175,6 +175,10 @@ battery:subscribe({"routine", "power_source_change", "system_woke"}, function()
   end)
 end)
 
+battery:subscribe("mouse.exited.global", function(_)
+  battery:set({ popup = { drawing = false } })
+end)
+
 battery:subscribe("mouse.clicked", function(env)
   local drawing = battery:query().popup.drawing
   battery:set( { popup = { drawing = "toggle" } })
@@ -186,13 +190,6 @@ battery:subscribe("mouse.clicked", function(env)
       remaining_time:set( { label = label })
     end)
     refresh_modes()
-  end
-end)
-
--- close the popup on a click outside the bar (events.lua)
-battery:subscribe("global_click", function(env)
-  if env.on_bar == "0" then
-    battery:set({ popup = { drawing = false } })
   end
 end)
 

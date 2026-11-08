@@ -201,7 +201,3 @@ bluetooth:subscribe("mouse.clicked", function()
   if not open then refresh() end
 end)
 bluetooth:subscribe("mouse.exited.global", hide_popup)
--- close on a click outside the bar (events.lua)
-bluetooth:subscribe("global_click", function(env)
-  if env.on_bar == "0" then hide_popup() end
-end)

@@ -245,9 +245,6 @@ return function(cal)
   cal:subscribe("mouse.exited.global", function(_)
     cal:set({ popup = { drawing = false } })
   end)
-  cal:subscribe("global_click", function(env)
-    if env.on_bar == "0" then cal:set({ popup = { drawing = false } }) end
-  end)
   -- keep clocks and day/night current while the popup is open
   cal:subscribe("routine", function(_)
     if cal:query().popup.drawing == "on" then
