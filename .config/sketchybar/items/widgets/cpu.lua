@@ -28,7 +28,10 @@ local memory = load_graph("memory", {
 })
 
 -- Background around the load graphs
-sbar.add("bracket", "widgets.cpu.bracket", { cpu.name, gpu.name, memory.name }, {
+sbar.add("bracket", "widgets.cpu.bracket", {
+  cpu.name, gpu.name, memory.name,
+  "widgets.network.down", "widgets.network.up", -- traffic graph (network.lua)
+}, {
   background = { color = colors.bg1 }
 })
 
