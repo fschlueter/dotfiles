@@ -204,6 +204,10 @@ function M.attach(apple)
   apple:subscribe("mouse.exited.global", function(_)
     apple:set({ popup = { drawing = false } })
   end)
+  -- a click outside the bar closes the popup (events.lua)
+  apple:subscribe("global_click", function(env)
+    if env.on_bar == "0" then apple:set({ popup = { drawing = false } }) end
+  end)
 end
 
 return M
