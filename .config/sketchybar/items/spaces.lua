@@ -14,15 +14,26 @@ local max_apps = left and 3 or 6  -- app icons per workspace
 
 sbar.add("event", "aerospace_workspace_change")
 
--- The workspace set is fixed at load (config bindings + existing ones);
--- workspaces created later appear after the next bar reload.
+-- The workspace set: the `workspace X` bindings in aerospace.toml, read at load.
+-- Read from the file, not `aerospace list-workspaces`: blocking on a process here delays
+-- end_config, and front_app's async `--move front_app before menu.1` then runs too early.
 local names = {}
 do
-  local f = io.popen(aerospace .. " list-workspaces --all 2>/dev/null")
+  local f = io.open(os.getenv("HOME") .. "/.config/aerospace/aerospace.toml", "r")
   if f then
-    for name in f:read("a"):gmatch("[^\r\n]+") do names[#names + 1] = name end
+    local seen = {}
+    for name in f:read("a"):gmatch("'workspace ([^'%s]+)'") do
+      if not seen[name] then seen[name] = true; names[#names + 1] = name end
+    end
     f:close()
   end
+  -- AeroSpace's order: digits first, then letters
+  table.sort(names, function(a, b)
+    local da, db = a:match("^%d+$"), b:match("^%d+$")
+    if da and db then return tonumber(a) < tonumber(b) end
+    if da or db then return da ~= nil end
+    return a < b
+  end)
 end
 
 local function props(name)
