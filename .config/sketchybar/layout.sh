@@ -16,9 +16,12 @@ case "${1:-toggle}" in
   *) echo "usage: $0 [top|left|toggle]" >&2; exit 1 ;;
 esac
 
-# left bar (40) + the usual 10 gap
+# left bar (settings.lua bar_width) + the usual 10 gap
 gap=10
-[ "$next" = left ] && gap=50
+if [ "$next" = left ]; then
+  bar_width="$(sed -nE 's/^ *bar_width *= *([0-9]+).*/\1/p' "$dir/settings.lua")"
+  gap=$(( ${bar_width:-40} + 10 ))
+fi
 
 # resolve the stow symlink so sed -i edits the repo file, not the link
 aero="$(cd "$dir/../aerospace" && pwd -P)/aerospace.toml"

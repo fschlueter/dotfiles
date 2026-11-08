@@ -17,8 +17,8 @@ return {
   group_paddings = 5,
 
   -- Left layout: bar thickness and the width of one item cell
-  bar_width = 40,
-  cell_width = 34,
+  bar_width = 48,
+  cell_width = 42,
 
   icons = "sf-symbols", -- alternatively available: NerdFont
 
