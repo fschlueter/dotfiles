@@ -19,7 +19,8 @@ local wifi = sbar.add("item", "widgets.wifi", {
     padding_right = 0,
   },
   background = { color = colors.bg1, height = 28 },
-  popup = { align = "center", height = 30 },
+  -- vertical bar: "right" aligns the popup's bottom with the item's, so it grows upwards
+  popup = { align = "right", height = 30 },
 })
 
 -- Popup: left click lists the saved networks in range (click one to join), right click shows
