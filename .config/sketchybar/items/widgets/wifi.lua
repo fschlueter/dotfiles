@@ -308,6 +308,10 @@ wifi_up:subscribe("mouse.clicked", on_click)
 wifi_down:subscribe("mouse.clicked", on_click)
 wifi:subscribe("mouse.clicked", on_click)
 wifi:subscribe("mouse.exited.global", hide_details)
+-- close on a click outside the bar (events.lua)
+wifi:subscribe("global_click", function(env)
+  if env.on_bar == "0" and mode then hide_details() end
+end)
 
 local function copy_label_to_clipboard(env)
   local label = sbar.query(env.NAME).label.value

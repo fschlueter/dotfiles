@@ -2,6 +2,7 @@
 --   muted: dim icon, otherwise magenta; sketchybar reports mute as volume 0,
 --          so a 0 is checked with osascript.
 --   left click: popup listing the programs playing audio; click one to focus it.
+--   popup closes on hover-out or a click outside the bar.
 --   right click: Sound settings.  scroll: change volume (ctrl: 10x finer).
 -- Programs playing audio come from coreaudiod's "audio-out" power assertions
 -- (`pmset -g assertions`). Their owning app is resolved by a small C helper
@@ -165,3 +166,7 @@ end
 volume:subscribe("mouse.clicked", toggle)
 volume:subscribe("mouse.scrolled", scroll)
 volume:subscribe("mouse.exited.global", collapse)
+-- close on a click outside the bar (events.lua)
+volume:subscribe("global_click", function(env)
+  if env.on_bar == "0" then collapse() end
+end)

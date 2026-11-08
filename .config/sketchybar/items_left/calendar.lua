@@ -8,6 +8,9 @@ sbar.add("item", { position = "right", width = settings.group_paddings })
 local cal = sbar.add("item", "calendar", cell({
   position = "right",
   update_freq = 30,
+  -- on the vertical bar "right" aligns the popup's bottom with the item's,
+  -- so it grows upwards from the bottom of the screen
+  popup = { align = "right" },
   icon = {
     color = colors.accent,
     font = {

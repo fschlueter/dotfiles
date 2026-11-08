@@ -1,41 +1,14 @@
 local icons = require("icons")
 local colors = require("colors")
 local settings = require("settings")
-local cell = require("helpers.cell")
 
--- Execute the event provider binary which provides the event "network_update"
--- for the network interface "en0", which is fired every 2.0 seconds.
-sbar.exec("killall network_load >/dev/null; $CONFIG_DIR/helpers/event_providers/network_load/bin/network_load en0 network_update 2.0")
+-- No up/down rates in this layout (the top bar has them): stop the network_load event
+-- provider the top layout may have left running.
+sbar.exec("killall network_load >/dev/null 2>&1")
 
 local popup_width = 250
 
--- Network cell: upload rate above download rate
-local net = sbar.add("item", "widgets.net", cell({
-  position = "right",
-  icon = {
-    font = {
-      family = settings.font.numbers,
-      style = settings.font.style_map["Bold"],
-      size = 8.0,
-    },
-    color = colors.red,
-    string = "???B",
-    y_offset = 6,
-  },
-  label = {
-    font = {
-      family = settings.font.numbers,
-      style = settings.font.style_map["Bold"],
-      size = 8.0,
-    },
-    color = colors.blue,
-    string = "???B",
-    y_offset = -6,
-  },
-  background = { color = colors.bg1, height = 28 },
-}))
-
--- Wi-Fi status cell; its popup shows the connection details
+-- Wi-Fi status cell; popup: see below
 local wifi = sbar.add("item", "widgets.wifi", {
   position = "right",
   label = { drawing = false },
@@ -252,21 +225,6 @@ end
 
 sbar.add("item", "widgets.wifi.padding", { position = "right", width = settings.group_paddings })
 
-net:subscribe("network_update", function(env)
-  -- "012 KBps" -> "012KB" to fit the cell
-  local function short(rate) return (rate:gsub(" ", ""):gsub("ps$", "")) end
-  net:set({
-    icon = {
-      string = short(env.upload),
-      color = (env.upload == "000 Bps") and colors.dim or colors.red,
-    },
-    label = {
-      string = short(env.download),
-      color = (env.download == "000 Bps") and colors.dim or colors.blue,
-    },
-  })
-end)
-
 wifi:subscribe({"wifi_change", "system_woke"}, function(env)
   sbar.exec("ipconfig getifaddr en0", function(ip)
     local connected = not (ip == "")
@@ -279,9 +237,12 @@ wifi:subscribe({"wifi_change", "system_woke"}, function(env)
   end)
 end)
 
-net:subscribe("mouse.clicked", on_click)
 wifi:subscribe("mouse.clicked", on_click)
 wifi:subscribe("mouse.exited.global", hide_details)
+-- close on a click outside the bar (events.lua)
+wifi:subscribe("global_click", function(env)
+  if env.on_bar == "0" and mode then hide_details() end
+end)
 
 local function copy_label_to_clipboard(env)
   local label = sbar.query(env.NAME).label.value
