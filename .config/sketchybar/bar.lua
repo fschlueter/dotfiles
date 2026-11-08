@@ -9,6 +9,8 @@ local left = settings.layout == "left"
 -- The bar hangs from its screen edge (top/left): it overhangs that edge by
 -- the corner radius, so only the other three sides show their border and
 -- rounded corners; its two ends keep `inset` from the screen edges.
+-- Full-width top bar (exactly where the macOS menu bar is, bottom border
+-- only): set the top bar's margin to -radius, i.e. `margin = -radius`.
 -- margin: along the bar (top) / away from the edge (left); y_offset: down
 -- from the top edge (top) / along the bar (left). Items stay centred on the
 -- whole bar, so they sit radius/2 off the visible centre.
@@ -21,7 +23,7 @@ sbar.bar({
   topmost = "on",
   color = colors.bar.bg,
   border_color = colors.bar.border,
-  border_width = 1,
+  border_width = 2,
   corner_radius = radius,
   margin = left and -radius or inset,
   y_offset = left and inset or -radius,
