@@ -1,4 +1,5 @@
 require("items_left.widgets.battery")
 require("items_left.widgets.volume")
 require("items_left.widgets.wifi")
+require("items_left.widgets.bluetooth")
 require("items_left.widgets.cpu")
