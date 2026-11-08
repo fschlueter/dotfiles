@@ -44,7 +44,7 @@ sbar.add("bracket", "widgets.network.bracket", { "widgets.wifi", bluetooth.name 
 
 sbar.add("item", "widgets.bluetooth.padding", {
   position = "right",
-  width = settings.group_paddings
+  width = 6,  -- gap to the next background: 10 pt
 })
 
 -- ---------------------------------------------------------------------------------------------

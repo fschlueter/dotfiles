@@ -45,7 +45,7 @@ sbar.add("bracket", { cal.name }, {
 })
 
 -- Padding item required because of bracket
-sbar.add("item", { position = "right", width = settings.group_paddings })
+sbar.add("item", { position = "right", width = 7 })  -- gap to the next background: 10 pt
 
 cal:subscribe({ "forced", "routine", "system_woke" }, function(env)
   cal:set({ icon = os.date("%a. %d %b."), label = os.date("%H:%M") })

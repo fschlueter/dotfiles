@@ -34,7 +34,7 @@ local volume = sbar.add("item", "widgets.volume", {
 
 sbar.add("item", "widgets.volume.padding", {
   position = "right",
-  width = settings.group_paddings
+  width = 1,  -- gap to the next background: 10 pt
 })
 
 local function show(vol, muted)
