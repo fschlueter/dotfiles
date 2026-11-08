@@ -96,6 +96,8 @@ local query = aerospace .. " list-workspaces --all --format "
   .. "'%{workspace}|%{workspace-is-focused}|%{workspace-is-visible}'; echo '#'; "
   .. aerospace .. " list-windows --all --format '%{workspace}|%{app-name}'"
 
+local superscript = { nil, "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹" }
+
 local function update()
   sbar.exec(query, function(out)
     if type(out) ~= "string" then return end
@@ -106,19 +108,33 @@ local function update()
       elseif not windows then
         local name, focused, visible = line:match("^(.-)|(%a+)|(%a+)$")
         if name then
-          new[name] = { focused = focused == "true", visible = visible == "true", apps = "", n = 0 }
+          new[name] = { focused = focused == "true", visible = visible == "true",
+                        apps = "", n = 0, order = {} }
           seen[name] = {}
         end
       else
         local name, app = line:match("^(.-)|(.*)$")
         local s = name and new[name]
-        if s and not seen[name][app] then
-          seen[name][app] = true
-          s.n = s.n + 1
-          if s.n <= max_apps then
-            s.apps = s.apps .. (app_icons[app] or app_icons["Default"])
+        if s then
+          if not seen[name][app] then
+            s.n = s.n + 1
+            s.order[s.n] = app
+            seen[name][app] = 0
           end
+          seen[name][app] = seen[name][app] + 1
         end
+      end
+    end
+    -- Icons in first-seen order; more than one window of an app adds a superscript count
+    -- (plain digits don't render in sketchybar-app-font, superscripts fall back to a system font).
+    -- Left cells only fit counts with at most 2 apps.
+    for name, s in pairs(new) do
+      local counts = not left or s.n <= 2
+      for i = 1, math.min(s.n, max_apps) do
+        local app = s.order[i]
+        local k = seen[name][app]
+        s.apps = s.apps .. (app_icons[app] or app_icons["Default"])
+          .. ((counts and k > 1) and (superscript[k] or "⁺") or "")
       end
     end
     state = new
