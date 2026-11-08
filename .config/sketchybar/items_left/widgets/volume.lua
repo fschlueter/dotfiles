@@ -30,7 +30,7 @@ local volume = sbar.add("item", "widgets.volume", cell({
     y_offset = 0,
   },
   label = { drawing = false },
-  background = { color = colors.bg1, height = settings.cell_width },
+  background = { color = colors.bg1, height = 28 }, -- icon only: shorter cell (as wifi)
   popup = { align = "center" },
 }))
 
