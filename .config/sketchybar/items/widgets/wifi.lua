@@ -2,72 +2,19 @@ local icons = require("icons")
 local colors = require("colors")
 local settings = require("settings")
 
--- Execute the event provider binary which provides the event "network_update"
--- for the network interface "en0", which is fired every 2.0 seconds.
-sbar.exec("killall network_load >/dev/null; $CONFIG_DIR/helpers/event_providers/network_load/bin/network_load en0 network_update 2.0")
+-- No up/down rates (dropped): stop the network_load event provider an older config may have
+-- left running.
+sbar.exec("killall network_load >/dev/null 2>&1")
 
 local popup_width = 250
 
-local wifi_up = sbar.add("item", "widgets.wifi1", {
+-- Wi-Fi icon. No background of its own: items/widgets/bluetooth.lua (required after this file)
+-- puts Wi-Fi and Bluetooth into one bg1 bracket and adds the group padding.
+local wifi = sbar.add("item", "widgets.wifi", {
   position = "right",
-  padding_left = -5,
-  width = 0,
-  icon = {
-    padding_right = 0,
-    font = {
-      style = settings.font.style_map["Bold"],
-      size = 9.0,
-    },
-    string = icons.wifi.upload,
-  },
-  label = {
-    font = {
-      family = settings.font.numbers,
-      style = settings.font.style_map["Bold"],
-      size = 9.0,
-    },
-    color = colors.red,
-    string = "??? Bps",
-  },
-  y_offset = 4,
-})
-
-local wifi_down = sbar.add("item", "widgets.wifi2", {
-  position = "right",
-  padding_left = -5,
-  icon = {
-    padding_right = 0,
-    font = {
-      style = settings.font.style_map["Bold"],
-      size = 9.0,
-    },
-    string = icons.wifi.download,
-  },
-  label = {
-    font = {
-      family = settings.font.numbers,
-      style = settings.font.style_map["Bold"],
-      size = 9.0,
-    },
-    color = colors.blue,
-    string = "??? Bps",
-  },
-  y_offset = -4,
-})
-
-local wifi = sbar.add("item", "widgets.wifi.padding", {
-  position = "right",
+  icon = { string = icons.wifi.connected, padding_left = 8, padding_right = 6 },
   label = { drawing = false },
-})
-
--- Background around the item
-local wifi_bracket = sbar.add("bracket", "widgets.wifi.bracket", {
-  wifi.name,
-  wifi_up.name,
-  wifi_down.name
-}, {
-  background = { color = colors.bg1 },
-  popup = { align = "center", height = 30 }
+  popup = { align = "center", height = 30 },
 })
 
 -- Popup: left click lists the saved networks in range (click one to join), right click shows
@@ -84,7 +31,7 @@ end
 
 local max_networks = 12
 local bars = { "▂   ", "▂▄  ", "▂▄▆ ", "▂▄▆█" }
-local popup = "popup." .. wifi_bracket.name
+local popup = "popup." .. wifi.name
 local mode = nil -- "networks" | "details" while the popup is open
 local networks = {} -- saved networks in range, strongest first
 local current_ssid = ""
@@ -211,7 +158,7 @@ end
 
 local function hide_details()
   mode = nil
-  wifi_bracket:set({ popup = { drawing = false } })
+  wifi:set({ popup = { drawing = false } })
 end
 
 local function join(i)
@@ -240,7 +187,7 @@ local function show(which)
   for _, row in ipairs(details) do row:set({ drawing = which == "details" }) end
   menu_row:set({ drawing = which == "networks" })
   render_networks() -- last scan right away, refreshed when the new one is done
-  wifi_bracket:set({ popup = { drawing = true } })
+  wifi:set({ popup = { drawing = true } })
 
   if which == "networks" then
     header:set({ icon = icons.loading })
@@ -271,30 +218,9 @@ local function on_click(env)
   if mode == which then hide_details() else show(which) end
 end
 
-sbar.add("item", { position = "right", width = settings.group_paddings })
-
-wifi_up:subscribe("network_update", function(env)
-  local up_color = (env.upload == "000 Bps") and colors.dim or colors.red
-  local down_color = (env.download == "000 Bps") and colors.dim or colors.blue
-  wifi_up:set({
-    icon = { color = up_color },
-    label = {
-      string = env.upload,
-      color = up_color
-    }
-  })
-  wifi_down:set({
-    icon = { color = down_color },
-    label = {
-      string = env.download,
-      color = down_color
-    }
-  })
-end)
-
-wifi:subscribe({"wifi_change", "system_woke"}, function(env)
-  sbar.exec("ipconfig getifaddr en0", function(ip)
-    local connected = not (ip == "")
+local function update_icon()
+  sbar.exec("ipconfig getifaddr en0", function(addr)
+    local connected = addr ~= ""
     wifi:set({
       icon = {
         string = connected and icons.wifi.connected or icons.wifi.disconnected,
@@ -302,10 +228,10 @@ wifi:subscribe({"wifi_change", "system_woke"}, function(env)
       },
     })
   end)
-end)
+end
+update_icon()
+wifi:subscribe({ "wifi_change", "system_woke" }, update_icon)
 
-wifi_up:subscribe("mouse.clicked", on_click)
-wifi_down:subscribe("mouse.clicked", on_click)
 wifi:subscribe("mouse.clicked", on_click)
 wifi:subscribe("mouse.exited.global", hide_details)
 

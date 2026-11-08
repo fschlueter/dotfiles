@@ -27,13 +27,17 @@ local bluetooth = sbar.add("item", "widgets.bluetooth", {
     string = glyphs.on,
     color = colors.dim,
     font = nerd_font,
-    padding_left = 8,
+    padding_left = 6,
     padding_right = 8,
   },
   label = { drawing = false },
-  background = { color = colors.bg1 },
   popup = { align = "center" },
   update_freq = 30,
+})
+
+-- one background for Wi-Fi and Bluetooth
+sbar.add("bracket", "widgets.network.bracket", { "widgets.wifi", bluetooth.name }, {
+  background = { color = colors.bg1 },
 })
 
 sbar.add("item", "widgets.bluetooth.padding", {
