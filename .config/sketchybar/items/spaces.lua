@@ -1,6 +1,7 @@
 -- AeroSpace workspaces, for both layouts (items_left/spaces.lua requires this file).
 -- One item per workspace: its name plus the app icons of its windows. Shown when it
--- has windows or is visible; the focused one is highlighted. Click switches to it.
+-- has windows or is visible; the focused one is highlighted. Click switches to it,
+-- right click opens a popup listing all windows.
 -- Updated on `aerospace_workspace_change` (exec-on-workspace-change in aerospace.toml)
 -- and on macOS window/app events.
 local colors = require("colors")
@@ -67,33 +68,116 @@ local function props(name)
   return p
 end
 
-local spaces = {}
-for _, name in ipairs(names) do
+-- Right-click popup: all windows, grouped by workspace; click a row to focus that window.
+-- Rows are added per opening (names carry a generation so a pending removal can't hit them).
+local spaces, index_of = {}, {}  -- name -> item / bar position
+local popup_owner, popup_gen = nil, 0
+
+local function close_popup()
+  if not popup_owner then return end
+  popup_owner:set({ popup = { drawing = false } })
+  sbar.exec("sketchybar --remove '/spaces\\.popup\\..*/'")
+  popup_owner = nil
+end
+
+local function open_popup(space, current)
+  close_popup()
+  popup_gen = popup_gen + 1
+  local gen, pos, i = popup_gen, "popup." .. space.name, 0
+  local function row(props)
+    i = i + 1
+    return sbar.add("item", "spaces.popup." .. gen .. "." .. i, props)
+  end
+  sbar.exec(aerospace .. " list-windows --all --format "
+    .. "'%{workspace}|%{window-id}|%{app-name}|%{window-title}'", function(out)
+    if gen ~= popup_gen or type(out) ~= "string" then return end
+    local groups, order = {}, {}
+    for line in out:gmatch("[^\r\n]+") do
+      local ws, id, app, title = line:match("^(.-)|(%d+)|(.-)|(.*)$")
+      if ws then
+        if not groups[ws] then groups[ws] = {}; order[#order + 1] = ws end
+        table.insert(groups[ws], { id = id, app = app, title = title })
+      end
+    end
+    -- workspaces in bar order
+    table.sort(order, function(a, b) return (index_of[a] or 99) < (index_of[b] or 99) end)
+    for _, ws in ipairs(order) do
+      row({
+        position = pos,
+        icon = { drawing = false },
+        label = {
+          string = ws,
+          color = ws == current and colors.accent or colors.dim,
+          font = { style = settings.font.style_map["Bold"], size = 11.0 },
+          padding_left = 6,
+        },
+      })
+      for _, w in ipairs(groups[ws]) do
+        local r = row({
+          position = pos,
+          icon = {
+            string = app_icons[w.app] or app_icons["Default"],
+            font = "sketchybar-app-font:Regular:12.0",
+            color = colors.fg,
+            padding_left = 12,
+            padding_right = 2,
+          },
+          label = {
+            string = w.title ~= "" and w.title or w.app,
+            color = colors.fg,
+            font = { size = 11.0 },
+            max_chars = 60,
+            padding_right = 8,
+          },
+        })
+        r:subscribe("mouse.clicked", function()
+          close_popup()
+          sbar.exec(aerospace .. " focus --window-id " .. w.id)
+        end)
+      end
+    end
+    popup_owner = space
+    space:set({ popup = { drawing = true } })
+  end)
+end
+
+for i, name in ipairs(names) do
   local space = sbar.add("item", "spaces." .. name, props(name))
-  space:subscribe("mouse.clicked", function()
-    sbar.exec(aerospace .. " workspace '" .. name .. "'")
+  space:set({ popup = { height = 18 } })  -- compact window list rows
+  space:subscribe("mouse.clicked", function(env)
+    if env.BUTTON == "right" then
+      if popup_owner == space then close_popup() else open_popup(space, name) end
+    else
+      close_popup()
+      sbar.exec(aerospace .. " workspace '" .. name .. "'")
+    end
+  end)
+  space:subscribe("mouse.exited.global", function()
+    if popup_owner == space then close_popup() end
   end)
   spaces[name] = space
+  index_of[name] = i
 end
 
 if left then sbar.add("item", "spaces.gap", { width = settings.group_paddings }) end
 
--- Top bar: hidden while front_app shows the app menus (items/menus.lua)
-local menus_shown = false
-local state = {}  -- last parsed state, reused by the menu toggle
+local state = {}  -- last parsed state
 
 local function draw()
   for name, space in pairs(spaces) do
     local s = state[name]
-    local show = s and (s.apps ~= "" or s.focused or s.visible) and not menus_shown
     if not s then
       space:set({ drawing = false })
     else
       local hl = s.focused and colors.accent or (s.visible and colors.fg or colors.dim)
       space:set({
-        drawing = show,
+        drawing = s.apps ~= "" or s.focused or s.visible,
         icon = { color = hl },
-        label = { string = s.apps, drawing = s.apps ~= "", color = s.focused and colors.fg or colors.dim },
+        label = {
+          string = s.apps,
+          drawing = s.apps ~= "",
+          color = s.focused and colors.fg or colors.dim,
+        },
         background = {
           color = s.focused and colors.bg2 or colors.bg1,
           border_color = s.focused and colors.accent or colors.bg1,
@@ -149,12 +233,5 @@ watcher:subscribe({
   "system_woke",
   "forced",
 }, update)
-
-if not left then
-  watcher:subscribe("swap_menus_and_spaces", function()
-    menus_shown = not menus_shown
-    draw()
-  end)
-end
 
 update()
