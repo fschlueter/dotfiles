@@ -2,6 +2,7 @@
 # Checks staged changes (the index, not the working tree, so partially staged files are checked as committed):
 # 1. secrets: gitleaks if installed, else a dependency-free regex scan
 # 2. shell syntax: `bash -n` / `zsh -n`; shellcheck (config in .shellcheckrc) if installed
+# 3. Lua syntax: `luac -p` if installed (sketchybar, nvim)
 # Bypass a false positive with `git commit --no-verify`.
 fail=0
 
@@ -41,5 +42,12 @@ while IFS= read -r f; do
         git show ":$f" | shellcheck -f gcc - | sed "s|^-:|$f:|" | grep . >&2 && fail=1
     fi
 done < <(git diff --cached --name-only --diff-filter=ACM)
+
+# --- 3. Lua files
+if command -v luac >/dev/null; then
+    while IFS= read -r f; do
+        git show ":$f" | luac -p - 2>&1 | sed "s|^luac: stdin:|$f:|" | grep . >&2 && fail=1
+    done < <(git diff --cached --name-only --diff-filter=ACM -- '*.lua')
+fi
 
 exit $fail
