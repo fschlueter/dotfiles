@@ -19,6 +19,7 @@ local inset = 6
 local thickness = left and settings.bar_width or settings.bar_height
 sbar.bar({
   position = left and "left" or "top",
+  display = "main", -- only on the main display (layout.sh sets AeroSpace's gaps to match)
   height = thickness + radius,
   topmost = "on", -- above the auto-hidden macOS menu bar
   color = colors.bar.bg,

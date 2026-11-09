@@ -9,7 +9,9 @@
 - `sketchybarrc` → `helpers/init.lua` (SbarLua path, `make` for the C helpers) → `init.lua`:
   `bar.lua`, `default.lua`, `items/` or `items_left/`, `theme_watch.lua`.
 - **Two layouts**: `sbl top|left|toggle` (`layout.sh`) or right click on the Apple logo; state in
-  the gitignored file `layout`. `layout.sh` also sets AeroSpace's `gaps.outer.left`.
+  the gitignored file `layout`. The bar shows only on the main display; `layout.sh` sets
+  AeroSpace's `gaps.outer.left`/`top` for it (bar thickness `bar_width`/`bar_height` in
+  `settings.lua`).
   - `items/`: horizontal bar at the top.
   - `items_left/`: vertical bar on the left (`settings.bar_width`, cells `settings.cell_width`;
     `helpers/cell.lua` stacks icon above label). Position `left` stacks from the top, `right` from

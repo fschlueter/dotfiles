@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Switch the sketchybar layout: layout.sh [top|left|toggle] (default: toggle)
-# Also sets AeroSpace's left gap so windows don't cover the left bar.
+# Also sets AeroSpace's left/top gaps so windows don't cover the bar.
 set -euo pipefail
 
 # sketchybar click scripts run with a minimal PATH
@@ -16,17 +16,23 @@ case "${1:-toggle}" in
   *) echo "usage: $0 [top|left|toggle]" >&2; exit 1 ;;
 esac
 
-# left bar (settings.lua bar_width) + the usual 10 gap
-gap=10
+# AeroSpace outer gaps: the usual 10 (left) / 12 (top), plus the bar's thickness
+# (settings.lua) on the main display, where the bar is. The built-in display keeps
+# 12 on top.
+setting() { sed -nE "s/^ *$1 *= *([0-9]+).*/\1/p" "$dir/settings.lua"; }
 if [ "$next" = left ]; then
-  bar_width="$(sed -nE 's/^ *bar_width *= *([0-9]+).*/\1/p' "$dir/settings.lua")"
-  gap=$(( ${bar_width:-40} + 10 ))
+  left="[{ monitor.main = $(( $(setting bar_width) + 10 )) }, 10]"
+  top=12
+else
+  left=10
+  top="[{ monitor.\"built-in\" = 12 }, { monitor.main = $(( $(setting bar_height) + 12 )) }, 12]"
 fi
 
 # resolve the stow symlink so sed -i edits the repo file, not the link
 aero="$(cd "$dir/../aerospace" && pwd -P)/aerospace.toml"
 if [ -f "$aero" ]; then
-  sed -i '' "s/^gaps\.outer\.left = .*/gaps.outer.left = $gap/" "$aero"
+  sed -i '' -e "s/^gaps\.outer\.left = .*/gaps.outer.left = $left/" \
+    -e "s/^gaps\.outer\.top = .*/gaps.outer.top = $top/" "$aero"
   aerospace reload-config || true
 fi
 
