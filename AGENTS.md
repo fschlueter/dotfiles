@@ -53,5 +53,5 @@ What follows the palette:
 
 - Verify aliases, key bindings and startup in a pty: `script -q /dev/null zsh -ic '<cmds>' </dev/null` (or `bash -ic`); plain `zsh -ic` can hang (observed with eza and zoxide's `cd`). Strip colors with `sed 's/\x1b\[[0-9;]*m//g'`. Say what was not run (e.g. Linux install paths).
 - Aliases are also defined in `.env/env` and `.env/hosts/*`, not only `.env/shell`: before adding one, `grep -rn 'alias NAME=' .env .zshrc .bashrc`.
-- `.githooks/pre-commit` (enabled by `install.sh` via `core.hooksPath`) checks staged changes: gitleaks (regex fallback), `bash -n`/`zsh -n`, shellcheck (`.shellcheckrc`). Run it directly to check before committing.
+- `.githooks/pre-commit` (enabled by `install.sh` via `core.hooksPath`) checks staged changes: gitleaks (regex fallback), `bash -n`/`zsh -n`, shellcheck (`.shellcheckrc`), `luac -p` for Lua. Run it directly to check before committing.
 - Keep README's contents table current when adding a tool or `.env/` file.
