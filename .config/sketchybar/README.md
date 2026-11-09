@@ -7,9 +7,11 @@
 ## Structure
 
 - `sketchybarrc` → `helpers/init.lua` (SbarLua path, `make` for the C helpers) → `init.lua`:
-  `bar.lua`, `default.lua`, `items/` or `items_left/`, `theme_watch.lua`.
+  `bar.lua`, `default.lua`, `items/` or `items_left/`, `theme_watch.lua`, `display_watch.lua`.
 - **Two layouts**: `sbl top|left|toggle` (`layout.sh`) or right click on the Apple logo; state in
-  the gitignored file `layout`. The bar shows only on the main display; `layout.sh` sets
+  the gitignored file `layout`. `display_watch.lua` runs `layout.sh auto` at load and on
+  display changes: when the main display changed (gitignored `layout_main`), top for the
+  built-in, left for any other. The bar shows only on the main display; `layout.sh` sets
   AeroSpace's `gaps.outer.left`/`top` for it (bar thickness `bar_width`/`bar_height` in
   `settings.lua`).
   - `items/`: horizontal bar at the top.

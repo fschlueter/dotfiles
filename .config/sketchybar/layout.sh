@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-# Switch the sketchybar layout: layout.sh [top|left|toggle] (default: toggle)
+# Switch the sketchybar layout: layout.sh [top|left|toggle|auto] (default: toggle)
 # Also sets AeroSpace's left/top gaps so windows don't cover the bar.
+# auto (run on display changes): only when the main display changed since the last
+# auto run, picks top for the built-in display, left for any other; so a manual
+# switch stays until the main display changes.
 set -euo pipefail
 
 # sketchybar click scripts run with a minimal PATH
@@ -13,7 +16,19 @@ current="$(cat "$state" 2>/dev/null || echo top)"
 case "${1:-toggle}" in
   top|left) next="$1" ;;
   toggle) [ "$current" = left ] && next=top || next=left ;;
-  *) echo "usage: $0 [top|left|toggle]" >&2; exit 1 ;;
+  auto)
+    main="$(aerospace list-monitors --format '%{monitor-is-main}|%{monitor-name}' \
+      | sed -n 's/^true|//p')"
+    [ -n "$main" ] || exit 0
+    [ "$main" = "$(cat "$dir/layout_main" 2>/dev/null)" ] && exit 0
+    echo "$main" > "$dir/layout_main"
+    case "$main" in
+      Built-in*) next=top ;;
+      *) next=left ;;
+    esac
+    [ "$next" = "$current" ] && exit 0
+    ;;
+  *) echo "usage: $0 [top|left|toggle|auto]" >&2; exit 1 ;;
 esac
 
 # AeroSpace outer gaps: the usual 10 (left) / 12 (top), plus the bar's thickness
