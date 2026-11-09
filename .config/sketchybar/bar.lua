@@ -16,14 +16,14 @@ local left = settings.layout == "left"
 -- whole bar, so they sit radius/2 off the visible centre.
 local radius = 6
 local inset = 6
-local thickness = left and settings.bar_width or 40
+local thickness = left and settings.bar_width or settings.bar_height
 sbar.bar({
   position = left and "left" or "top",
   height = thickness + radius,
-  topmost = "on",
+  topmost = "on", -- above the auto-hidden macOS menu bar
   color = colors.bar.bg,
   border_color = colors.bar.border,
-  border_width = 2,
+  border_width = 0,
   corner_radius = radius,
   margin = left and -radius or inset,
   y_offset = left and inset or -radius,

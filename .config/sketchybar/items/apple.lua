@@ -28,7 +28,7 @@ local apple = sbar.add("item", {
 sbar.add("bracket", { apple.name }, {
   background = {
     color = colors.transparent,
-    height = 30,
+    height = 28,
     border_color = colors.dim,
   }
 })

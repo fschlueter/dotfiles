@@ -23,7 +23,7 @@ local text_font = {
 local function graph_props(extra)
   local props = {
     position = "right",
-    y_offset = -6,
+    y_offset = -9,
     background = {
       height = 16,
       color = { alpha = 0 },

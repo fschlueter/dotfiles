@@ -25,7 +25,7 @@ return function(name, opts)
       fill_color = colors.with_alpha(colors.dim, 0.45),
       line_width = 1.5,
     },
-    y_offset = -6,
+    y_offset = -9,
     background = {
       height = 16,
       color = { alpha = 0 },

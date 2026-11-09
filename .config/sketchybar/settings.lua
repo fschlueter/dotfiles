@@ -16,6 +16,8 @@ return {
   paddings = 3,
   group_paddings = 5,
 
+  -- Top layout: bar thickness (macOS menu bar: 30 pt on the external displays)
+  bar_height = 34,
   -- Left layout: bar thickness and the width of one item cell
   bar_width = 48,
   cell_width = 42,

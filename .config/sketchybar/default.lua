@@ -1,7 +1,9 @@
 local settings = require("settings")
 local colors = require("colors")
 
--- Equivalent to the --default domain
+-- Equivalent to the --default domain. Top bar: items move down by half the
+-- corner-radius overhang (3 pt) to sit on the visible centre.
+local top = settings.layout == "top"
 sbar.default({
   updates = "when_shown",
   icon = {
@@ -26,7 +28,7 @@ sbar.default({
     padding_right = settings.paddings,
   },
   background = {
-    height = 28,
+    height = top and 26 or 28,
     corner_radius = 9,
     border_width = 2,
     border_color = colors.bg2,
@@ -49,4 +51,5 @@ sbar.default({
   padding_left = 5,
   padding_right = 5,
   scroll_texts = true,
+  y_offset = top and -3 or 0,
 })
