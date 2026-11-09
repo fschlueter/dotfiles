@@ -47,3 +47,4 @@ export RNO_G_INSTALL_DIR="${SOFTWARE:-$HOME/software}/rnog/daq/install"  # $SOFT
 
 alias cs="~/.claude/scripts/claude-sessions/cs"
 alias claude-alt="~/cowork/claude-litellm/claude-alt.sh"  # Claude Code on KI-Connect models via litellm
+alias claude-or="~/cowork/claude-litellm/claude-or.sh"  # Claude Code on OpenRouter models (key from keychain)
