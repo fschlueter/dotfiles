@@ -9,18 +9,22 @@ local function read_layout()
   return layout == "left" and "left" or "top"
 end
 
+local bar_width = 62
+local cell_background_inset = 3
+
 return {
   layout = read_layout(),
   -- Colors: the theme selected with `theme` for the "terminal" or for "herdr"
   theme_source = "terminal",
-  paddings = 3,
-  group_paddings = 5,
+  paddings = 2,
+  group_paddings = 3,
 
   -- Top layout: bar thickness (macOS menu bar: 30 pt on the external displays)
-  bar_height = 34,
-  -- Left layout: bar thickness and the width of one item cell
-  bar_width = 48,
-  cell_width = 42,
+  bar_height = 38,
+  -- Left layout: cell backgrounds track the bar thickness with a 4 pt inset.
+  bar_width = bar_width,
+  cell_width = bar_width - 2 * cell_background_inset,
+  cell_background_height = 28,
 
   icons = "sf-symbols", -- alternatively available: NerdFont
 

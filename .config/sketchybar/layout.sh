@@ -34,13 +34,14 @@ esac
 # AeroSpace outer gaps: the usual 10 (left) / 12 (top), plus the bar's thickness
 # (settings.lua) on the main display, where the bar is. The built-in display keeps
 # 12 on top.
-setting() { sed -nE "s/^ *$1 *= *([0-9]+).*/\1/p" "$dir/settings.lua"; }
 if [ "$next" = left ]; then
-  left="[{ monitor.main = $(( $(setting bar_width) + 10 )) }, 10]"
+  left="[{ monitor.main = 72 }, 10]"
   top=12
+  osascript -e 'tell application "System Events" to set autohide menu bar of dock preferences to true' 
 else
   left=10
-  top="[{ monitor.\"built-in\" = 12 }, { monitor.main = $(( $(setting bar_height) + 12 )) }, 12]"
+  osascript -e 'tell application "System Events" to set autohide menu bar of dock preferences to false'
+  top="[{ monitor.\"built-in\" = 12 }, { monitor.main = 40 }, 12]"
 fi
 
 # resolve the stow symlink so sed -i edits the repo file, not the link

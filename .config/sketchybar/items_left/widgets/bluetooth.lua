@@ -35,7 +35,7 @@ local bluetooth = sbar.add("item", "widgets.bluetooth", cell({
     y_offset = 0,
   },
   label = { drawing = false },
-  background = { color = colors.bg1, height = settings.cell_width },
+  background = { color = colors.bg1, height = 28 },
   -- vertical bar: "right" aligns the popup's bottom with the item's, so it grows upwards
   -- (centered, the longer list ran off the bottom of the screen)
   popup = { align = "right" },

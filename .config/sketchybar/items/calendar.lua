@@ -16,11 +16,12 @@ local cal = sbar.add("item", "calendar", {
   label = {
     color = colors.accent,
     padding_right = 8,
-    width = 49,
+    width = 60,
     align = "right",
     font = {
       family = settings.font.numbers,
-      style = settings.font.style_map["Bold"],
+      style = settings.font.style_map["Heavy"],
+      size = 16.0,
     },
   },
   position = "right",

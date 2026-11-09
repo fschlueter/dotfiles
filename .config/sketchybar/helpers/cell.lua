@@ -34,6 +34,6 @@ return function(props)
       font = { size = 9.0 },
     },
     -- the background height sets the cell's vertical extent
-    background = { drawing = true, height = 36 },
+    background = { drawing = true, height = settings.cell_background_height },
   }, props or {})
 end
