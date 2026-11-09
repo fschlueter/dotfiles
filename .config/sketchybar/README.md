@@ -31,6 +31,8 @@
   `src/bar.c`, `bar_calculate_bounds_left_right`).
 - `tools/`: `speedtest.sh` (cost), `bg_runs.sh` (background boxes and gaps in a screenshot row),
   `item_geom.sh` (window x, paddings and widths of the right-side items).
+  `barshot.sh [name.png]`: screenshot of only the bar and open popups (bounding box of sketchybar's
+  windows via `bar_rect.swift`) into `~/cowork/scratchpad/sketchybar/`; allowed in Claude's settings.
 
 ## Items
 
