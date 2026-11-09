@@ -25,8 +25,12 @@
 - **Helpers** (built into gitignored `bin/` on every load): `menus` (`-l`/`-L` list the front app's
   menus, `-s N|owner,name` clicks a menu or menu bar extra), event providers `cpu_load`,
   `network_load`, the Swift app `wifi_scan`.
-- `tools/speedtest.sh`: reload time, timers, CPU/memory of the bar and its helpers.
 - sketchybar commands and the helpers must run outside Claude's sandbox.
+- `sketchybar --query bar` prints `position` only as top/bottom, and item `bounding_rects` stay
+  horizontal on the left bar: judge layout behaviour on screen or in the source (v2.24.1
+  `src/bar.c`, `bar_calculate_bounds_left_right`).
+- `tools/`: `speedtest.sh` (cost), `bg_runs.sh` (background boxes and gaps in a screenshot row),
+  `item_geom.sh` (window x, paddings and widths of the right-side items).
 
 ## Items
 

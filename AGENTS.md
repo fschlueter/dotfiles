@@ -40,7 +40,7 @@ What follows the palette:
   - `parentBackground`/`parentForeground` only resolve within the same `[[blocks]]`; separate blocks give the visible gap between groups. Powerline segments fade out on their own when last, so no extra "end" segment is needed.
   - Slow metrics (CPU/GPU) use the async cache pattern: `_omp_sysload` precmd hook in `.env/tools/omp` reads `~/.cache/ohmyposh/sysload` and refreshes it in a background job (`ps`/`ioreg` on macOS, `/proc/stat` deltas on Linux; GPU is macOS only), exposed as `OMP_CPU`/`OMP_GPU`. Bash and zsh compatible (zsh `precmd` / bash `PROMPT_COMMAND`); avoid zsh-only `&!`. Reuse it for any expensive prompt metric.
 - **Claude Code**: theme `custom:ansi-contrast` (`~/.claude/themes/ansi-contrast.json`, not in this repo): `dark-ansi` with the prompt, sidebar and memory backgrounds moved from slot 8 (too bright behind text) to slot 0. `~/.claude/scripts/statusline.sh` uses ANSI colors unless a custom theme is selected; the earlier custom theme `~/.claude/themes/rose-pine.json` (`custom:rose-pine`) is kept.
-- **sketchybar**: `colors.lua` maps roles to slots of the terminal theme (`theme_source` in `settings.lua`); `theme_watch.lua` reloads the bar within ~5 s when the selection or a theme file changes.
+- **sketchybar**: read `.config/sketchybar/README.md` before changing it (layouts, color roles, tools, limits).
 - **Window borders**: `bordersrc` uses slots 5/7 of the herdr theme; `theme` reruns it.
 - **Shell output**: zsh-syntax-highlighting, zsh-autosuggestions (slot 8), `ls`/completion via `LS_COLORS`, git.
 
