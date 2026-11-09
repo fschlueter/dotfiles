@@ -453,7 +453,7 @@ rows = [
 # (custom-command syntax: see [keys] section above)
 
 [[keys.command]]
-key = "prefix+k"
+key = "prefix+f"
 type = "plugin_action"
 command = "herdr-bar.open"
 description = "command bar"
