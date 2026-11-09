@@ -246,11 +246,13 @@ return function(cal)
   cal:subscribe("mouse.exited.global", function(_)
     cal:set({ popup = { drawing = false } })
   end)
-  -- keep clocks and day/night current while the popup is open
-  cal:subscribe("routine", function(_)
+  -- keeps clocks and day/night current while the popup is open; the caller
+  -- runs it from its own routine handler (a second cal:subscribe("routine")
+  -- would replace that handler)
+  return function()
     if cal:query().popup.drawing == "on" then
       update_clocks()
       if os.time() - last_render >= map_interval then render_map(map) end
     end
-  end)
+  end
 end

@@ -32,8 +32,9 @@ local cal = sbar.add("item", "calendar", cell({
 
 sbar.add("item", { position = "right", width = settings.group_paddings })
 
+local popup_tick = require("items.calendar_popup")(cal)
+
 cal:subscribe({ "forced", "routine", "system_woke" }, function(env)
   cal:set({ icon = os.date("%H:%M"), label = os.date("%a %d") })
+  popup_tick()
 end)
-
-require("items.calendar_popup")(cal)
