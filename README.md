@@ -20,8 +20,7 @@ An interactive shell runs, top to bottom. Every file shown is always sourced, ex
 │   ├── .env/tools/core       path_append/path_prepend, dot_have, dot_unzip, dot_glibc_at_least;
 │   │                         base PATH; installs fzf, zoxide, uv if missing
 │   ├── (shell)               LS_COLORS, fzf init + FZF_DEFAULT_COMMAND, zoxide (as cd), uv completion (bash)
-│   ├── .env/tools/omp        installs oh-my-posh if missing; CPU/GPU hook; builds ~/.cache/ohmyposh/config.toml
-│   │                         from omp.toml + themes/*.toml; oh-my-posh init; posh-theme
+│   ├── .env/tools/omp        installs oh-my-posh if missing; CPU/GPU hook; oh-my-posh init
 │   ├── .env/tools/yazi       defines y() (installs yazi and its plugins on first call)
 │   ├── .env/tools/nvim       EDITOR/VISUAL; defines nvim() (installs nvim and tree-sitter on first call)
 │   ├── (shell)               alias vim
@@ -92,7 +91,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.config/git/` | git user config (`config`: identity, diff context lines drawn faint) and global ignore (`ignore`); a host's `~/.gitconfig`, if present, overrides `config` |
 | `.config/ghostty/` | [Ghostty](https://ghostty.org) terminal config |
 | `.config/kitty/` | [kitty](https://sw.kovidgoyal.net/kitty/) config, used for the floating yazi window (macOS) |
-| `.config/ohmyposh/` | oh-my-posh theme |
+| `.config/ohmyposh/` | oh-my-posh config (`omp.toml`; ANSI colors, so it follows the `theme` selection) |
 | `.config/herdr/` | [herdr](https://herdr.dev) config (`config.toml`); `~/.config/herdr/` also holds herdr runtime state, so only the files are linked (`install.sh` pre-creates the folder) |
 | `.config/worktrunk/` | worktrunk user config: worktrees in `~/cowork/<repo>/<branch>`, NuRadioMC hooks (antenna-model symlink, C++ ray tracer build); `~/.config/worktrunk/` also holds approvals, so only the file is linked |
 | `.local/bin/dotsync` | `dotsync [push\|pull\|status]`: pushes or pulls `~/.dotfiles`, `~/.agents`, `~/.claude` (default `$DOTFILES_SYNC`: push on the laptop, pull elsewhere); after pulling dotfile changes it re-runs `install.sh` |

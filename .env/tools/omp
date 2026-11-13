@@ -1,8 +1,5 @@
 # shellcheck shell=bash
 # Prompt engine
-omp_dir="$HOME/.config/ohmyposh"
-mkdir -p "$omp_dir"
-touch "$omp_dir/theme"
 
 dot_install_omp() {
     echo "oh-my-posh not found, installing ..."
@@ -68,15 +65,6 @@ if [[ "$OSTYPE" == darwin* || -r /proc/stat ]]; then
     fi
 fi
 
-# persisted by `posh-theme`; herdr panes (HERDR_ENV=1) use theme-herdr if it is set
-omp_state="$omp_dir/theme"
-[[ ${HERDR_ENV-} == 1 && -s $omp_dir/theme-herdr ]] && omp_state="$omp_dir/theme-herdr"
-POSH_THEME="$(cat "$omp_state")"
-export POSH_THEME
-# oh-my-posh has no config imports: assemble base config + themes/*.toml
-omp_cfg="${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh/config.toml"
-mkdir -p "${omp_cfg%/*}"
-cat "$omp_dir/omp.toml" "$omp_dir"/themes/*.toml > "$omp_cfg"
 # bash < 5.1 only runs PROMPT_COMMAND[0], but the oh-my-posh init appends _omp_hook as a further array element
 # (so the prompt never renders). Flatten to one string, hook first so it sees the real exit status.
 _omp_flatten_prompt_command() {
@@ -89,34 +77,8 @@ _omp_flatten_prompt_command() {
 }
 
 if command -v oh-my-posh >/dev/null; then
-    eval "$(oh-my-posh init "${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}" --config "$omp_cfg")"
+    eval "$(oh-my-posh init "${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}" --config "$HOME/.config/ohmyposh/omp.toml")"
     if [[ -n ${BASH_VERSION-} ]] && ((BASH_VERSINFO[0] < 5 || (BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] < 1))); then
         _omp_flatten_prompt_command
     fi
 fi
-unset omp_dir omp_cfg omp_state
-
-# oh-my-posh theme switcher: picks a color palette from themes/*.toml
-# and persists it so new shells keep using it (inside herdr: only for herdr panes).
-function posh-theme() {
-    local state="$HOME/.config/ohmyposh/theme"
-    [[ ${HERDR_ENV-} == 1 ]] && state+="-herdr"
-    local f themes=()
-    for f in ~/.config/ohmyposh/themes/*.toml; do
-        f="${f##*/}"
-        themes+=("${f%.toml}")
-    done
-
-    if [[ -z "$1" ]]; then
-        echo "Current: ${POSH_THEME:-default}"
-        echo "Available: ${themes[*]}"
-        return
-    fi
-    if [[ ! " ${themes[*]} " == *" $1 "* ]]; then
-        echo "Unknown theme '$1'. Available: ${themes[*]}" >&2
-        return 1
-    fi
-
-    export POSH_THEME="$1"
-    echo "$1" > "$state"
-}

@@ -6,7 +6,7 @@ Personal shell/app config for macOS (primary) and Linux servers. See `README.md`
 
 - The repo root is one GNU Stow package mirroring `$HOME`; `install.sh` (idempotent) runs `stow --restow --target=$HOME .`.
 - To add a config, put it at its home-relative path and re-run `~/.dotfiles/install.sh` (exactly this form, no `cd`/chain: only it runs outside Claude's sandbox, which blocks writes to `$HOME`). Files that must not be linked go in `.stow-local-ignore` (Perl regexes; it replaces stow's defaults, so git files are listed too).
-- Runtime state is gitignored and stow-ignored (e.g. `.config/ohmyposh/theme`, `.config/yazi/plugins/`, `.config/aerospace/session.tsv`).
+- Runtime state is gitignored and stow-ignored (e.g. `.config/ghostty/theme.ghostty`, `.config/yazi/plugins/`, `.config/aerospace/session.tsv`).
 - Zsh plugins are git submodules in `.zsh/plugins/`.
 
 ## Platforms and hosts
@@ -34,8 +34,8 @@ Code should work on macOS and Linux; gate OS-specific parts with `$OSTYPE`. Host
 What follows the palette:
 
 - **herdr UI**: `[theme] name = "terminal"` in `.config/herdr/config.toml`; reload with `herdr server reload-config`. `~/.config/herdr/` is a real directory holding herdr's runtime state (sessions, sockets, logs); only the files inside it are linked.
-- **oh-my-posh**: theme `ansi` (`themes/ansi.toml`, matrix.toml's layout with the closest Matrix Contrast slots), selected by the `theme` state file; `theme-herdr` stays empty so herdr panes use the same. Because the slots were picked for Matrix Contrast's repurposed hues, standard palettes shift some meanings (dirty git red, errors gold). The hex palettes in `themes/` (matrix, rose-pine, amber, ...) stay selectable with `posh-theme` but ignore the palette.
-  - `omp.toml` is concatenated with `themes/*.toml` (one palette per file) into `~/.cache/ohmyposh/config.toml` at shell start, so open a new shell to see changes. Segments use purpose-named aliases (`p:git-foreground`, ...) that resolve to the theme's `hue-*` colors. ANSI names cannot be shaded (darken/lighten, gradients).
+- **oh-my-posh**: one ANSI `[palette]` in `.config/ohmyposh/omp.toml` (no picker of its own), hues set to the closest Matrix Contrast slots. Because the slots were picked for Matrix Contrast's repurposed hues, standard palettes shift some meanings (dirty git red, errors gold).
+  - Open a new shell to see config changes. Segments use purpose-named aliases (`p:git-foreground`, ...) that resolve to the palette's `hue-*` colors. ANSI names cannot be shaded (darken/lighten, gradients).
   - Nerd Font glyphs are invisible private-use chars, so string matching on them fails: edit with Python regex or write `\uXXXX`/`\U000XXXXX` in double-quoted TOML strings (single-quoted TOML strings are literal, `\n` needs double quotes).
   - `parentBackground`/`parentForeground` only resolve within the same `[[blocks]]`; separate blocks give the visible gap between groups. Powerline segments fade out on their own when last, so no extra "end" segment is needed.
   - Slow metrics (CPU/GPU) use the async cache pattern: `_omp_sysload` precmd hook in `.env/tools/omp` reads `~/.cache/ohmyposh/sysload` and refreshes it in a background job (`ps`/`ioreg` on macOS, `/proc/stat` deltas on Linux; GPU is macOS only), exposed as `OMP_CPU`/`OMP_GPU`. Bash and zsh compatible (zsh `precmd` / bash `PROMPT_COMMAND`); avoid zsh-only `&!`. Reuse it for any expensive prompt metric.
