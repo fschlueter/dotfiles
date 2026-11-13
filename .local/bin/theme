@@ -52,7 +52,8 @@ name_of() {
 }
 
 # Herdr app (GUI, can't read Ghostty's palette): writes the herdr theme as herdr-app's themes/ghostty.json,
-# which the app reloads on save. Accent = slot 5 (magenta), selected sidebar row = slot 0.
+# which the app reloads on save. Accent = slot 5 (magenta), selected sidebar row = slot 0; agent states
+# (radar mod) = working 3 (yellow), blocked 1 (red), done 2 (green), idle 8 (bright black), unknown 5.
 herdr_app_theme() {
     local home="${HERDR_APP_HOME:-$HOME/.config/herdr-app}" file
     [[ -d $home ]] || return 0
@@ -72,8 +73,11 @@ herdr_app_theme() {
             for (i = 0; i < 16; i++) printf "%s\"%s\"", (i ? ", " : ""), (pal[i] ? pal[i] : fg)
             printf "],\n  \"colors\": {\n"
             printf "    \"accent\": \"%s\",\n    \"selected\": \"%s\",\n", pal[5] ? pal[5] : fg, pal[0] ? pal[0] : bg
-            printf "    \"working\": \"#c78a1f\",\n    \"blocked\": \"#c04a4a\",\n    \"done\": \"#4c9a5a\",\n"
-            printf "    \"idle\": \"#6b6259\",\n    \"unknown\": \"#907aa9\"\n  }\n}\n"
+            printf "    \"working\": \"%s\",\n    \"blocked\": \"%s\",\n", P(3), P(1)
+            printf "    \"done\": \"%s\",\n    \"idle\": \"%s\",\n", P(2), P(8)
+            printf "    \"unknown\": \"%s\"\n  }\n}\n", P(5)
+        }
+        function P(i) { return pal[i] ? pal[i] : (pal[i % 8] ? pal[i % 8] : fg)
         }' "$file" >"$home/themes/ghostty.json.tmp" && mv "$home/themes/ghostty.json.tmp" "$home/themes/ghostty.json"
 }
 
