@@ -8,13 +8,17 @@
 set -euo pipefail
 [[ -n ${HC_TERMINAL_ID-} ]] || { echo "wt-herdr: not running inside Herdr (no HC_TERMINAL_ID)" >&2; exit 1; }
 
+usage() { echo "usage: wt-herdr [--name NAME] [--task TEXT] [DIR] [-- ARGV...]" >&2; exit 2; }
 name='' task='' dir=''
 while (($#)); do
     case "$1" in
-        --name) name="$2"; shift 2 ;;
-        --task) task="$2"; shift 2 ;;
+        --name | --task)
+            (($# >= 2)) || usage
+            if [[ $1 == --name ]]; then name="$2"; else task="$2"; fi
+            shift 2 ;;
         --) shift; break ;;
-        *) dir="$1"; shift ;;
+        -*) echo "wt-herdr: unknown option '$1'" >&2; usage ;;
+        *) [[ -z $dir ]] || usage; dir="$1"; shift ;;
     esac
 done
 path="$(git -C "${dir:-$PWD}" rev-parse --show-toplevel)"
