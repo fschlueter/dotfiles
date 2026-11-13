@@ -85,6 +85,23 @@ function herdr-plugins-sync() {
 	done
 }
 
+# Herdr GUI app (macOS): installed on first `herdr-app` call into ~/Applications/Herdr.app (checksum- and
+# signature-verified), linked as ~/.local/bin/herdr-app; also installs herdr-core (+ `hc`) into ~/.local/bin if
+# missing, which the app keeps current. Rerun `dot_install_herdr_app` to update the app.
+if [[ "$OSTYPE" == darwin* ]]; then
+	function dot_install_herdr_app() {
+		curl -fsSL --connect-timeout 10 https://releases.herdr.dev/app/install.sh | sh
+	}
+
+	function herdr-app() {
+		if ! dot_have herdr-app; then
+			echo "herdr-app not found, installing ..."
+			dot_install_herdr_app || return
+		fi
+		command herdr-app "$@"
+	}
+fi
+
 # Completion (zsh: after compinit, the generated file registers itself via compdef; bash: complete -F)
 if dot_have herdr; then
 	if [[ -n ${ZSH_VERSION-} ]]; then _herdr_bin="$(whence -p herdr)"; else _herdr_bin="$(type -P herdr)"; fi
