@@ -41,7 +41,7 @@ if [ "$next" = left ]; then
 else
   left=10
   osascript -e 'tell application "System Events" to set autohide menu bar of dock preferences to false'
-  top="[{ monitor.\"built-in\" = 12 }, { monitor.main = 40 }, 12]"
+  top="[{ monitor.\"built-in\" = 12 }, { monitor.main = 20 }, 12]"
 fi
 
 # resolve the stow symlink so sed -i edits the repo file, not the link
