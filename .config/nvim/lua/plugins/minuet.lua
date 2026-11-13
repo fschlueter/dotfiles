@@ -21,10 +21,11 @@ return {
     request_timeout = 5,
     n_completions = 1,
     context_window = 8000,
-    -- No auto suggestions while editing inside a word
+    -- No auto suggestions while editing inside a word or in a comment
     enable_predicates = {
       function()
-        return not require("config.util").cursor_before_word()
+        local util = require("config.util")
+        return not util.cursor_before_word() and not util.cursor_in_comment()
       end,
     },
     virtualtext = {
