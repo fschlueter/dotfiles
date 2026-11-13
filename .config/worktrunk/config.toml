@@ -4,8 +4,8 @@
 # One folder per task under ~/cowork/<repo>/ (see ~/.claude/CLAUDE.md, "Workspace")
 worktree-path = "~/cowork/{{ repo }}/{{ branch | sanitize }}"
 
-# Close the herdr workspace of a removed worktree (ends an agent still running there). post-remove, not pre-remove:
-# it runs in the background after the removal, so `wt remove` from inside that workspace still completes.
+# Close the Herdr space of a removed worktree (ends an agent still running there). post-remove, not pre-remove:
+# it runs in the background after the removal, so `wt remove` from inside that space still completes.
 [post-remove]
 herdr-close = "wt-herdr-close {{ worktree_path }}"
 

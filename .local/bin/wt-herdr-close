@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
-# Close the herdr workspace(s) that have the git worktree at $1 open (matched on the workspace's checkout path);
-# ends any agent running there. No-op if herdr is not running. From worktrunk: post-remove hook in
-# ~/.config/worktrunk/config.toml.
+# Close the Herdr space(s) whose folder is the git worktree at $1; ends their terminals (and any agent there).
+# No-op if the Herdr app is not running. From worktrunk: post-remove hook in ~/.config/worktrunk/config.toml.
 set -euo pipefail
 path="${1:?usage: wt-herdr-close <worktree path>}"
 path="${path%/}"
 
-command -v herdr > /dev/null || exit 0
-list="$(herdr workspace list 2> /dev/null)" || exit 0
+command -v herdr-app > /dev/null || exit 0
+list="$(herdr-app ls 2> /dev/null)" || exit 0
 
-ids="$(jq -r --arg p "$path" '.result.workspaces[] | select(.worktree.checkout_path == $p) | .workspace_id' <<< "$list")"
+ids="$(jq -r --arg p "$path" '.spaces[] | select(.folder == $p and .machine == null) | .id' <<< "$list")"
 for id in $ids; do
-    echo "closing herdr workspace $id ($path)"
-    herdr workspace close "$id"
+    echo "closing Herdr space $id ($path)"
+    herdr-app "do" space.close --id "$id" --confirmed true > /dev/null
 done

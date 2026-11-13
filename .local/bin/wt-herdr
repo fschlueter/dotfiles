@@ -1,11 +1,35 @@
 #!/usr/bin/env bash
-# Open the git worktree at $1 (default: $PWD) in its own herdr workspace labelled $2 (default: the worktree's folder
-# name) and focus it; a workspace that already has it open is reused (and relabelled). Prints herdr's JSON:
-# .result.already_open, .result.root_pane.pane_id. From worktrunk: `wt switch <branch> --no-cd -x wt-herdr`
-# (shell: `wth <branch>`).
+# Open the git worktree at DIR (default: $PWD) in its own Herdr space named NAME (default: the worktree's folder
+# name) and show it; a space whose folder is the worktree is reused (selected, renamed, nothing started).
+# Usage: wt-herdr [--name NAME] [--task TEXT] [DIR] [-- ARGV...]
+#   ARGV: program for the space's first terminal (default: a shell); TASK: its first message (agents).
+# Prints JSON: .already_open, .space, .tab, .terminal (empty when reused). From worktrunk:
+# `wt switch <branch> --no-cd -x wt-herdr` (shell: `wth <branch>`).
 set -euo pipefail
-[[ ${HERDR_ENV-} == 1 ]] || { echo "wt-herdr: not running inside herdr" >&2; exit 1; }
+[[ -n ${HC_TERMINAL_ID-} ]] || { echo "wt-herdr: not running inside Herdr (no HC_TERMINAL_ID)" >&2; exit 1; }
 
-path="$(git -C "${1:-$PWD}" rev-parse --show-toplevel)"
-repo="$(git -C "$path" worktree list --porcelain | sed -n '1s/^worktree //p')"  # main checkout
-herdr worktree open --cwd "$repo" --path "$path" --label "${2:-${path##*/}}" --focus
+name='' task='' dir=''
+while (($#)); do
+    case "$1" in
+        --name) name="$2"; shift 2 ;;
+        --task) task="$2"; shift 2 ;;
+        --) shift; break ;;
+        *) dir="$1"; shift ;;
+    esac
+done
+path="$(git -C "${dir:-$PWD}" rev-parse --show-toplevel)"
+name="${name:-${path##*/}}"
+
+space="$(herdr-app ls | jq -r --arg p "$path" 'first(.spaces[] | select(.folder == $p and .machine == null) | .id) // empty')"
+if [[ -n $space ]]; then
+    herdr-app "do" space.rename --id "$space" --name "$name" > /dev/null
+    herdr-app "do" space.select --id "$space" > /dev/null
+    jq -cn --arg s "$space" '{already_open: true, space: $s, tab: null, terminal: null}'
+    exit 0
+fi
+
+args="$(jq -cn --arg n "$name" --arg f "$path" '{name: $n, folder: $f}')"
+(($#)) && args="$(jq -c '. + {argv: $ARGS.positional}' --args -- "$@" <<< "$args")"
+[[ -n $task ]] && args="$(jq -c --arg t "$task" '. + {task: $t}' <<< "$args")"
+out="$(herdr-app "do" space.new "$args")" || { echo "wt-herdr: $out" >&2; exit 1; }
+jq -c '{already_open: false} + .' <<< "$out"
