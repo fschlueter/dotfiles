@@ -37,9 +37,10 @@ sbar.add("bracket", { '/menu\\..*/' }, {
   background = { color = colors.bg1 }
 })
 
+-- Gap after the menu block, same as front_app's to the spaces
 local menu_padding = sbar.add("item", "menu.padding", {
   drawing = false,
-  width = 5
+  width = 15
 })
 
 -- The space before the first menu goes into front_app's padding_right (outside the
