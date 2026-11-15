@@ -1,7 +1,11 @@
 -- Apple logo popup menu, shared by both layouts (items/ and items_left/ apple.lua).
 -- Entry icons are pixel art: written as PNGs in the theme's colors at every bar
 -- load (theme_watch reloads the bar), drawn by sketchybar without smoothing.
+-- Below them, a theme picker lists the repo's own Ghostty themes (swatch in
+-- each theme's colors), folded under a "Theme" row that a click unfolds; a
+-- click on a theme runs `theme NAME` and reloads the bar.
 local colors = require("colors")
+local theme = require("helpers.theme")
 
 local M = {}
 
@@ -78,6 +82,21 @@ local art = {
     "..###..###..",
     "............",
   },
+  -- theme swatch: "#" fg, "b" background, "a" accent, "1"/"5" ANSI slots
+  swatch = {
+    "############",
+    "#bbbbbbbbbb#",
+    "#baab11b55b#",
+    "#baab11b55b#",
+    "#baab11b55b#",
+    "#baab11b55b#",
+    "#baab11b55b#",
+    "#baab11b55b#",
+    "#baab11b55b#",
+    "#baab11b55b#",
+    "#bbbbbbbbbb#",
+    "############",
+  },
 }
 
 -- Minimal PNG writer (RGBA, uncompressed deflate blocks)
@@ -151,53 +170,110 @@ local entries = {
   { "apple", "Apple Menu", "$CONFIG_DIR/helpers/menus/bin/menus -s 0" },
 }
 
+-- Adds a popup row to `apple`: pixel-art icon (PNG at `path`), label, click runs `cmd`.
+-- Returns the item.
+local function add_entry(apple, id, path, label, cmd, label_color, hidden)
+  local entry = sbar.add("item", "apple.entry." .. id, {
+    position = "popup." .. apple.name,
+    icon = {
+      string = "",
+      -- a fixed icon width ignores the icon paddings: the gap to the label
+      -- is width - padding_left - 18 (art width at scale 1.5)
+      width = 44,
+      background = {
+        color = colors.transparent,
+        image = {
+          string = path,
+          padding_left = 8,
+          scale = 1.5,
+          corner_radius = 0,
+          border_width = 0,
+        },
+      },
+    },
+    label = { string = label, padding_right = 10, color = label_color or colors.fg },
+    background = { color = colors.transparent, height = 26, border_width = 0 },
+    drawing = not hidden,
+  })
+  entry:subscribe("mouse.clicked", function(_)
+    apple:set({ popup = { drawing = false } })
+    sbar.exec(cmd)
+  end)
+  entry:subscribe("mouse.entered", function(_)
+    entry:set({ background = { color = colors.bg2 } })
+  end)
+  entry:subscribe("mouse.exited", function(_)
+    entry:set({ background = { color = colors.transparent } })
+  end)
+  return entry
+end
+
+-- Theme picker: a "Theme" row (current theme's name) that unfolds the repo's own
+-- Ghostty themes, the selected one in the accent color. Returns a function that folds them.
+local function add_themes(apple)
+  local current = theme.name("terminal")
+  local header = sbar.add("item", "apple.theme_header", {
+    position = "popup." .. apple.name,
+    icon = { string = "􀆊", color = colors.dim, width = 44, padding_left = 14 },
+    label = { string = "Theme: " .. (current or "?"), padding_right = 10 },
+    background = { color = colors.transparent, height = 26, border_width = 0 },
+  })
+  local rows = {}
+  local ls = io.popen("ls '" .. theme.own_dir .. "' 2>/dev/null")
+  if ls then
+    for name in ls:lines() do
+      local t = theme.load_file(theme.own_dir .. "/" .. name)
+      if t then
+        local i = #rows + 1
+        local path = icon_dir .. "/theme_" .. i .. ".png"
+        write_png(path, art.swatch, {
+          ["#"] = t.foreground, b = t.background, a = t["cursor-color"] or t.slot[2],
+          ["1"] = t.slot[1], ["5"] = t.slot[5],
+        })
+        local quoted = "'" .. name:gsub("'", "'\\''") .. "'"
+        rows[i] = add_entry(apple, "theme_" .. i, path, name,
+                            "'" .. theme.cmd .. "' " .. quoted .. " && sketchybar --reload",
+                            name == current and colors.accent or nil, true)
+      end
+    end
+    ls:close()
+  end
+
+  local open = false
+  local function unfold(on)
+    open = on
+    header:set({ icon = { string = on and "􀆈" or "􀆊" } })
+    for _, row in ipairs(rows) do row:set({ drawing = on }) end
+  end
+  header:subscribe("mouse.clicked", function(_) unfold(not open) end)
+  header:subscribe("mouse.entered", function(_)
+    header:set({ background = { color = colors.bg2 } })
+  end)
+  header:subscribe("mouse.exited", function(_)
+    header:set({ background = { color = colors.transparent } })
+  end)
+  return function() if open then unfold(false) end end
+end
+
 -- Turns `apple` (the logo item) into the menu's anchor:
 -- left click toggles the popup, right click switches the bar layout.
 function M.attach(apple)
   apple:set({ popup = { align = "left" } })
 
   for _, e in ipairs(entries) do
-    local name, label, cmd = e[1], e[2], e[3]
+    local name = e[1]
     local path = icon_dir .. "/" .. name .. ".png"
     write_png(path, art[name], palette)
-    local entry = sbar.add("item", "apple.entry." .. name, {
-      position = "popup." .. apple.name,
-      icon = {
-        string = "",
-        -- a fixed icon width ignores the icon paddings: the gap to the label
-        -- is width - padding_left - 18 (art width at scale 1.5)
-        width = 44,
-        background = {
-          color = colors.transparent,
-          image = {
-            string = path,
-            padding_left = 8,
-            scale = 1.5,
-            corner_radius = 0,
-            border_width = 0,
-          },
-        },
-      },
-      label = { string = label, padding_right = 10 },
-      background = { color = colors.transparent, height = 26, border_width = 0 },
-    })
-    entry:subscribe("mouse.clicked", function(_)
-      apple:set({ popup = { drawing = false } })
-      sbar.exec(cmd)
-    end)
-    entry:subscribe("mouse.entered", function(_)
-      entry:set({ background = { color = colors.bg2 } })
-    end)
-    entry:subscribe("mouse.exited", function(_)
-      entry:set({ background = { color = colors.transparent } })
-    end)
+    add_entry(apple, name, path, e[2], e[3])
   end
+  local fold_themes = add_themes(apple)
 
   apple:subscribe("mouse.clicked", function(env)
     if env.BUTTON == "right" then
       apple:set({ popup = { drawing = false } })
       sbar.exec("$CONFIG_DIR/layout.sh toggle")
     else
+      fold_themes()
       apple:set({ popup = { drawing = "toggle" } })
     end
   end)

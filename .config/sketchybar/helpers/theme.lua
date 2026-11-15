@@ -38,6 +38,19 @@ local function load(which)
   return text and parse(text) or nil
 end
 
+-- Colors of the theme file at `path` (same table as load), or nil
+local function load_file(path)
+  local text = read(path)
+  return text and parse(text) or nil
+end
+
+-- Name of the selected theme (`which` as in load), or nil
+local function name(which)
+  local n = (read("'" .. theme_cmd .. "' --name " .. which .. " 2>/dev/null", true) or "")
+    :gsub("%s+$", "")
+  return n ~= "" and n or nil
+end
+
 -- What the watcher in theme_watch.lua checks for changes: the selection state
 -- files and the repo's own themes
 local watched = {
@@ -47,4 +60,7 @@ local watched = {
   home .. "/.config/ghostty/themes",
 }
 
-return { load = load, watched = watched }
+return {
+  load = load, load_file = load_file, name = name, watched = watched,
+  cmd = theme_cmd, own_dir = watched[4],
+}

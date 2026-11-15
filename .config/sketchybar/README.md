@@ -42,7 +42,7 @@
 
 | Item | Shows | Interactions |
 |---|---|---|
-| Apple (`apple.lua`, `apple_menu.lua`) | Apple logo | left: pixel-art menu (Settings, Force Quit, Restart, Shut Down, Apple menu); right: switch layout |
+| Apple (`apple.lua`, `apple_menu.lua`) | Apple logo | left: pixel-art menu (Settings, Force Quit, Restart, Shut Down, Apple menu) and theme picker ("Theme: NAME" row unfolds the own themes in `~/.config/ghostty/themes`, click runs `theme NAME`); right: switch layout |
 | Front app (`front_app.lua`, `menus.lua`) | app icon (+ name on top) with accent underline | top: left click swaps the name for the app's menu row, aligned with the native menus (`menus -L`); right click / left bar: native app menu |
 | Spaces (`spaces.lua`, WIP) | one cell per AeroSpace workspace with its apps' icons | click: switch workspace |
 | Calendar (`calendar.lua`, `calendar_popup.lua`) | date and time | popup: world map with day/night, local/UTC/CT clocks, today's events |
