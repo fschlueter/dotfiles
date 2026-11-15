@@ -1,6 +1,6 @@
 require("items.apple")
+require("items.front_app")  -- before menus: the menu row follows the icon
 require("items.menus")
-require("items.front_app")
 require("items.spaces")
 require("items.calendar")
 -- require("items.control")

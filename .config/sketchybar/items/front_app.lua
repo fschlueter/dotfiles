@@ -28,9 +28,6 @@ local front_app = sbar.add("item", "front_app", {
   updates = true,
 })
 
--- items/init.lua loads menus first; put the icon before the menu row
-sbar.exec("sketchybar --move front_app before menu.1")
-
 front_app:subscribe("front_app_switched", function(env)
   front_app:set({
     icon = { string = app_icons[env.INFO] or app_icons["Default"] },

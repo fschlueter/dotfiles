@@ -17,7 +17,7 @@ sbar.add("event", "aerospace_workspace_change")
 
 -- The workspace set: the `workspace X` bindings in aerospace.toml, read at load.
 -- Read from the file, not `aerospace list-workspaces`: blocking on a process here delays
--- end_config, and front_app's async `--move front_app before menu.1` then runs too early.
+-- end_config (bar load).
 local names = {}
 do
   local f = io.open(os.getenv("HOME") .. "/.config/aerospace/aerospace.toml", "r")
