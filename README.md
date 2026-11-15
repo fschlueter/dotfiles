@@ -98,6 +98,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.local/bin/theme` | `theme [NAME]`, `theme --herdr NAME\|same`: selects the Ghostty theme for the terminal and for herdr panes; borders and sketchybar follow it |
 | `.local/bin/wt-herdr` | opens (or refocuses) a worktree in its own herdr workspace; used by `wth` and as `wt switch -x wt-herdr` |
 | `.config/yazi/` | yazi config; plugins are pinned in `package.toml` (manage with `ya pkg add/upgrade`) and not tracked in git |
+| `.npmrc` | npm user config: `min-release-age=7` (installs only versions published at least 7 days ago) |
 | `.tmux.conf` | tmux: passes image escape codes and `TERM`/`TERM_PROGRAM` through, so yazi image previews work inside tmux; Ctrl+S as a second prefix next to Ctrl+B; plugins via TPM in `$DOTFILES_TMUX_PLUGINS` (vim-tmux-navigator, tmux-power), cloned on first start |
 | `.config/nvim/` | [LazyVim](https://www.lazyvim.org) config (from the starter); plugins are installed by lazy.nvim on first start, pinned in `lazy-lock.json` |
 | `.config/aerospace/` | [AeroSpace](https://github.com/nikitabobko/AeroSpace) window manager config and session save/restore (macOS, see its [README](.config/aerospace/README.md)) |
