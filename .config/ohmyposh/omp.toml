@@ -5,8 +5,7 @@ final_space = true
 
 [maps.host_name]
 # Mac = ""
-MacPal = " "
-MacBook-Pro-8 = " "
+mithril = " "
 NuRadioOpt-GPU = " NuRadio"
 "rno-g.uchicago.edu" = "\U000F019A rno-g"  # host names with a . need qotes
 
