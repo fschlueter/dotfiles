@@ -5,7 +5,7 @@
 #        theme --herdr NAME|same    herdr pane theme ("same": follow the terminal theme)
 #        theme --name terminal|herdr   print the effective theme name (for scripts)
 #        theme --file terminal|herdr   print the effective theme file (for scripts)
-#        theme --apply              reapply the current themes (borders, herdr app, wallpaper)
+#        theme --apply              reapply the current themes (borders, wallpaper)
 # State: ~/.config/ghostty/theme.ghostty (`theme = NAME`, included by config.ghostty)
 #        and ~/.config/ghostty/theme-herdr (NAME, or empty/"same"). Both are gitignored.
 # Wallpaper (macOS): cycles ~/Pictures/wallpapers/<first word of the terminal theme, lowercase>/ if that
@@ -53,36 +53,6 @@ name_of() {
     esac
 }
 
-# Herdr app (GUI, can't read Ghostty's palette): writes the herdr theme as herdr-app's themes/ghostty.json,
-# which the app reloads on save. Accent = slot 5 (magenta), selected sidebar row = slot 0; agent states
-# (radar mod) = working 3 (yellow), blocked 1 (red), done 2 (green), idle 8 (bright black), unknown 5.
-herdr_app_theme() {
-    local home="${HERDR_APP_HOME:-$HOME/.config/herdr-app}" file
-    [[ -d $home ]] || return 0
-    file="$(theme_file "$(herdr_name)")" || return 0
-    mkdir -p "$home/themes"
-    awk '
-        { sub(/[ \t]*#[^0-9a-fA-F].*$/, "") }  # trailing comments (not the # of a color)
-        /^palette *=/ { if (match($0, /[0-9]+ *= *#?[0-9a-fA-F]{6}/)) { s = substr($0, RSTART, RLENGTH)
-            n = s; sub(/ *=.*/, "", n); c = s; sub(/.*= *#?/, "", c); pal[n + 0] = "#" c } }
-        /^(background|foreground|cursor-color|selection-background) *=/ { k = $0; sub(/ *=.*/, "", k)
-            if (match($0, /#?[0-9a-fA-F]{6} *$/)) { c = substr($0, RSTART, RLENGTH); sub(/#/, "", c); sub(/ *$/, "", c); v[k] = "#" c } }
-        END {
-            bg = v["background"] ? v["background"] : "#000000"; fg = v["foreground"] ? v["foreground"] : "#ffffff"
-            printf "{\n  \"background\": \"%s\",\n  \"foreground\": \"%s\",\n", bg, fg
-            printf "  \"selection\": \"%s\",\n", v["selection-background"] ? v["selection-background"] : (pal[8] ? pal[8] : fg)
-            printf "  \"cursor\": \"%s\",\n  \"ansi\": [", v["cursor-color"] ? v["cursor-color"] : fg
-            for (i = 0; i < 16; i++) printf "%s\"%s\"", (i ? ", " : ""), (pal[i] ? pal[i] : fg)
-            printf "],\n  \"colors\": {\n"
-            printf "    \"accent\": \"%s\",\n    \"selected\": \"%s\",\n", pal[5] ? pal[5] : fg, pal[0] ? pal[0] : bg
-            printf "    \"working\": \"%s\",\n    \"blocked\": \"%s\",\n", P(3), P(1)
-            printf "    \"done\": \"%s\",\n    \"idle\": \"%s\",\n", P(2), P(8)
-            printf "    \"unknown\": \"%s\"\n  }\n}\n", P(5)
-        }
-        function P(i) { return pal[i] ? pal[i] : (pal[i % 8] ? pal[i % 8] : fg)
-        }' "$file" >"$home/themes/ghostty.json.tmp" && mv "$home/themes/ghostty.json.tmp" "$home/themes/ghostty.json"
-}
-
 # macOS wallpaper folder of the terminal theme (see the header)
 wallpaper_folder() {
     local word folder
@@ -94,11 +64,9 @@ wallpaper_folder() {
     "$(dirname "$0")/wallpaper" "$folder" || echo "theme: wallpaper not switched to $folder" >&2
 }
 
-# Effects outside the state files: window borders and the herdr app use the herdr theme,
-# the wallpaper the terminal theme
+# Effects outside the state files: window borders use the herdr theme, the wallpaper the terminal theme
 apply() {
     [[ -x "$HOME/.config/borders/bordersrc" ]] && "$HOME/.config/borders/bordersrc" >/dev/null 2>&1 || true
-    herdr_app_theme || true
     wallpaper_folder || true
 }
 
