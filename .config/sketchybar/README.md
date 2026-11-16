@@ -29,7 +29,9 @@
 - **Helpers** (built into gitignored `bin/` on every load): `menus` (`-l`/`-L` list the front app's
   menus, `-s N|owner,name` clicks a menu or menu bar extra), event providers `cpu_load`,
   `network_load`, the Swift app `wifi_scan`.
-- sketchybar commands and the helpers must run outside Claude's sandbox.
+- `sketchybar …` and `tools/barshot.sh` are sandbox-excluded in Claude's settings: run them bare (one call,
+  no chain). The other helpers need a run outside the sandbox. Open the Apple menu for a screenshot with
+  `sketchybar --set apple popup.drawing=on`.
 - `sketchybar --query bar` prints `position` only as top/bottom, and item `bounding_rects` stay
   horizontal on the left bar: judge layout behaviour on screen or in the source (v2.24.1
   `src/bar.c`, `bar_calculate_bounds_left_right`).

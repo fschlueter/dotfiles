@@ -6,7 +6,7 @@ local apple_menu = require("items.apple_menu")
 -- Padding item required because of bracket
 sbar.add("item", { width = 10 })
 
-local apple = sbar.add("item", {
+local apple = sbar.add("item", "apple", {
   icon = {
     font = { size = 16.0 },
     string = icons.apple,
