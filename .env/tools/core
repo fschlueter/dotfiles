@@ -40,7 +40,7 @@ function dot_have() {
 }
 
 # Usage: dot_front_app_refresh. Tells sketchybar's front_app to re-read the window title
-# (herdr icon; .config/sketchybar/helpers/front_app_name.lua) 1 s later, once the TUI (on start)
+# (herdr/yazi icon; .config/sketchybar/helpers/front_app_name.lua) 1 s later, once the TUI (on start)
 # or the shell (on exit) has set it. macOS only; detached double subshell: no job message.
 function dot_front_app_refresh() {
 	[[ $OSTYPE == darwin* ]] && dot_have sketchybar || return 0

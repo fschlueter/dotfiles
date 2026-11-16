@@ -40,7 +40,9 @@ function y() {
 	_sync_yazi_plugins
 	local tmp cwd
 	tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	dot_front_app_refresh
 	yazi "$@" --cwd-file="$tmp"
+	dot_front_app_refresh
 	IFS= read -r -d '' cwd < "$tmp"
 	rm -f -- "$tmp"
 	if [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
