@@ -3,6 +3,7 @@
 # 1. secrets: gitleaks if installed, else a dependency-free regex scan
 # 2. shell syntax: `bash -n` / `zsh -n`; shellcheck (config in .shellcheckrc) if installed
 # 3. Lua syntax: `luac -p` if installed (sketchybar, nvim)
+# 4. Python syntax: *.py and python scripts in .local/bin (parsed, not run; no __pycache__)
 # Bypass a false positive with `git commit --no-verify`.
 fail=0
 
@@ -51,6 +52,19 @@ if command -v luac >/dev/null; then
     while IFS= read -r f; do
         git show ":$f" | luac -p - 2>&1 | sed "s|^luac: stdin:|$f:|" | grep . >&2 && fail=1
     done < <(git diff --cached --name-only --diff-filter=ACM -- '*.lua')
+fi
+
+# --- 4. Python files
+if command -v python3 >/dev/null; then
+    while IFS= read -r f; do
+        case "$f" in
+            *.py) ;;
+            .local/bin/*) git show ":$f" | head -1 | grep -qE '^#!.*python' || continue ;;
+            *) continue ;;
+        esac
+        git show ":$f" | python3 -I -c 'import ast, sys; ast.parse(sys.stdin.read(), sys.argv[1])' "$f" 2>&1 \
+            | grep . >&2 && fail=1
+    done < <(git diff --cached --name-only --diff-filter=ACM)
 fi
 
 exit $fail
