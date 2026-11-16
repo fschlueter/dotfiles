@@ -45,6 +45,6 @@ python_module_extra=(
 export RNO_G_DATA="${RNO_G_DATA:-$HOME/work/rnog/data/full}"
 export RNO_G_INSTALL_DIR="${SOFTWARE:-$HOME/software}/rnog/daq/install"  # $SOFTWARE is not set yet here
 
-alias cs="~/.claude/scripts/claude-sessions/cs"
+alias cs="~/cowork/claude-sessions/cs"
 alias claude-alt="~/cowork/claude-litellm/claude-alt.sh"  # Claude Code on KI-Connect models via litellm
 alias claude-or="~/cowork/claude-litellm/claude-or.sh"  # Claude Code on OpenRouter models (key from keychain)
