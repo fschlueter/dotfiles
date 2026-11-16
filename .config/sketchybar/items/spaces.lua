@@ -7,6 +7,7 @@
 local colors = require("colors")
 local settings = require("settings")
 local app_icons = require("helpers.app_icons")
+local app_name = require("helpers.front_app_name").name
 local cell = require("helpers.cell")
 
 local left = settings.layout == "left"
@@ -116,7 +117,7 @@ local function open_popup(space, current)
         local r = row({
           position = pos,
           icon = {
-            string = app_icons[w.app] or app_icons["Default"],
+            string = app_icons[app_name(w.app, w.title)] or app_icons["Default"],
             font = "sketchybar-app-font:Regular:12.0",
             color = colors.fg,
             padding_left = 12,
@@ -189,7 +190,7 @@ end
 
 local query = aerospace .. " list-workspaces --all --format "
   .. "'%{workspace}|%{workspace-is-focused}|%{workspace-is-visible}'; echo '#'; "
-  .. aerospace .. " list-windows --all --format '%{workspace}|%{app-name}'"
+  .. aerospace .. " list-windows --all --format '%{workspace}|%{app-name}|%{window-title}'"
 
 local function update()
   sbar.exec(query, function(out)
@@ -206,9 +207,10 @@ local function update()
           seen[name] = {}
         end
       else
-        local name, app = line:match("^(.-)|(.*)$")
+        local name, app, title = line:match("^(.-)|(.-)|(.*)$")
         local s = name and new[name]
         if s then
+          app = app_name(app, title)
           if not seen[name][app] then
             seen[name][app] = true
             s.n = s.n + 1
@@ -228,6 +230,7 @@ local watcher = sbar.add("item", "spaces.watcher", { drawing = false, updates = 
 watcher:subscribe({
   "aerospace_workspace_change",
   "front_app_switched",
+  "front_window_changed",  -- window titles: herdr/yazi icons (helpers/front_app_name.lua)
   "space_windows_change",
   "display_change",
   "system_woke",

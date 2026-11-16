@@ -30,7 +30,7 @@ local front_app = sbar.add("item", "front_app", {
 
 local current_app
 local function update()
-  front_app_name(current_app, function(name)
+  front_app_name.focused(current_app, function(name)
     front_app:set({ icon = { string = app_icons[name] or app_icons["Default"] } })
   end)
 end

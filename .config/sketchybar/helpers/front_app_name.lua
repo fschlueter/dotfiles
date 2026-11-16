@@ -1,4 +1,4 @@
--- Name shown for the focused app: for a Ghostty window, the TUI its title names
+-- Name shown for an app window (front_app, spaces): for a Ghostty window, the TUI its title names
 -- ("herdr:" = window_title in ~/.config/herdr/config.toml, "Yazi:" = yazi's default title_format),
 -- else the app name.
 -- Event front_window_changed: AeroSpace on-focus-changed and dot_front_app_refresh (.env/tools/core,
@@ -8,11 +8,19 @@ sbar.add("event", "front_window_changed")
 
 local aerospace = "/opt/homebrew/bin/aerospace"
 
--- Calls cb(name) for app (front_app_switched's INFO)
-return function(app, cb)
+local M = {}
+
+function M.name(app, title)
+  if app ~= "Ghostty" or not title then return app end
+  return title:match("^herdr:") and "Herdr" or title:match("^Yazi:") and "Yazi" or app
+end
+
+-- Calls cb(name) for the focused window of app (front_app_switched's INFO)
+function M.focused(app, cb)
   if app ~= "Ghostty" then return cb(app) end
   sbar.exec(aerospace .. " list-windows --focused --format '%{window-title}'", function(out)
-    if type(out) ~= "string" then return cb(app) end
-    cb(out:match("^herdr:") and "Herdr" or out:match("^Yazi:") and "Yazi" or app)
+    cb(M.name(app, type(out) == "string" and out or nil))
   end)
 end
+
+return M
