@@ -42,6 +42,7 @@ What follows the palette:
 - **Claude Code**: theme `custom:ansi-contrast` (`~/.claude/themes/ansi-contrast.json`, not in this repo): `dark-ansi` with the prompt, sidebar and memory backgrounds moved from slot 8 (too bright behind text) to slot 0. `~/.claude/scripts/statusline.sh` uses ANSI colors unless a custom theme is selected; the earlier custom theme `~/.claude/themes/rose-pine.json` (`custom:rose-pine`) is kept.
 - **sketchybar**: read `.config/sketchybar/README.md` before changing it (layouts, color roles, tools, limits).
 - **Window borders**: `bordersrc` uses slots 5/7 of the herdr theme; `theme` reruns it.
+- **Wallpaper** (macOS): `theme` points the desktop at `~/Pictures/wallpapers/<first word of theme>/` via `.local/bin/wallpaper`. macOS cycles a copy taken when the folder was added in System Settings, so new images probably need the folder re-added (untested). Theme-tinted versions of photos: `~/cowork/scripts/wallpaper-tint/tint.sh`.
 - **Shell output**: zsh-syntax-highlighting, zsh-autosuggestions (slot 8), `ls`/completion via `LS_COLORS`, git.
 
 **On their own (for now)**: Neovim and yazi use their own Everforest colorschemes and ignore the palette.
