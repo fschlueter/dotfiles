@@ -3,12 +3,17 @@
 # Keep it bash-compatible; anything zsh- or bash-only belongs in the respective rc file.
 _sh="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
 
+# Agent shell: a coding agent runs the commands, so skip conveniences that change command output (e.g. ls aliases).
+# Markers: Claude Code sets CLAUDECODE=1. Add other agents' markers here.
+DOTFILES_IS_AGENT=""
+[[ -n ${CLAUDECODE-} ]] && DOTFILES_IS_AGENT=1
+
 # Aliases
 alias ll="ls -l"
 alias la="ls -la"
 alias lt="ls -ltr"
-if [[ -n ${CLAUDECODE-} ]]; then
-    :  # agent shell (Claude Code): plain ls, as pi's bash has it
+if [[ -n $DOTFILES_IS_AGENT ]]; then
+    :  # plain ls, as pi's bash has it
 elif [[ "$OSTYPE" == darwin* ]]; then
     alias ls="gls --color=auto"  # GNU ls honors LS_COLORS; macOS /bin/ls does not
 else
