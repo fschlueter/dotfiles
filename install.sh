@@ -136,7 +136,7 @@ if ((agents)); then
         # shellcheck disable=SC2086  # "dest url" pair
         install_agent_repo $r
     done
-    # Link skills, scripts and pi configs into ~/.claude and ~/.pi (conflicts are reported, not fatal)
+    # Link Claude Code config, skills, scripts and pi configs into ~/.claude and ~/.pi (conflicts are reported, not fatal)
     if [[ -x "$HOME/.agents/install-links" ]]; then
         "$HOME/.agents/install-links" || echo "agents: install-links reported conflicts, see above" >&2
     fi
