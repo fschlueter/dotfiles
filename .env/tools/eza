@@ -33,7 +33,8 @@ if [[ ${DOTFILES_AUTO_INSTALL-1} != 0 ]]; then
 fi
 
 # Colors come from LS_COLORS (set in .env/shell), so they match ls and the completion menu.
-if dot_have eza; then
+# Agent shells (Claude Code sets CLAUDECODE=1) keep plain ls, as pi's bash has it.
+if dot_have eza && [[ -z ${CLAUDECODE-} ]]; then
 	# Aliases starting with an alias expand it too (bash + zsh), so these build on `ls`.
 	alias ls="eza --icons=auto --group-directories-first"  # grid
 	alias ll="ls -lh --git"                                 # long, header, git status

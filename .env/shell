@@ -7,7 +7,9 @@ _sh="${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
 alias ll="ls -l"
 alias la="ls -la"
 alias lt="ls -ltr"
-if [[ "$OSTYPE" == darwin* ]]; then
+if [[ -n ${CLAUDECODE-} ]]; then
+    :  # agent shell (Claude Code): plain ls, as pi's bash has it
+elif [[ "$OSTYPE" == darwin* ]]; then
     alias ls="gls --color=auto"  # GNU ls honors LS_COLORS; macOS /bin/ls does not
 else
     alias ls="ls --color=auto"
