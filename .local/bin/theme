@@ -90,7 +90,8 @@ wallpaper_folder() {
     word="$(terminal_name)"
     word="${word%% *}"
     folder="$HOME/Pictures/wallpapers/$(tr '[:upper:]' '[:lower:]' <<<"$word")"
-    [[ -d $folder ]] && "$(dirname "$0")/wallpaper" "$folder"
+    [[ -d $folder ]] || return 0
+    "$(dirname "$0")/wallpaper" "$folder" || echo "theme: wallpaper not switched to $folder" >&2
 }
 
 # Effects outside the state files: window borders and the herdr app use the herdr theme,
