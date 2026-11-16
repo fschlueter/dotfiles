@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+"""Show or set the image folder macOS cycles the desktop wallpaper from (all spaces and displays).
+
+Usage: wallpaper           print the current folder
+       wallpaper FOLDER    switch to FOLDER and restart WallpaperAgent (no-op if already set)
+FOLDER must have been added once in System Settings → Wallpaper: macOS cycles its own copy of
+each added folder, taken when it is added (restarting WallpaperAgent doesn't pick up later edits).
+Rewrites the folder URL in WallpaperAgent's Index.plist (undocumented; checked on macOS 26) and
+needs a wallpaper folder (not a single image) selected in System Settings.
+"""
+import pathlib
+import plistlib
+import subprocess
+import sys
+
+STORE = pathlib.Path.home() / "Library/Application Support/com.apple.wallpaper/Store/Index.plist"
+
+
+def folder_choices(store):
+    """The desktop choices that show an image folder, with their decoded configuration."""
+    for choice in store["AllSpacesAndDisplays"]["Desktop"]["Content"]["Choices"]:
+        if choice.get("Provider") != "com.apple.wallpaper.choice.image":
+            continue
+        conf = plistlib.loads(choice["Configuration"])
+        if conf.get("type") == "imageFolder":
+            yield choice, conf
+
+
+def main():
+    if len(sys.argv) > 2 or (sys.argv[1:] and sys.argv[1] in ("-h", "--help")):
+        print(__doc__.strip())
+        return 0 if sys.argv[1:] and sys.argv[1] in ("-h", "--help") else 2
+    with open(STORE, "rb") as f:
+        store = plistlib.load(f)
+    choices = list(folder_choices(store))
+    if not choices:
+        print("wallpaper: no image folder selected in System Settings → Wallpaper", file=sys.stderr)
+        return 1
+
+    if len(sys.argv) == 1:
+        for _, conf in choices:
+            print(conf["url"]["relative"])
+        return 0
+
+    folder = pathlib.Path(sys.argv[1]).expanduser().resolve()
+    if not folder.is_dir():
+        print(f"wallpaper: not a folder: {folder}", file=sys.stderr)
+        return 1
+    url = folder.as_uri() + "/"
+    if all(conf["url"]["relative"] == url for _, conf in choices):
+        return 0
+    for choice, conf in choices:
+        conf["url"] = {"relative": url}
+        choice["Configuration"] = plistlib.dumps(conf, fmt=plistlib.FMT_BINARY)
+    tmp = STORE.with_suffix(".plist.tmp")
+    with open(tmp, "wb") as f:
+        plistlib.dump(store, f, fmt=plistlib.FMT_BINARY)
+    tmp.replace(STORE)
+    subprocess.run(["killall", "WallpaperAgent"], check=False)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

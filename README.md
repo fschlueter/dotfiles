@@ -95,7 +95,8 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.config/herdr/` | [herdr](https://herdr.dev) config (`config.toml`); `~/.config/herdr/` also holds herdr runtime state, so only the files are linked (`install.sh` pre-creates the folder) |
 | `.config/worktrunk/` | worktrunk user config: worktrees in `~/cowork/<repo>/<branch>`, NuRadioMC hooks (antenna-model symlink, C++ ray tracer build); `~/.config/worktrunk/` also holds approvals, so only the file is linked |
 | `.local/bin/dotsync` | `dotsync [push\|pull\|status]`: pushes or pulls `~/.dotfiles`, `~/.agents`, `~/.claude` (default `$DOTFILES_SYNC`: push on the laptop, pull elsewhere); after pulling dotfile changes it re-runs `install.sh` |
-| `.local/bin/theme` | `theme [NAME]`, `theme --herdr NAME\|same`: selects the Ghostty theme for the terminal and for herdr panes; borders and sketchybar follow it |
+| `.local/bin/theme` | `theme [NAME]`, `theme --herdr NAME\|same`: selects the Ghostty theme for the terminal and for herdr panes; borders and sketchybar follow it, and on macOS the wallpaper (folder `~/Pictures/wallpapers/<first word of the theme>/`, if present) |
+| `.local/bin/wallpaper` | `wallpaper [FOLDER]` (macOS): shows or sets the image folder the desktop wallpaper cycles (folder added once in System Settings; rewrites WallpaperAgent's undocumented `Index.plist`) |
 | `.local/bin/wt-herdr` | opens (or refocuses) a worktree in its own herdr workspace; used by `wth` and as `wt switch -x wt-herdr` |
 | `.config/yazi/` | yazi config; plugins are pinned in `package.toml` (manage with `ya pkg add/upgrade`) and not tracked in git |
 | `.npmrc` | npm user config: `min-release-age=7` (installs only versions published at least 7 days ago) |

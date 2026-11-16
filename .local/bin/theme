@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-# Select the Ghostty color theme that the terminal, herdr, borders and sketchybar follow.
+# Select the Ghostty color theme that the terminal, herdr, borders and sketchybar follow (and, on macOS, the wallpaper).
 # Usage: theme                      show the current themes and the repo's own ones
 #        theme NAME                 terminal theme (Ghostty outside herdr; also herdr when it is "same")
 #        theme --herdr NAME|same    Herdr app theme ("same": follow the terminal theme)
 #        theme --name terminal|herdr   print the effective theme name (for scripts)
 #        theme --file terminal|herdr   print the effective theme file (for scripts)
-#        theme --apply              reapply the current themes (borders, herdr app)
+#        theme --apply              reapply the current themes (borders, herdr app, wallpaper)
 # State: ~/.config/ghostty/theme.ghostty (`theme = NAME`, included by config.ghostty)
 #        and ~/.config/ghostty/theme-herdr (NAME, or empty/"same"). Both are gitignored.
+# Wallpaper (macOS): cycles ~/Pictures/wallpapers/<first word of the terminal theme, lowercase>/ if that
+#        folder exists, else stays as is; each folder must be added once in System Settings (see `wallpaper -h`).
 set -euo pipefail
 
 dir="$HOME/.config/ghostty"
@@ -81,10 +83,22 @@ herdr_app_theme() {
         }' "$file" >"$home/themes/ghostty.json.tmp" && mv "$home/themes/ghostty.json.tmp" "$home/themes/ghostty.json"
 }
 
-# Effects outside the state files: window borders and the herdr app use the herdr theme
+# macOS wallpaper folder of the terminal theme (see the header)
+wallpaper_folder() {
+    local word folder
+    [[ $OSTYPE == darwin* ]] || return 0
+    word="$(terminal_name)"
+    word="${word%% *}"
+    folder="$HOME/Pictures/wallpapers/$(tr '[:upper:]' '[:lower:]' <<<"$word")"
+    [[ -d $folder ]] && "$(dirname "$0")/wallpaper" "$folder"
+}
+
+# Effects outside the state files: window borders and the herdr app use the herdr theme,
+# the wallpaper the terminal theme
 apply() {
     [[ -x "$HOME/.config/borders/bordersrc" ]] && "$HOME/.config/borders/bordersrc" >/dev/null 2>&1 || true
     herdr_app_theme || true
+    wallpaper_folder || true
 }
 
 check() {
@@ -111,7 +125,7 @@ case "${1-}" in
         apply
         echo "herdr: $(herdr_name); the Herdr app follows at once."
         ;;
-    -h | --help) sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//' ;;
+    -h | --help) sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//' ;;
     -*) echo "unknown option '$1' (see theme --help)" >&2; exit 2 ;;
     *)
         check "$1"
