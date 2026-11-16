@@ -3,6 +3,7 @@
 # On Linux also installs zsh into ~/.local if missing.
 # Usage: ./install.sh [--agents] [stow args], e.g. `./install.sh -n -v` for a dry run.
 #   --agents  also clone the private agent config repos (see AGENT_REPOS; needs SSH access)
+#             and run ~/.agents/install-links
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -135,4 +136,8 @@ if ((agents)); then
         # shellcheck disable=SC2086  # "dest url" pair
         install_agent_repo $r
     done
+    # Link skills, scripts and pi configs into ~/.claude and ~/.pi (conflicts are reported, not fatal)
+    if [[ -x "$HOME/.agents/install-links" ]]; then
+        "$HOME/.agents/install-links" || echo "agents: install-links reported conflicts, see above" >&2
+    fi
 fi
