@@ -44,7 +44,11 @@ default-root-container-orientation = 'auto'
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
 # Re-check the window border (hidden for floating, accordion, fullscreen; see ~/.config/borders/bordersrc)
-on-focus-changed = ['exec-and-forget ~/.config/borders/bordersrc hook']
+# and the sketchybar front_app icon (herdr in Ghostty; ~/.config/sketchybar/helpers/front_app_name.lua)
+on-focus-changed = [
+  'exec-and-forget ~/.config/borders/bordersrc hook',
+  'exec-and-forget /opt/homebrew/bin/sketchybar --trigger front_window_changed',
+]
 
 # Workspace indicators in sketchybar (~/.config/sketchybar/items/spaces.lua)
 exec-on-workspace-change = ['/bin/bash', '-c',

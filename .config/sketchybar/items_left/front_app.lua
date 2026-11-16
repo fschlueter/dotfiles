@@ -1,6 +1,7 @@
 local colors = require("colors")
 local settings = require("settings")
 local app_icons = require("helpers.app_icons")
+local front_app_name = require("helpers.front_app_name")
 
 -- App icon of the focused app; click opens its native menu (items_left/menus.lua)
 local front_app = sbar.add("item", "front_app", {
@@ -27,8 +28,19 @@ local front_app = sbar.add("item", "front_app", {
   updates = true,
 })
 
+local current_app
+local function update()
+  front_app_name(current_app, function(name)
+    front_app:set({ icon = { string = app_icons[name] or app_icons["Default"] } })
+  end)
+end
+
 front_app:subscribe("front_app_switched", function(env)
-  front_app:set({ icon = { string = app_icons[env.INFO] or app_icons["Default"] } })
+  current_app = env.INFO
+  update()
+end)
+front_app:subscribe("front_window_changed", function()
+  if current_app then update() end
 end)
 
 return front_app

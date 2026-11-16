@@ -60,9 +60,11 @@ function herdr() {
 	if [[ ${HERDR_ENV-} != 1 && -t 1 ]] && { [[ $# -eq 0 || $1 == --session || $1 == --remote ]] \
 		|| [[ ${1-} == session && ${2-} == attach ]]; }; then
 		_herdr_colors_set
+		dot_front_app_refresh
 		command herdr "$@"
 		local ret=$?
 		_herdr_colors_reset
+		dot_front_app_refresh
 		return $ret
 	fi
 	command herdr "$@"

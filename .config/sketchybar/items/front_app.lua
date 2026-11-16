@@ -1,6 +1,7 @@
 local colors = require("colors")
 local settings = require("settings")
 local app_icons = require("helpers.app_icons")
+local front_app_name = require("helpers.front_app_name")
 
 -- Icon + name of the focused app; click toggles the name with the app's menus (items/menus.lua)
 local front_app = sbar.add("item", "front_app", {
@@ -30,11 +31,22 @@ local front_app = sbar.add("item", "front_app", {
   updates = true,
 })
 
+local current_app
+local function update()
+  front_app_name(current_app, function(name)
+    front_app:set({
+      icon = { string = app_icons[name] or app_icons["Default"] },
+      label = { string = name },
+    })
+  end)
+end
+
 front_app:subscribe("front_app_switched", function(env)
-  front_app:set({
-    icon = { string = app_icons[env.INFO] or app_icons["Default"] },
-    label = { string = env.INFO },
-  })
+  current_app = env.INFO
+  update()
+end)
+front_app:subscribe("front_window_changed", function()
+  if current_app then update() end
 end)
 
 -- Left click: toggle name <-> menus; right click: the app-name menu (native popup opens here)

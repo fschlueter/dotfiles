@@ -39,6 +39,14 @@ function dot_have() {
 	if [[ -n ${ZSH_VERSION-} ]]; then whence -p "$1"; else type -P "$1"; fi >/dev/null
 }
 
+# Usage: dot_front_app_refresh. Tells sketchybar's front_app to re-read the window title
+# (herdr icon; .config/sketchybar/helpers/front_app_name.lua) 1 s later, once the TUI (on start)
+# or the shell (on exit) has set it. macOS only; detached double subshell: no job message.
+function dot_front_app_refresh() {
+	[[ $OSTYPE == darwin* ]] && dot_have sketchybar || return 0
+	( (sleep 1; sketchybar --trigger front_window_changed) >/dev/null 2>&1 & )
+}
+
 # Usage: dot_glibc_at_least X.Y. True if glibc is at least that version (or unknown, e.g. musl).
 function dot_glibc_at_least() {
 	local v
