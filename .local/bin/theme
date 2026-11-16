@@ -2,7 +2,7 @@
 # Select the Ghostty color theme that the terminal, herdr, borders and sketchybar follow (and, on macOS, the wallpaper).
 # Usage: theme                      show the current themes and the repo's own ones
 #        theme NAME                 terminal theme (Ghostty outside herdr; also herdr when it is "same")
-#        theme --herdr NAME|same    Herdr app theme ("same": follow the terminal theme)
+#        theme --herdr NAME|same    herdr pane theme ("same": follow the terminal theme)
 #        theme --name terminal|herdr   print the effective theme name (for scripts)
 #        theme --file terminal|herdr   print the effective theme file (for scripts)
 #        theme --apply              reapply the current themes (borders, herdr app, wallpaper)
@@ -124,7 +124,7 @@ case "${1-}" in
         [[ $2 == same ]] || check "$2"
         echo "$2" >"$herdr_state"
         apply
-        echo "herdr: $(herdr_name); the Herdr app follows at once."
+        echo "herdr: $(herdr_name); applies the next time herdr attaches."
         ;;
     -h | --help) sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//' ;;
     -*) echo "unknown option '$1' (see theme --help)" >&2; exit 2 ;;
@@ -132,6 +132,6 @@ case "${1-}" in
         check "$1"
         printf '# Written by the theme script (~/.local/bin/theme); gitignored.\ntheme = %s\n' "$1" >"$terminal_state"
         apply
-        echo "terminal: $1. Reload Ghostty with Cmd+Shift+, ; the Herdr app follows if it is 'same'."
+        echo "terminal: $1. Reload Ghostty with Cmd+Shift+, ; herdr follows on its next attach if it is 'same'."
         ;;
 esac

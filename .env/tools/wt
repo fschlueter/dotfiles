@@ -2,7 +2,7 @@
 # Worktrunk (`wt`): git worktree manager (~/.config/worktrunk/config.toml). Installed on first call if missing
 # (macOS only, via Homebrew; on Linux install it yourself).
 # Its shell integration defines a `wt` function that cd's into the switched-to worktree.
-#   wth <branch> [wt switch args]   switch/create, then open the worktree in its own Herdr space (wt-herdr)
+#   wth <branch> [wt switch args]   switch/create, then open the worktree in its own herdr workspace (wt-herdr)
 
 function dot_install_wt() {
 	if [[ "$OSTYPE" != darwin* ]]; then
