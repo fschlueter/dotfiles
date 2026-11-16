@@ -42,6 +42,9 @@ auto_switch = false
 # Active sidebar row: the terminal theme's default DarkGray (slot 8) is too bright behind the text; slot 0 instead
 [theme.custom]
 active_row_bg = "black"
+# Active tab text (drawn on `accent`, light in all themes); default DarkGray (slot 8) is unreadable there.
+# Also colors the sidebar separator and scroll tracks.
+surface_dim = "black"
 
 [terminal]
 # Executable used for new interactive panes.
