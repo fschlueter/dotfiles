@@ -30,7 +30,10 @@ fi
 while IFS= read -r f; do
     case "$f" in
         .zshrc | *.zsh) shells="zsh" ;;
-        .bashrc | *.sh | .githooks/* | .local/bin/*) shells="bash" ;;
+        .bashrc | *.sh | .githooks/*) shells="bash" ;;
+        .local/bin/*) # only shell scripts (by shebang)
+            git show ":$f" | head -1 | grep -qE '^#!.*[/ ](ba)?sh( |$)' || continue
+            shells="bash" ;;
         .env/*) shells="bash zsh" ;;
         *) continue ;;
     esac
