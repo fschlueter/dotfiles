@@ -1,7 +1,0 @@
-require("items_left.widgets.battery")
-require("items_left.widgets.volume")
-require("items_left.widgets.wifi")
-require("items_left.widgets.bluetooth")
-require("items_left.widgets.network")
-require("items_left.widgets.cpu")
-require("items_left.widgets.amphetamine")

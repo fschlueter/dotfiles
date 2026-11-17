@@ -1,4 +1,4 @@
--- Calendar popup, shared by both layouts (items/ and items_left/ calendar.lua):
+-- Calendar popup, shared by both layouts (items/calendar.lua):
 -- a world map with the clock zones highlighted and day/night shading (rendered
 -- by calendar_worldmap.py), one big row per zone (local time first), a
 -- separator, then a "Today" header and today's remaining events (icalBuddy),

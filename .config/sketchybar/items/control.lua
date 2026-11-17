@@ -3,17 +3,22 @@ local settings = require("settings")
 
 -- Control Center: SF Symbol switch.2 (themed glyph instead of an alias of the
 -- system icon); click opens the real Control Center menu bar extra.
+local left = settings.layout == "left"
 local control = sbar.add("item", "control", {
   position = "right",
   icon = {
     string = "\u{10070A}",
     color = colors.fg,
     font = { style = settings.font.style_map["Regular"], size = 14.0 },
-    padding_left = 8,
-    padding_right = 8,
+    -- left: centred in a square cell
+    width = left and settings.cell_width or nil,
+    align = "center",
+    padding_left = left and 0 or 8,
+    padding_right = left and 0 or 8,
   },
   label = { drawing = false },
-  background = { color = colors.bg1, border_color = colors.dim },
+  background = { color = colors.bg1, border_color = colors.dim,
+                 height = left and settings.cell_width or nil },
 })
 
 sbar.add("item", "control.padding", {

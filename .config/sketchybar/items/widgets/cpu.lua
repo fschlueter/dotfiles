@@ -1,8 +1,11 @@
 local colors = require("colors")
 local settings = require("settings")
-local load_graph = require("items.widgets.load_graph")
+local left = settings.layout == "left"
+-- load_graph.lua differs per layout (cell geometry)
+local load_graph = require((left and "items_left" or "items") .. ".widgets.load_graph")
 
--- Load graphs for cpu, gpu and memory in one bracket (cpu rightmost).
+-- Load graphs for cpu, gpu and memory. Top: in one bracket with the network graph,
+-- cpu rightmost; left: three cells, cpu at the bottom.
 
 -- Execute the event provider binary which provides the event "cpu_update" for
 -- the cpu load data, which is fired every 2.0 seconds.
@@ -27,13 +30,15 @@ local memory = load_graph("memory", {
   command = [[vm_stat | awk -v m="$(sysctl -n hw.memsize)" '/page size of/ {ps = $8} /^Anonymous/ {a = $3} /purgeable/ {p = $3} /wired/ {w = $4} /occupied by compressor/ {c = $5} END {u = (a - p + w + c) * ps; f = (m - u) / 2^30; printf (f < 10 ? "%d %.1fG" : "%d %.0fG"), u * 100 / m, f}']],
 })
 
--- Background around the load graphs
-sbar.add("bracket", "widgets.cpu.bracket", {
-  cpu.name, gpu.name, memory.name,
-  "widgets.network.down", "widgets.network.up", -- traffic graph (network.lua)
-}, {
-  background = { color = colors.bg1 }
-})
+if not left then
+  -- Background around the load graphs
+  sbar.add("bracket", "widgets.cpu.bracket", {
+    cpu.name, gpu.name, memory.name,
+    "widgets.network.down", "widgets.network.up", -- traffic graph (network.lua)
+  }, {
+    background = { color = colors.bg1 }
+  })
+end
 
 sbar.add("item", "widgets.cpu.padding", {
   position = "right",

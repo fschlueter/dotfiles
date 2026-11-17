@@ -1,4 +1,4 @@
--- AeroSpace workspaces, for both layouts (items_left/spaces.lua requires this file).
+-- AeroSpace workspaces, for both layouts.
 -- One item per workspace: its name plus the app icons of its windows. Shown when it
 -- has windows or is visible; the focused one is highlighted. Click switches to it,
 -- right click opens a popup listing all windows.

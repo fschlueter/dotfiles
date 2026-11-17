@@ -1,13 +1,15 @@
 local icons = require("icons")
 local colors = require("colors")
 local settings = require("settings")
+local cell = require("helpers.cell")
 
-local battery = sbar.add("item", "widgets.battery", {
+local left = settings.layout == "left"
+local props = {
   position = "right",
   icon = {
     font = {
       style = settings.font.style_map["Regular"],
-      size = 19.0,
+      size = left and 18.0 or 19.0,
     }
   },
   label = { font = { family = settings.font.numbers } },
@@ -15,7 +17,10 @@ local battery = sbar.add("item", "widgets.battery", {
   -- small cell size so the separator row stays thin; rows get their height
   -- from a transparent background
   popup = { align = "center", height = 9 }
-})
+}
+-- left: own bg1 cell; top: bg1 bracket (below)
+if left then props.background = { color = colors.bg1 } end
+local battery = sbar.add("item", "widgets.battery", left and cell(props) or props)
 
 -- Popup: time remaining, a separator, one row per energy mode. A mode row is
 -- a level meter in block characters (pixel art that follows the theme
@@ -191,11 +196,13 @@ battery:subscribe("mouse.clicked", function(env)
   end
 end)
 
-sbar.add("bracket", "widgets.battery.bracket", { battery.name }, {
-  background = { color = colors.bg1 }
-})
+if not left then
+  sbar.add("bracket", "widgets.battery.bracket", { battery.name }, {
+    background = { color = colors.bg1 }
+  })
+end
 
 sbar.add("item", "widgets.battery.padding", {
   position = "right",
-  width = 1,  -- gap to the next background: 10 pt
+  width = left and settings.group_paddings or 1,  -- top: gap to the next background: 10 pt
 })

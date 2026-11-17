@@ -1,4 +1,4 @@
--- Apple logo popup menu, shared by both layouts (items/ and items_left/ apple.lua).
+-- Apple logo popup menu, shared by both layouts (items/apple.lua).
 -- Entry icons are pixel art: written as PNGs in the theme's colors at every bar
 -- load (theme_watch reloads the bar), drawn by sketchybar without smoothing.
 -- Below them, a theme picker lists the repo's own Ghostty themes (swatch in

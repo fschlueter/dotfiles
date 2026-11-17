@@ -1,4 +1,4 @@
--- Bar layout: "top" (horizontal, items/) or "left" (vertical, items_left/).
+-- Bar layout: "top" (horizontal) or "left" (vertical); items read it (items/init.lua).
 -- Read from the state file `layout` (written by layout.sh), default "top".
 local function read_layout()
   local dir = os.getenv("CONFIG_DIR") or "."

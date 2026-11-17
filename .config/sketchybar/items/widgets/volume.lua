@@ -9,16 +9,17 @@
 -- (source embedded below, see owner_src) that is compiled with `cc` (Xcode
 -- command line tools) into ~/.cache/sketchybar/ on first load; without it the
 -- raw process names from `ps` are shown.
--- Same as items_left/widgets/volume.lua except the item layout.
 
 local colors = require("colors")
 local icons = require("icons")
 local settings = require("settings")
+local cell = require("helpers.cell")
 
 local popup_width = 250
 local icon_font = { style = settings.font.style_map["Regular"], size = 14.0 }
+local left = settings.layout == "left"
 
-local volume = sbar.add("item", "widgets.volume", {
+local props = {
   position = "right",
   icon = {
     string = icons.volume._100,
@@ -30,11 +31,21 @@ local volume = sbar.add("item", "widgets.volume", {
   label = { drawing = false },
   background = { color = colors.bg1 },
   popup = { align = "center" },
-})
+}
+if left then
+  props = cell(props)
+  -- no label: undo cell()'s icon-over-label offsets
+  props.icon.width = settings.cell_width
+  props.icon.padding_left = 0
+  props.icon.padding_right = 0
+  props.icon.y_offset = 0
+  props.background.height = 28 -- icon only: shorter cell (as wifi)
+end
+local volume = sbar.add("item", "widgets.volume", props)
 
 sbar.add("item", "widgets.volume.padding", {
   position = "right",
-  width = 1,  -- gap to the next background: 10 pt
+  width = left and settings.group_paddings or 1,  -- top: gap to the next background: 10 pt
 })
 
 local function show(vol, muted)

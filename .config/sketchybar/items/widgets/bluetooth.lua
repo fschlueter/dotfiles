@@ -5,10 +5,11 @@
 -- State comes from `system_profiler SPBluetoothDataType` (~0.2 s, polled every 30 s and on
 -- opening the popup); switching uses blueutil (`brew install blueutil`).
 -- Top layout: shares one bg1 bracket with the Wi-Fi icon (items/widgets/wifi.lua, required
--- before this file). Same as items_left/widgets/bluetooth.lua except the item layout.
+-- before this file); left layout: own cell.
 
 local colors = require("colors")
 local settings = require("settings")
+local cell = require("helpers.cell")
 
 local popup_width = 250
 local max_devices = 16
@@ -23,7 +24,8 @@ local glyphs = {
   ["Magic Trackpad"] = "󰟸", Speaker = "󰓃", Gamepad = "󰊗", other = "󰾰",
 }
 
-local bluetooth = sbar.add("item", "widgets.bluetooth", {
+local left = settings.layout == "left"
+local props = {
   position = "right",
   icon = {
     string = glyphs.on,
@@ -35,20 +37,32 @@ local bluetooth = sbar.add("item", "widgets.bluetooth", {
   label = { drawing = false },
   popup = { align = "center" },
   update_freq = 30,
-})
+}
+if left then
+  props = cell(props)
+  -- no label: undo cell()'s icon-over-label offsets
+  props.icon.width = settings.cell_width
+  props.icon.padding_left = 0
+  props.icon.padding_right = 0
+  props.icon.y_offset = 0
+  props.background = { drawing = true, color = colors.bg1, height = 28 }
+  -- vertical bar: "right" aligns the popup's bottom with the item's, so it grows upwards
+  -- (centered, the longer list ran off the bottom of the screen)
+  props.popup.align = "right"
+end
+local bluetooth = sbar.add("item", "widgets.bluetooth", props)
 
--- one background for Wi-Fi and Bluetooth
-sbar.add("bracket", "widgets.network.bracket", { "widgets.wifi", bluetooth.name }, {
-  background = { color = colors.bg1 },
-})
+if not left then
+  -- one background for Wi-Fi and Bluetooth
+  sbar.add("bracket", "widgets.network.bracket", { "widgets.wifi", bluetooth.name }, {
+    background = { color = colors.bg1 },
+  })
+end
 
 sbar.add("item", "widgets.bluetooth.padding", {
   position = "right",
-  width = 6,  -- gap to the next background: 10 pt
+  width = left and settings.group_paddings or 6,  -- top: gap to the next background: 10 pt
 })
-
--- ---------------------------------------------------------------------------------------------
--- Shared with items_left/widgets/bluetooth.lua from here on.
 
 local popup = "popup." .. bluetooth.name
 local powered = false

@@ -7,19 +7,21 @@
 ## Structure
 
 - `sketchybarrc` → `helpers/init.lua` (SbarLua path, `make` for the C helpers) → `init.lua`:
-  `bar.lua`, `default.lua`, `items/` or `items_left/`, `theme_watch.lua`, `display_watch.lua`.
+  `bar.lua`, `default.lua`, `items/`, `theme_watch.lua`, `display_watch.lua`.
 - **Two layouts**: `sbl top|left|toggle` (`layout.sh`) or right click on the Apple logo; state in
   the gitignored file `layout`. `display_watch.lua` runs `layout.sh auto` at load and on
   display changes: when the main display changed (gitignored `layout_main`), top for the
   built-in, left for any other. The bar shows only on the main display; `layout.sh` sets
   AeroSpace's `gaps.outer.left`/`top` for it (bar thickness `bar_width`/`bar_height` in
   `settings.lua`).
-  - `items/`: horizontal bar at the top.
-  - `items_left/`: vertical bar on the left (`settings.bar_width`, cells `settings.cell_width`;
+  - Top: horizontal bar. Left: vertical bar (`settings.bar_width`, cells `settings.cell_width`;
     `helpers/cell.lua` stacks icon above label). Position `left` stacks from the top, `right` from
     the bottom; `width` is the vertical extent. Brackets don't work here; items draw their own
     backgrounds. Popups open to the right.
-  - Each item has one file per layout (no shared code).
+  - Items read `settings.layout` and set their layout-specific properties in one file in
+    `items/`. Only `front_app`, `menus`, `widgets/load_graph`, `widgets/network` and
+    `widgets/wifi` have a separate left version in `items_left/` (`items/init.lua`,
+    `items/widgets/init.lua` pick it).
 - `bar.lua`: the bar overhangs its screen edge, so border and rounded corners show on the other
   three sides.
 - **Colors** follow the Ghostty theme selected with `theme` (see the repo's AGENTS.md):
@@ -75,7 +77,7 @@ Not loaded: `control.lua` (Control Center alias).
 
 ## Known limits
 
-- The two layouts duplicate item code; changes have to be made in both.
+- The items in `items_left/` duplicate their `items/` version; changes have to be made in both.
 - The top bar's right-side gaps (10 pt) come from per-item padding widths; re-measure when a
   background changes size.
 - Hardcoded: interface `en0`, localized menu aliases (`Control Centre,WiFi`, `...,Bluetooth`).

@@ -1,6 +1,6 @@
 -- Amphetamine: alias of its menu bar extra (live image, so it keeps showing the
 -- session state), tinted with the theme's text color.
--- Same as items_left/widgets/amphetamine.lua except the item layout.
+-- Used by both layouts.
 local colors = require("colors")
 local settings = require("settings")
 
@@ -19,8 +19,6 @@ sbar.add("item", "widgets.amphetamine.padding", {
   width = settings.group_paddings,
 })
 
--- ---------------------------------------------------------------------------------------------
--- Shared with the other layout's amphetamine.lua from here on.
 -- The icon is Amphetamine's own (alias), so it follows the session state by itself.
 --   left click: popup with the session state, durations to start, end, Amphetamine's menu
 --   right click: toggle a session (Amphetamine's default duration)
