@@ -1,7 +1,6 @@
 local icons = require("icons")
 local colors = require("colors")
 local settings = require("settings")
-local cell = require("helpers.cell")
 
 local left = settings.layout == "left"
 local props = {
@@ -18,9 +17,19 @@ local props = {
   -- from a transparent background
   popup = { align = "center", height = 9 }
 }
--- left: own bg1 cell; top: bg1 bracket (below)
-if left then props.background = { color = colors.bg1 } end
-local battery = sbar.add("item", "widgets.battery", left and cell(props) or props)
+-- left: own bg1 cell, icon and percentage in one row (widths add up to the cell width);
+-- top: bg1 bracket (below)
+if left then
+  local icon_width = 25
+  props.icon.font.size = 14.0
+  props.icon.width, props.icon.align = icon_width, "right"
+  props.icon.padding_left, props.icon.padding_right = 0, 0
+  props.label.width, props.label.align = settings.cell_width - icon_width, "center"
+  props.label.padding_left, props.label.padding_right = 0, 0
+  props.label.font.size = 11.0
+  props.background = { color = colors.bg1, height = 28 }
+end
+local battery = sbar.add("item", "widgets.battery", props)
 
 -- Popup: time remaining, a separator, one row per energy mode. A mode row is
 -- a level meter in block characters (pixel art that follows the theme
