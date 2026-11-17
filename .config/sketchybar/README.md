@@ -54,6 +54,7 @@
 | Wi-Fi | icon (+ up/down rates on top) | left: saved networks in range (click joins); right: hostname, IP, mask, router (click copies) |
 | Bluetooth (WIP) | state icon | popup: paired devices (click connects), power toggle, Bluetooth menu |
 | Load (`cpu.lua`, `load_graph.lua`) | CPU, GPU, memory graphs, colored by load | none |
+| Amphetamine (`helpers/amphetamine.sh`) | alias of its menu bar extra, tinted `fg` | left: popup with session state, start (durations) / end, Amphetamine's own menu; right: toggle a session |
 
 Not loaded: `control.lua` (Control Center alias).
 
@@ -62,6 +63,7 @@ Not loaded: `control.lua` (Control Center alias).
 - Fonts: SF Pro / SF Mono; `sketchybar-app-font` v3.0.20 in `~/Library/Fonts` (matches
   `helpers/app_icons.lua`); Hack Nerd Font (Bluetooth glyphs).
 - Accessibility for sketchybar / `menus` (menus, Force Quit, Control Centre menus).
+- Automation permission for Amphetamine (asked on first click on its item).
 - Location Services for `WifiScan.app` (SSIDs): run once
   `open -W ~/.config/sketchybar/helpers/wifi_scan/bin/WifiScan.app --args --authorize`
   (details: `helpers/wifi_scan/README.md`).
