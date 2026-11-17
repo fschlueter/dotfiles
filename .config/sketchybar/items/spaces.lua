@@ -57,11 +57,14 @@ local function props(name)
   }
   if left then
     -- one row across the cell: name, then the app icons centred in an inset box
-    local name_width, inset = 20, 3
+    -- icon + label widths and paddings add up to the cell width; the cell background is
+    -- 2 pt narrower on each side (background padding), so the box (label) ends `gap` - 2
+    -- before the cell's right edge
+    local name_width, gap = 18, 7
     p.icon.width, p.icon.align = name_width, "center"
     p.icon.padding_left, p.icon.padding_right = 0, 0
-    p.label.width, p.label.align = settings.cell_width - name_width - inset, "center"
-    p.label.padding_left, p.label.padding_right = 0, 0
+    p.label.width, p.label.align = settings.cell_width - name_width - gap, "center"
+    p.label.padding_left, p.label.padding_right = 0, gap
     p.label.background = { drawing = true, color = colors.bg, height = 20, corner_radius = 6 }
     p.label.font = "sketchybar-app-font:Regular:10.0"
     p.background.height = 28
