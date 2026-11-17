@@ -31,7 +31,7 @@
 - **Helpers** (built into gitignored `bin/` on every load): `menus` (`-l`/`-L` list the front app's
   menus, `-s N|owner,name` clicks a menu or menu bar extra; since macOS 26 third-party extras
   are `Control Centre,<name>` and are found by position in the other apps), event providers `cpu_load`,
-  `network_load`, the Swift app `wifi_scan`.
+  `network_load`, the Swift app `wifi_scan` (runs in the background, pushes Wi-Fi changes).
 - `sketchybar …` and `tools/barshot.sh` are sandbox-excluded in Claude's settings: run them bare (one call,
   no chain). The other helpers need a run outside the sandbox. Open the Apple menu for a screenshot with
   `sketchybar --set apple popup.drawing=on`.
@@ -53,7 +53,7 @@
 | Calendar (`calendar.lua`, `calendar_popup.lua`) | date and time | popup: world map with day/night, local/UTC/CT clocks, today's events |
 | Battery | charge icon and % (color by charge, Low Power Mode) | popup: remaining time, energy mode switch |
 | Volume | speaker icon (dim when muted) | popup: apps playing audio (click focuses); right: Sound settings; scroll: volume |
-| Wi-Fi | icon (+ up/down rates on top) | left: saved networks in range (click joins); right: hostname, IP, mask, router (click copies) |
+| Wi-Fi | icon: slash dim when off, red when not connected; connected: accent / fg / yellow / orange by signal | left: native Wi-Fi menu; right: SSID, hostname, IP, mask, router (click copies) |
 | Bluetooth (WIP) | state icon | popup: paired devices (click connects), power toggle, Bluetooth menu |
 | Load (`cpu.lua`, `load_graph.lua`) | CPU, GPU, memory graphs, colored by load | none |
 | Amphetamine (`helpers/amphetamine.sh`) | alias of its menu bar extra, tinted `fg` | left: popup with session state, start (durations) / end, Amphetamine's own menu; right: toggle a session |
@@ -66,7 +66,7 @@ Not loaded: `control.lua` (Control Center alias).
   `helpers/app_icons.lua`); Hack Nerd Font (Bluetooth glyphs).
 - Accessibility for sketchybar / `menus` (menus, Force Quit, Control Centre menus).
 - Automation permission for Amphetamine (asked on first click on its item).
-- Location Services for `WifiScan.app` (SSIDs): run once
+- Location Services for `WifiScan.app` (SSIDs; without it the icon shows "not connected"): run once
   `open -W ~/.config/sketchybar/helpers/wifi_scan/bin/WifiScan.app --args --authorize`
   (details: `helpers/wifi_scan/README.md`).
 - Command Line Tools (`cc`, `swiftc`): volume's app resolver and `wifi_scan` are built on first load.

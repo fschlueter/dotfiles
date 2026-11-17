@@ -1,7 +1,11 @@
 # wifi_scan
 
-Helper for the Wi-Fi popup (`items/widgets/wifi.lua`, `items_left/widgets/wifi.lua`): prints the
-current SSID and the nearby networks, marking the saved ones. Output format: top of `main.swift`.
+Helper for the Wi-Fi item (`items/widgets/wifi.lua`, `items_left/widgets/wifi.lua`). The item starts
+it once per config load with `--watch`: it listens for CoreWLAN events (power, SSID, link; link
+quality events never arrived on macOS 26, so it reads the signal every 10 s) and triggers the sketchybar event `wifi_state` when power, SSID or signal level (bars 0-4)
+changes; it exits with the process whose PID it was given (the config's Lua process). Flags and
+format: top of `main.swift`. Debug log: `~/cowork/scratchpad/sketchybar-wifi/events.log`,
+written only while that folder exists.
 
 ## Why an app
 
@@ -12,13 +16,11 @@ Only the list of saved networks (`networksetup -listpreferredwirelessnetworks en
 but it can't tell which are in range.
 
 The permission is granted per app, so the scanner is a minimal app bundle (`Info.plist` with a
-bundle id and the location usage text) around a CoreWLAN scan. Observed on macOS 26:
+bundle id and the location usage text) around CoreWLAN. Observed on macOS 26:
 
 - The permission only applies when the app is **launched through `open`**. Run directly
-  (`.../Contents/MacOS/wifi_scan`), it gets no SSIDs even when authorized. Hence the popup calls
-  `open -n -W --stdout <tmpfile> WifiScan.app [--args ...]` and reads the file.
-- With `--current` the app may exit before `open -W` starts waiting; `open` then reports
-  "Unable to block on applications", but the output file is complete.
+  (`.../Contents/MacOS/wifi_scan`), it gets no SSIDs even when authorized. Hence the item calls
+  `open -g -n WifiScan.app --args --watch ...`.
 - A rebuilt (re-signed) app at a new path kept the permission (same bundle id).
 
 ## Build and setup
@@ -36,5 +38,6 @@ bundle id and the location usage text) around a CoreWLAN scan. Observed on macOS
 open -n -W --stdout /tmp/wifi.txt ~/.config/sketchybar/helpers/wifi_scan/bin/WifiScan.app; cat /tmp/wifi.txt
 ```
 
-A scan takes about 3 s. Empty SSIDs mean the permission is missing (or the app was not started
-through `open`).
+Prints `<on|off>\t<ssid>\t<rssi>`. An empty SSID while connected means the permission is missing
+(or the app was not started through `open`). The app may exit before `open -W` starts waiting;
+`open` then reports "Unable to block on applications", but the output file is complete.
