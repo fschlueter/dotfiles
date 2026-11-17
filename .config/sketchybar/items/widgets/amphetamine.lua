@@ -7,18 +7,18 @@ local settings = require("settings")
 local extra = "Control Centre,Amphetamine"
 
 local left = settings.layout == "left"
-if not left then
-  -- with cpu.padding: 10 pt gap to the load graphs' background
-  sbar.add("item", "widgets.amphetamine.gap", { position = "right", width = 6 })
-end
 local amphetamine = sbar.add("alias", extra, {
   position = "right",
   -- left: scaled to fit the countdown ("00:19") into the bar width
   alias = { color = colors.fg, scale = left and 0.7 or 1.0 },
   padding_left = left and 0 or 4,
   padding_right = left and 0 or 4,
-  -- left: own bg1 box (as wide as the image: shorter without a countdown); top: bracket below
+  -- left: own bg1 cell; the background ends with the content, so empty icon and label
+  -- of width `fit()` pad the image to the cell width; top: bracket below
   background = left and { drawing = true, color = colors.bg1, height = 28 } or nil,
+  icon = { drawing = left, string = " ", padding_left = 0, padding_right = 0 },
+  label = { drawing = left, string = " ", padding_left = 0, padding_right = 0 },
+  update_freq = left and 30 or 0,
   popup = { align = "center", height = 26 }, -- row height
 })
 
@@ -30,7 +30,7 @@ end
 
 sbar.add("item", "widgets.amphetamine.padding", {
   position = "right",
-  width = settings.group_paddings,
+  width = left and settings.group_paddings or 6,  -- top: gap to the next background: 10 pt
 })
 
 -- The icon is Amphetamine's own (alias), so it follows the session state by itself.
@@ -171,8 +171,9 @@ local function describe(out)
   if out == "not running" then return "Amphetamine not running", false end
   local seconds = tonumber(out:match("^on (%d+)"))
   if not seconds then return out, false end
-  if seconds == 0 then return "Session: indefinite", true end
-  return string.format("Session: %d:%02d h left", seconds // 3600, seconds % 3600 // 60), true
+  if seconds == 0 then return "Session: indefinite", true, 0 end
+  return string.format("Session: %d:%02d h left", seconds // 3600, seconds % 3600 // 60), true,
+         seconds
 end
 
 local cup_on, cup_off = icon("cup"), icon("cup", true)
@@ -182,10 +183,12 @@ local session_active = false
 local status = add_row("status", "cup", "…")
 status:set({ label = { color = colors.dim } })
 
+local refresh -- defined below
+
 local function start(minutes)
   return function()
     close()
-    sbar.exec(control .. " start " .. minutes)
+    sbar.exec(control .. " start " .. minutes, refresh)
   end
 end
 add_row("start.0", "indefinite", "Start: indefinitely", start(0))
@@ -195,13 +198,21 @@ add_row("start.120", "hours", "Start: 2 hours", start(120))
 local end_row = add_row("end", "stop", "End session", function()
   if not session_active then return end
   close()
-  sbar.exec(control .. " end")
+  sbar.exec(control .. " end", refresh)
 end)
 
 add_row("menu", "pill", "Amphetamine menu…", function()
   close()
   sbar.exec("$CONFIG_DIR/helpers/menus/bin/menus -s '" .. extra .. "'")
 end)
+
+-- Left: pads the image (about 23 pt at scale 0.7, 54 pt with a countdown) to the cell width.
+local function fit(countdown)
+  if not left then return end
+  local pad = countdown and 1 or 16
+  amphetamine:set({ icon = { width = pad }, label = { width = pad } })
+end
+fit(false)
 
 local function show_state(active, text)
   session_active = active
@@ -216,17 +227,21 @@ local function show_state(active, text)
 end
 show_state(false)
 
-local function refresh()
+refresh = function()
   sbar.exec(control .. " status 2>&1", function(out)
-    local text, active = describe(out)
+    local text, active, seconds = describe(out)
     show_state(active, text)
+    fit(active and (seconds or 0) > 0) -- Amphetamine shows a countdown for timed sessions
   end)
+end
+if left then
+  amphetamine:subscribe({ "routine", "forced", "system_woke" }, refresh)
 end
 
 amphetamine:subscribe("mouse.clicked", function(env)
   if env.BUTTON == "right" then
     close()
-    sbar.exec(control .. " toggle")
+    sbar.exec(control .. " toggle", refresh)
     return
   end
   local drawing = amphetamine:query().popup.drawing
