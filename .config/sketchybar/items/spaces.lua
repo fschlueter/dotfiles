@@ -11,7 +11,7 @@ local app_name = require("helpers.front_app_name").name
 
 local left = settings.layout == "left"
 local aerospace = "/opt/homebrew/bin/aerospace"
-local max_apps = left and 3 or 6  -- app icons per workspace
+local max_apps = left and 2 or 6  -- app icons per workspace (left: what fits the box)
 
 sbar.add("event", "aerospace_workspace_change")
 
