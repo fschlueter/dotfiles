@@ -8,7 +8,6 @@ local colors = require("colors")
 local settings = require("settings")
 local app_icons = require("helpers.app_icons")
 local app_name = require("helpers.front_app_name").name
-local cell = require("helpers.cell")
 
 local left = settings.layout == "left"
 local aerospace = "/opt/homebrew/bin/aerospace"
@@ -57,8 +56,14 @@ local function props(name)
     },
   }
   if left then
-    p = cell(p)
+    -- one row across the cell: name, then up to max_apps icons
+    local name_width = 18
+    p.icon.width, p.icon.align = name_width, "center"
+    p.icon.padding_left, p.icon.padding_right = 0, 0
+    p.label.width, p.label.align = settings.cell_width - name_width, "left"
+    p.label.padding_left, p.label.padding_right = 0, 0
     p.label.font = "sketchybar-app-font:Regular:10.0"
+    p.background.height = 28
     p.padding_left, p.padding_right = 2, 2
   else
     p.padding_left, p.padding_right = 2, 2
