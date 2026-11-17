@@ -27,7 +27,8 @@
   `popup`) to ANSI slots. Items use roles, never hex. `theme_watch.lua` reloads on theme changes.
 - **Popups** close when the mouse leaves item and popup (`mouse.exited.global`).
 - **Helpers** (built into gitignored `bin/` on every load): `menus` (`-l`/`-L` list the front app's
-  menus, `-s N|owner,name` clicks a menu or menu bar extra), event providers `cpu_load`,
+  menus, `-s N|owner,name` clicks a menu or menu bar extra; since macOS 26 third-party extras
+  are `Control Centre,<name>` and are found by position in the other apps), event providers `cpu_load`,
   `network_load`, the Swift app `wifi_scan`.
 - `sketchybar …` and `tools/barshot.sh` are sandbox-excluded in Claude's settings: run them bare (one call,
   no chain). The other helpers need a run outside the sandbox. Open the Apple menu for a screenshot with

@@ -111,6 +111,55 @@ void ax_print_menu_options(AXUIElementRef app, bool geometry) {
   }
 }
 
+// The menu bar extra of app `pid` whose x position matches the window's
+// (retained; NULL if none).
+AXUIElementRef ax_extra_at(pid_t pid, CGFloat x) {
+  AXUIElementRef app = AXUIElementCreateApplication(pid);
+  if (!app) return NULL;
+  // bounds the wait on a hung app (fallback below asks many apps)
+  AXUIElementSetMessagingTimeout(app, 0.25);
+  AXUIElementRef result = NULL;
+  CFTypeRef extras = NULL;
+  CFArrayRef children_ref = NULL;
+  if (AXUIElementCopyAttributeValue(app, kAXExtrasMenuBarAttribute, &extras)
+        == kAXErrorSuccess
+      && AXUIElementCopyAttributeValue(extras,
+                                       kAXVisibleChildrenAttribute,
+                                       (CFTypeRef*)&children_ref   )
+           == kAXErrorSuccess) {
+    uint32_t count = CFArrayGetCount(children_ref);
+    for (uint32_t i = 0; i < count; i++) {
+      AXUIElementRef item = CFArrayGetValueAtIndex(children_ref, i);
+      CFTypeRef position_ref = NULL;
+      AXUIElementCopyAttributeValue(item, kAXPositionAttribute, &position_ref);
+      if (!position_ref) continue;
+      CGPoint position = CGPointZero;
+      AXValueGetValue(position_ref, kAXValueCGPointType, &position);
+      CFRelease(position_ref);
+      // The offset is exactly 8 on macOS Sonoma...
+      if (fabs(position.x - x) <= 10) {
+        result = (AXUIElementRef)CFRetain(item);
+        break;
+      }
+    }
+  }
+  if (children_ref) CFRelease(children_ref);
+  if (extras) CFRelease(extras);
+  CFRelease(app);
+  return result;
+}
+
+static pid_t window_pid(CFDictionaryRef dictionary) {
+  CFNumberRef pid_ref = CFDictionaryGetValue(dictionary, kCGWindowOwnerPID);
+  int pid = 0;
+  if (pid_ref) CFNumberGetValue(pid_ref, kCFNumberIntType, &pid);
+  return pid;
+}
+
+// alias = "<window owner>,<window name>" as listed by sketchybar.
+// Since macOS 26, Control Centre owns the windows of third-party extras while
+// the clickable item stays in the app's process: if the owner has no item at
+// the window's position, ask every other process that owns a window.
 AXUIElementRef ax_get_extra_menu_item(char* alias) {
   pid_t pid = 0;
   CGRect bounds = CGRectNull;
@@ -126,25 +175,15 @@ AXUIElementRef ax_get_extra_menu_item(char* alias) {
 
     CFStringRef owner_ref = CFDictionaryGetValue(dictionary,
                                                  kCGWindowOwnerName);
-
-    CFNumberRef owner_pid_ref = CFDictionaryGetValue(dictionary,
-                                                     kCGWindowOwnerPID);
-
     CFStringRef name_ref = CFDictionaryGetValue(dictionary, kCGWindowName);
     CFNumberRef layer_ref = CFDictionaryGetValue(dictionary, kCGWindowLayer);
     CFDictionaryRef bounds_ref = CFDictionaryGetValue(dictionary,
                                                       kCGWindowBounds);
 
-    if (!name_ref || !owner_ref || !owner_pid_ref || !layer_ref || !bounds_ref)
-      continue;
+    if (!name_ref || !owner_ref || !layer_ref || !bounds_ref) continue;
 
     long long int layer = 0;
     CFNumberGetValue(layer_ref, CFNumberGetType(layer_ref), &layer);
-    uint64_t owner_pid = 0;
-    CFNumberGetValue(owner_pid_ref,
-                     CFNumberGetType(owner_pid_ref),
-                     &owner_pid                     );
-
     if (layer != 0x19) continue;
     bounds = CGRectNull;
     if (!CGRectMakeWithDictionaryRepresentation(bounds_ref, &bounds)) continue;
@@ -160,56 +199,28 @@ AXUIElementRef ax_get_extra_menu_item(char* alias) {
     snprintf(buffer, sizeof(buffer), "%s,%s", owner_buffer, name_buffer);
 
     if (strcmp(buffer, alias) == 0) {
-      pid = owner_pid;
+      pid = window_pid(dictionary);
       break;
     }
   }
-  CFRelease(window_list);
-  if (!pid) return NULL;
 
-  AXUIElementRef app = AXUIElementCreateApplication(pid);
-  if (!app) return NULL;
-  AXUIElementRef result = NULL;
-  CFTypeRef extras = NULL;
-  CFArrayRef children_ref = NULL;
-  AXError error = AXUIElementCopyAttributeValue(app,
-                                                kAXExtrasMenuBarAttribute,
-                                                &extras                   );
-  if (error == kAXErrorSuccess) {
-    error = AXUIElementCopyAttributeValue(extras,
-                                          kAXVisibleChildrenAttribute,
-                                          (CFTypeRef*)&children_ref   );
-
-    if (error == kAXErrorSuccess) {
-      uint32_t count = CFArrayGetCount(children_ref);
-      for (uint32_t i = 0; i < count; i++) {
-        AXUIElementRef item = CFArrayGetValueAtIndex(children_ref, i);
-        CFTypeRef position_ref = NULL;
-        CFTypeRef size_ref = NULL;
-        AXUIElementCopyAttributeValue(item, kAXPositionAttribute,
-                                            &position_ref        );
-        AXUIElementCopyAttributeValue(item, kAXSizeAttribute,
-                                            &size_ref        );
-        if (!position_ref || !size_ref) continue;
-
-        CGPoint position = CGPointZero;
-        AXValueGetValue(position_ref, kAXValueCGPointType, &position);
-        CGSize size = CGSizeZero;
-        AXValueGetValue(size_ref, kAXValueCGSizeType, &size);
-        CFRelease(position_ref);
-        CFRelease(size_ref);
-        // The offset is exactly 8 on macOS Sonoma...
-        // printf("%f %f\n", position.x, bounds.origin.x);
-        if (error == kAXErrorSuccess
-            && fabs(position.x - bounds.origin.x) <= 10) {
-          result = item;
-          break;
-        }
-      }
+  AXUIElementRef result = pid ? ax_extra_at(pid, bounds.origin.x) : NULL;
+  if (pid && !result) {
+    pid_t tried[512];
+    int n_tried = 0;
+    tried[n_tried++] = pid;
+    for (int i = 0; i < window_count && !result && n_tried < 512; ++i) {
+      CFDictionaryRef dictionary = CFArrayGetValueAtIndex(window_list, i);
+      if (!dictionary) continue;
+      pid_t candidate = window_pid(dictionary);
+      bool seen = !candidate;
+      for (int j = 0; j < n_tried && !seen; j++) seen = tried[j] == candidate;
+      if (seen) continue;
+      tried[n_tried++] = candidate;
+      result = ax_extra_at(candidate, bounds.origin.x);
     }
   }
-
-  CFRelease(app);
+  CFRelease(window_list);
   return result;
 }
 
