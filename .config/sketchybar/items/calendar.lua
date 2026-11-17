@@ -39,7 +39,7 @@ if left then
     icon = time_text,
     background = background,
   }))
-  sbar.add("item", { position = "right", width = settings.group_paddings })
+  sbar.add("item", { position = "right", width = settings.group_paddings + 1 }) -- taller cell: same gap as the others
 else
   date_text.padding_left = 8
   time_text.padding_right = 8

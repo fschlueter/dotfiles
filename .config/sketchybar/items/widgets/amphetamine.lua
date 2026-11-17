@@ -11,8 +11,8 @@ local amphetamine = sbar.add("alias", extra, {
   position = "right",
   -- left: scaled to fit the countdown ("00:19") into the bar width
   alias = { color = colors.fg, scale = left and 0.7 or 1.0 },
-  padding_left = left and 0 or 4,
-  padding_right = left and 0 or 4,
+  padding_left = left and 5 or 4, -- left: default item padding, as the other cells
+  padding_right = left and 5 or 4,
   -- left: own bg1 cell; the background ends with the content, so empty icon and label
   -- of width `fit()` pad the image to the cell width; top: bracket below
   background = left and { drawing = true, color = colors.bg1, height = 28 } or nil,
