@@ -25,7 +25,7 @@ sbar.bar({
   topmost = "on", -- above the auto-hidden macOS menu bar
   color = colors.bar.bg,
   border_color = colors.bar.border,
-  border_width = 0,
+  border_width = 1, -- fine accent border (colors.bar.border)
   corner_radius = radius,
   margin = inset,
   y_offset = left and inset or -radius,
