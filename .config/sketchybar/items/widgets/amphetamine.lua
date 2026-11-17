@@ -8,7 +8,8 @@ local extra = "Control Centre,Amphetamine"
 
 local amphetamine = sbar.add("alias", extra, {
   position = "right",
-  alias = { color = colors.fg },
+  -- left: scaled to fit the countdown ("00:19") into the bar width
+  alias = { color = colors.fg, scale = settings.layout == "left" and 0.7 or 1.0 },
   padding_left = 0,
   padding_right = 0,
   popup = { align = "center", height = 26 }, -- row height
