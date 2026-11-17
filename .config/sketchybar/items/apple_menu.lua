@@ -6,6 +6,7 @@
 -- click on a theme runs `theme NAME` and reloads the bar.
 local colors = require("colors")
 local theme = require("helpers.theme")
+local pixel_art = require("helpers.pixel_art")
 
 local M = {}
 
@@ -99,63 +100,7 @@ local art = {
   },
 }
 
--- Minimal PNG writer (RGBA, uncompressed deflate blocks)
-local crc_table = {}
-for i = 0, 255 do
-  local c = i
-  for _ = 1, 8 do
-    c = (c & 1 == 1) and (0xedb88320 ~ (c >> 1)) or (c >> 1)
-  end
-  crc_table[i] = c
-end
-
-local function crc32(s)
-  local c = 0xffffffff
-  for i = 1, #s do
-    c = crc_table[(c ~ s:byte(i)) & 0xff] ~ (c >> 8)
-  end
-  return c ~ 0xffffffff
-end
-
-local function adler32(s)
-  local a, b = 1, 0
-  for i = 1, #s do
-    a = (a + s:byte(i)) % 65521
-    b = (b + a) % 65521
-  end
-  return (b << 16) | a
-end
-
-local function chunk(kind, data)
-  return string.pack(">I4", #data) .. kind .. data .. string.pack(">I4", crc32(kind .. data))
-end
-
-local function rgba(argb)
-  return string.pack("BBBB", (argb >> 16) & 0xff, (argb >> 8) & 0xff, argb & 0xff,
-                     (argb >> 24) & 0xff)
-end
-
-local function write_png(path, rows, palette)
-  local h, w = #rows, #rows[1]
-  local raw = {}
-  for y = 1, h do
-    raw[#raw + 1] = "\0"
-    for x = 1, w do
-      raw[#raw + 1] = rgba(palette[rows[y]:sub(x, x)] or 0)
-    end
-  end
-  raw = table.concat(raw)
-  -- one stored deflate block holds up to 65535 bytes, plenty for 12x12
-  local zlib = "\x78\x01" .. string.pack("<BI2I2", 1, #raw, (~#raw) & 0xffff) .. raw
-               .. string.pack(">I4", adler32(raw))
-  local f = io.open(path, "wb")
-  if not f then return false end
-  f:write("\x89PNG\r\n\x1a\n",
-          chunk("IHDR", string.pack(">I4I4BBBBB", w, h, 8, 6, 0, 0, 0)),
-          chunk("IDAT", zlib), chunk("IEND", ""))
-  f:close()
-  return true
-end
+local write_png = pixel_art.write_png
 
 local icon_dir = os.getenv("HOME") .. "/.cache/sketchybar/apple"
 os.execute("mkdir -p '" .. icon_dir .. "'")
@@ -175,22 +120,7 @@ local entries = {
 local function add_entry(apple, id, path, label, cmd, label_color, hidden)
   local entry = sbar.add("item", "apple.entry." .. id, {
     position = "popup." .. apple.name,
-    icon = {
-      string = "",
-      -- a fixed icon width ignores the icon paddings: the gap to the label
-      -- is width - padding_left - 18 (art width at scale 1.5)
-      width = 44,
-      background = {
-        color = colors.transparent,
-        image = {
-          string = path,
-          padding_left = 8,
-          scale = 1.5,
-          corner_radius = 0,
-          border_width = 0,
-        },
-      },
-    },
+    icon = pixel_art.icon(path),
     label = { string = label, padding_right = 10, color = label_color or colors.fg },
     background = { color = colors.transparent, height = 26, border_width = 0 },
     drawing = not hidden,
