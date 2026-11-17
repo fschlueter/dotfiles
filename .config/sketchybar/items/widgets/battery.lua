@@ -1,6 +1,7 @@
 local icons = require("icons")
 local colors = require("colors")
 local settings = require("settings")
+local cell = require("helpers.cell")
 
 local left = settings.layout == "left"
 local props = {
@@ -17,17 +18,15 @@ local props = {
   -- from a transparent background
   popup = { align = "center", height = 9 }
 }
--- left: own bg1 cell, icon and percentage in one row (widths add up to the cell width);
--- top: bg1 bracket (below)
+-- left: own bg1 cell, icon above the percentage (cell()), both larger and further apart
+-- than cell()'s defaults; top: bg1 bracket (below)
 if left then
-  local icon_width = 25
-  props.icon.font.size = 14.0
-  props.icon.width, props.icon.align = icon_width, "right"
-  props.icon.padding_left, props.icon.padding_right = 0, 0
-  props.label.width, props.label.align = settings.cell_width - icon_width, "center"
-  props.label.padding_left, props.label.padding_right = 0, 0
+  props = cell(props)
+  props.icon.font.size = 20.0
+  props.icon.y_offset = 9
   props.label.font.size = 11.0
-  props.background = { color = colors.bg1, height = 28 }
+  props.label.y_offset = -11
+  props.background = { drawing = true, color = colors.bg1, height = 44 }
 end
 local battery = sbar.add("item", "widgets.battery", props)
 
