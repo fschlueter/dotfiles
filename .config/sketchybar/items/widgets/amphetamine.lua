@@ -6,14 +6,27 @@ local settings = require("settings")
 
 local extra = "Control Centre,Amphetamine"
 
+local left = settings.layout == "left"
+if not left then
+  -- with cpu.padding: 10 pt gap to the load graphs' background
+  sbar.add("item", "widgets.amphetamine.gap", { position = "right", width = 6 })
+end
 local amphetamine = sbar.add("alias", extra, {
   position = "right",
   -- left: scaled to fit the countdown ("00:19") into the bar width
-  alias = { color = colors.fg, scale = settings.layout == "left" and 0.7 or 1.0 },
-  padding_left = 0,
-  padding_right = 0,
+  alias = { color = colors.fg, scale = left and 0.7 or 1.0 },
+  padding_left = left and 0 or 4,
+  padding_right = left and 0 or 4,
+  -- left: own bg1 box (as wide as the image: shorter without a countdown); top: bracket below
+  background = left and { drawing = true, color = colors.bg1, height = 28 } or nil,
   popup = { align = "center", height = 26 }, -- row height
 })
+
+if not left then
+  sbar.add("bracket", "widgets.amphetamine.bracket", { amphetamine.name }, {
+    background = { color = colors.bg1 }
+  })
+end
 
 sbar.add("item", "widgets.amphetamine.padding", {
   position = "right",
