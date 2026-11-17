@@ -56,12 +56,13 @@ local function props(name)
     },
   }
   if left then
-    -- one row across the cell: name, then up to max_apps icons
-    local name_width = 18
+    -- one row across the cell: name, then the app icons centred in an inset box
+    local name_width, inset = 20, 3
     p.icon.width, p.icon.align = name_width, "center"
     p.icon.padding_left, p.icon.padding_right = 0, 0
-    p.label.width, p.label.align = settings.cell_width - name_width, "left"
+    p.label.width, p.label.align = settings.cell_width - name_width - inset, "center"
     p.label.padding_left, p.label.padding_right = 0, 0
+    p.label.background = { drawing = true, color = colors.bg, height = 20, corner_radius = 6 }
     p.label.font = "sketchybar-app-font:Regular:10.0"
     p.background.height = 28
     p.padding_left, p.padding_right = 2, 2
