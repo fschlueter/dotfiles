@@ -9,7 +9,7 @@ local function read_layout()
   return layout == "left" and "left" or "top"
 end
 
-local bar_width = 62
+local bar_width = 64
 local cell_background_inset = 3
 
 return {

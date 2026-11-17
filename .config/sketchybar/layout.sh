@@ -35,7 +35,7 @@ esac
 # (settings.lua) on the main display, where the bar is. The built-in display keeps
 # 12 on top.
 if [ "$next" = left ]; then
-  left="[{ monitor.main = 78 }, 10]"
+  left="[{ monitor.main = 80 }, 10]"
   top=12
   osascript -e 'tell application "System Events" to set autohide menu bar of dock preferences to true' 
 else
