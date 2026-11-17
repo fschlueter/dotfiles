@@ -22,11 +22,11 @@ local props = {
 -- than cell()'s defaults; top: bg1 bracket (below)
 if left then
   props = cell(props)
-  props.icon.font.size = 25.0
+  props.icon.font.size = 22.0
   props.icon.y_offset = 10
-  props.label.font.size = 13.0
+  props.label.font.size = 12.0
   props.label.y_offset = -12
-  props.background = { drawing = true, color = colors.bg1, height = 48 }
+  props.background = { drawing = true, color = colors.bg1, height = 46 }
 end
 local battery = sbar.add("item", "widgets.battery", props)
 
