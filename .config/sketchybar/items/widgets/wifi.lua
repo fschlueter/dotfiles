@@ -8,14 +8,27 @@ sbar.exec("killall network_load >/dev/null 2>&1")
 
 local popup_width = 250
 
--- Wi-Fi icon. No background of its own: items/widgets/bluetooth.lua (required after this file)
--- puts Wi-Fi and Bluetooth into one bg1 bracket and adds the group padding.
-local wifi = sbar.add("item", "widgets.wifi", {
+local left = settings.layout == "left"
+local props = {
   position = "right",
   icon = { string = icons.wifi.connected, padding_left = 8, padding_right = 6 },
   label = { drawing = false },
   popup = { align = "center", height = 30 },
-})
+}
+if left then
+  -- own cell
+  props.icon.width, props.icon.align = settings.cell_width, "center"
+  props.icon.padding_left, props.icon.padding_right = 0, 0
+  props.background = { color = colors.bg1, height = 28 }
+  -- vertical bar: "right" aligns the popup's bottom with the item's, so it grows upwards
+  props.popup.align = "right"
+end
+-- Top: no background of its own; items/widgets/bluetooth.lua (required after this file)
+-- puts Wi-Fi and Bluetooth into one bg1 bracket and adds the group padding.
+local wifi = sbar.add("item", "widgets.wifi", props)
+if left then
+  sbar.add("item", "widgets.wifi.padding", { position = "right", width = settings.group_paddings })
+end
 
 -- State comes from helpers/wifi_scan (see its README.md), started once per bar load in --watch
 -- mode: it triggers `wifi_state` (STATE, SSID, RSSI) on every change of power, network or signal

@@ -19,9 +19,8 @@
     the bottom; `width` is the vertical extent. Brackets don't work here; items draw their own
     backgrounds. Popups open to the right.
   - Items read `settings.layout` and set their layout-specific properties in one file in
-    `items/`. Only `front_app`, `menus`, `widgets/load_graph`, `widgets/network` and
-    `widgets/wifi` have a separate left version in `items_left/` (`items/init.lua`,
-    `items/widgets/init.lua` pick it).
+    `items/`. Only `front_app`, `menus`, `widgets/load_graph` and `widgets/network` have a
+    separate left version in `items_left/` (`items/init.lua`, `items/widgets/init.lua` pick it).
 - `bar.lua`: the bar overhangs its screen edge, so border and rounded corners show on the other
   three sides.
 - **Colors** follow the Ghostty theme selected with `theme` (see the repo's AGENTS.md):

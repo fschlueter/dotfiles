@@ -1,6 +1,6 @@
 # wifi_scan
 
-Helper for the Wi-Fi item (`items/widgets/wifi.lua`, `items_left/widgets/wifi.lua`). The item starts
+Helper for the Wi-Fi item (`items/widgets/wifi.lua`). The item starts
 it once per config load with `--watch`: it listens for CoreWLAN events (power, SSID, link; link
 quality events never arrived on macOS 26, so it reads the signal every 10 s) and triggers the sketchybar event `wifi_state` when power, SSID or signal level (bars 0-4)
 changes; it exits with the process whose PID it was given (the config's Lua process). Flags and
