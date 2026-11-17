@@ -24,7 +24,7 @@ local props = {
 local apple
 if left then
   -- centred in a cell, no outer border (brackets don't work on the left bar)
-  props.icon.width = settings.cell_width
+  props.icon.width = settings.cell_width - 5 -- as wide as the workspace cells (spaces.lua)
   props.icon.align = "center"
   props.icon.padding_left = 0
   props.icon.padding_right = 0
