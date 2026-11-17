@@ -32,16 +32,22 @@
   menus, `-s N|owner,name` clicks a menu or menu bar extra; since macOS 26 third-party extras
   are `Control Centre,<name>` and are found by position in the other apps), event providers `cpu_load`,
   `network_load`, the Swift app `wifi_scan` (runs in the background, pushes Wi-Fi changes).
-- `sketchybar …` and `tools/barshot.sh` are sandbox-excluded in Claude's settings: run them bare (one call,
-  no chain). The other helpers need a run outside the sandbox. Open the Apple menu for a screenshot with
-  `sketchybar --set apple popup.drawing=on`.
+- `sketchybar …` and `tools/{barshot,reload,item_diff,item_geom}.sh` are sandbox-excluded in Claude's
+  settings: run them bare (one call, no chain). The other helpers need a run outside the sandbox. Open
+  the Apple menu for a screenshot with `sketchybar --set apple popup.drawing=on`.
 - `sketchybar --query bar` prints `position` only as top/bottom, and item `bounding_rects` stay
   horizontal on the left bar: judge layout behaviour on screen or in the source (v2.24.1
   `src/bar.c`, `bar_calculate_bounds_left_right`).
-- `tools/`: `speedtest.sh` (cost), `bg_runs.sh` (background boxes and gaps in a screenshot row),
-  `item_geom.sh` (window x, paddings and widths of the right-side items).
-  `barshot.sh [name.png]`: screenshot of only the bar and open popups (bounding box of sketchybar's
-  windows via `bar_rect.swift`) into `~/cowork/scratchpad/sketchybar/`; allowed in Claude's settings.
+- **Checking a change on screen** (gaps, widths, sizes, refactors): use `tools/` before writing own
+  scripts. Crop screenshots with `magick … -crop WxH+X+Y +repage`.
+  - `reload.sh`: reload and wait until the items are back (a screenshot, `--set` or `--query` right
+    after a bare `--reload` sees an empty or half-built bar).
+  - `barshot.sh [name.png]`: screenshot of only the bar and open popups (bounding box of
+    sketchybar's windows via `bar_rect.swift`) into `~/cowork/scratchpad/sketchybar/`.
+  - `bg_runs.sh`: background boxes and gaps in one screenshot row (top bar);
+    `cell_rows.sh`: the same along one column (left bar: cell heights and vertical gaps).
+  - `item_diff.sh dump|cmp`: every item's properties before/after a refactor, per layout.
+  - `item_geom.sh`: window x, paddings and widths of the right-side items. `speedtest.sh`: cost.
 
 ## Items
 
@@ -81,5 +87,13 @@ Not loaded: `control.lua` (Control Center alias).
 - The top bar's right-side gaps (10 pt) come from per-item padding widths; re-measure when a
   background changes size.
 - Hardcoded: interface `en0`, localized menu aliases (`Control Centre,WiFi`, `...,Bluetooth`).
+- Layout quirks (2.24, found by trial; mostly left bar):
+  - Items are centred on the whole bar thickness, including a part overhanging the screen edge.
+  - An item's background ends with its content (icon + label widths and their paddings).
+  - A text background spans the fixed width plus its paddings and always reaches the cell's right
+    edge; move it inside with `background.x_offset` and the text along with a negative `padding_left`
+    (`items/spaces.lua`).
+  - An alias's background is as wide as the captured image, which changes with the app's text;
+    pad it with empty icon/label widths (`items/widgets/amphetamine.lua`). `alias.scale` scales it.
 - Spaces: workspaces are read at load; new ones appear after a reload. Bluetooth connect from the
   popup is untested.
