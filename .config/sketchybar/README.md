@@ -21,8 +21,9 @@
   - Items read `settings.layout` and set their layout-specific properties in one file in
     `items/`. Only `front_app`, `menus`, `widgets/load_graph` and `widgets/network` have a
     separate left version in `items_left/` (`items/init.lua`, `items/widgets/init.lua` pick it).
-- `bar.lua`: the bar overhangs its screen edge, so border and rounded corners show on the other
-  three sides.
+- `bar.lua`: the top bar overhangs the screen's top edge, so its rounded corners show on the other
+  three sides; the left bar floats 6 pt from the screen edges (items are centred on the whole bar,
+  so an overhang would push them off the visible centre).
 - **Colors** follow the Ghostty theme selected with `theme` (see the repo's AGENTS.md):
   `colors.lua` maps roles (`fg`, `dim`, `accent`, alert levels, `blue`, `bg1`, `bg2`, `bar`,
   `popup`) to ANSI slots. Items use roles, never hex. `theme_watch.lua` reloads on theme changes.
