@@ -1,5 +1,6 @@
 local colors = require("colors")
 local settings = require("settings")
+local compact = require("items.widgets.compact")
 
 -- Network traffic graph (en0): download (blue, filled) and upload (red line) as two overlaid
 -- graphs, the rates above (download left, upload right, in the line colors), styled
@@ -70,7 +71,15 @@ local up = sbar.add("graph", "widgets.network.up", width, graph_props({
     y_offset = 14,
   },
   update_freq = 2,
+  updates = true,
 }))
+
+-- Compact mode (compact.lua): "↓rate ↑rate" replaces the graphs
+local small_props = compact.props()
+small_props.icon.string, small_props.label.string = "↓?", "↑?"
+small_props.icon.color, small_props.label.color = colors.dim, colors.dim
+local small = sbar.add("item", "widgets.network.compact", small_props)
+compact.register({ down, up }, { small })
 
 -- ---------------------------------------------------------------------------------------------
 -- Shared with items_left/widgets/network.lua from here on (except the arrows in show()).
@@ -104,6 +113,10 @@ local function show(down_rate, up_rate)
   down:set({ graph = { color = down_color, fill_color = colors.with_alpha(down_color, 0.3) } })
   up:set({
     graph = { color = up_color },
+    icon = { string = "↓" .. fmt(down_rate), color = down_color },
+    label = { string = "↑" .. fmt(up_rate), color = up_color },
+  })
+  small:set({
     icon = { string = "↓" .. fmt(down_rate), color = down_color },
     label = { string = "↑" .. fmt(up_rate), color = up_color },
   })

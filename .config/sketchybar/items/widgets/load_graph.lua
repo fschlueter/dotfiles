@@ -1,5 +1,6 @@
 local colors = require("colors")
 local settings = require("settings")
+local compact = require("items.widgets.compact")
 
 -- Load graph (cpu, gpu, memory): name and load % in a row above a flat graph.
 -- The graph is as tall as the background, so the background stays small and
@@ -9,6 +10,8 @@ local settings = require("settings")
 -- 30/60/80), command (shell command printing the load in % and optionally a
 -- label text replacing the %, polled every 2 s; without it call the returned
 -- update(load[, text]) yourself).
+-- Compact mode (compact.lua): a "name value" item replaces the graph; compact_name
+-- is its name ("" for none, default name).
 return function(name, opts)
   local levels = opts.levels or { 30, 60, 80 }
 
@@ -52,7 +55,16 @@ return function(name, opts)
     },
     padding_left = settings.paddings + 4,
     padding_right = settings.paddings + 4,
+    updates = true,
   })
+
+  local small_props = compact.props()
+  local short = opts.compact_name or opts.name
+  small_props.icon.string, small_props.icon.color = short, colors.dim
+  small_props.icon.drawing = short ~= ""
+  small_props.label.string, small_props.label.color = "??%", colors.dim
+  local small = sbar.add("item", "widgets." .. name .. ".compact", small_props)
+  compact.register({ item }, { small })
 
   local function update(load, text)
     load = math.max(0, math.min(100, math.floor(load)))
@@ -72,6 +84,7 @@ return function(name, opts)
       icon = { color = color },
       label = { string = text or (load .. "%"), color = color },
     })
+    small:set({ label = { string = text or (load .. "%"), color = color } })
   end
 
   if opts.command then
