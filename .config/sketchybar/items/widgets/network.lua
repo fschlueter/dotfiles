@@ -4,7 +4,7 @@ local settings = require("settings")
 -- Network traffic graph (en0): download (blue, filled) and upload (red line) as two overlaid
 -- graphs, the rates above (download left, upload right, in the line colors), styled
 -- like the load graphs (load_graph.lua).
--- Sits in the CPU bracket (items/widgets/cpu.lua); must be required right before cpu.lua.
+-- Must be required right before cpu.lua.
 -- Log scale from 10 KB/s to 100 MB/s: a graph can't be rescaled once pushed, and a linear
 -- scale either hides small traffic or clips large.
 -- Rates: byte counters from `netstat -ibI en0` (link row) every 2 s, divided by the time
