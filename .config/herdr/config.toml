@@ -176,14 +176,15 @@ edit_scrollback = "prefix+shift+e"  # prefix+e: herdr-nvim sidebar
 
 [ui]
 
-# >>> herdr-radar tab-bar block
+# Tab bar: herdr-radar's path entry plus the quota entry. Hand-owned on purpose: radar
+# rewrites a marked block that differs from its own, so its markers are removed. Without
+# them radar refuses (`foreign-entry`) and leaves this alone. Keep the first entry in sync
+# with radar's.
 tab_bar_right_separator = " · "
 tab_bar_right = [
   { type = 'command', command = 'cat "/Users/felix/.local/state/herdr/plugins/hhdebb.herdr-radar/tabbar${HERDR_SESSION:+-$HERDR_SESSION}.txt"', interval_seconds = 6, timeout_seconds = 2 },
-  # Local addition: radar Configure/repair may replace this managed block.
   { type = 'command', command = 'node ~/.claude/scripts/subscription-quota.mjs', interval_seconds = 15, timeout_seconds = 2 },
 ]
-# <<< herdr-radar tab-bar block
 
 # Sidebar width (auto-scaled based on workspace names, this sets the default)
 # sidebar_width = 26
