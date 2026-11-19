@@ -3,7 +3,9 @@ local settings = require("settings")
 -- Compact mode of the top bar's load and network widgets: the graphs are replaced by
 -- plain "name value" items. One click on any of them toggles all; the state is the
 -- gitignored file `compact` ("1" = compact), so it survives reloads.
--- The graph items keep `updates = true`: a hidden item would otherwise stop polling.
+-- In compact mode the hidden graph items keep `updates` on: they poll and feed the
+-- compact items, and a hidden item would otherwise stop. Otherwise they keep the default
+-- `when_shown` and pause while the bar is hidden.
 
 local path = (os.getenv("CONFIG_DIR") or ".") .. "/compact"
 
@@ -18,7 +20,9 @@ end
 local M = { on = read(), full = {}, small = {} }
 
 local function apply()
-  for _, item in ipairs(M.full) do item:set({ drawing = not M.on }) end
+  for _, item in ipairs(M.full) do
+    item:set({ drawing = not M.on, updates = M.on and "on" or "when_shown" })
+  end
   for _, item in ipairs(M.small) do item:set({ drawing = M.on }) end
 end
 
@@ -55,7 +59,6 @@ function M.props(size)
   return {
     position = "right",
     drawing = false,
-    updates = true,
     padding_left = 2,
     padding_right = 2,
     icon = { font = name_font, padding_left = 2, padding_right = 1, y_offset = 0 },

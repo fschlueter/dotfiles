@@ -55,7 +55,6 @@ return function(name, opts)
     },
     padding_left = settings.paddings + 4,
     padding_right = settings.paddings + 4,
-    updates = true,
   })
 
   local small_props = compact.props()

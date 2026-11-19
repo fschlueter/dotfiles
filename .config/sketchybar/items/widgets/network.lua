@@ -5,7 +5,8 @@ local compact = require("items.widgets.compact")
 -- Network traffic graph (en0): download (blue, filled) and upload (red line) as two overlaid
 -- graphs, the rates above (download left, upload right, in the line colors), styled
 -- like the load graphs (load_graph.lua).
--- Must be required right before cpu.lua.
+-- Must be required right before cpu.lua: rightmost of the load group, whose padding item
+-- cpu.lua adds.
 -- Log scale from 10 KB/s to 100 MB/s: a graph can't be rescaled once pushed, and a linear
 -- scale either hides small traffic or clips large.
 -- Rates: byte counters from `netstat -ibI en0` (link row) every 2 s, divided by the time
@@ -71,7 +72,6 @@ local up = sbar.add("graph", "widgets.network.up", width, graph_props({
     y_offset = 14,
   },
   update_freq = 2,
-  updates = true,
 }))
 
 -- Compact mode (compact.lua): "↓rate ↑rate" replaces the graphs

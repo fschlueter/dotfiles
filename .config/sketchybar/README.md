@@ -61,7 +61,7 @@
 | Volume | speaker icon (dim when muted) | popup: apps playing audio (click focuses); right: Sound settings; scroll: volume |
 | Wi-Fi | icon: slash dim when off, red when not connected; connected: accent / fg / yellow / orange by signal | left: native Wi-Fi menu; right: SSID, hostname, IP, mask, router (click copies) |
 | Bluetooth (WIP) | state icon | popup: paired devices (click connects), power toggle, Bluetooth menu |
-| Load (`cpu.lua`, `load_graph.lua`, `network.lua`) | CPU, GPU, memory and network graphs, colored by load | top: click toggles compact mode (`compact.lua`, numbers only; state in the gitignored file `compact`) |
+| Load (`cpu.lua`, `load_graph.lua`, `network.lua`) | CPU, GPU, memory and network graphs, colored by load / traffic | top: click toggles compact mode (`compact.lua`, numbers only; state in the gitignored file `compact`) |
 | Amphetamine (`helpers/amphetamine.sh`) | alias of its menu bar extra, tinted `fg` | left: popup with session state, start (durations) / end, Amphetamine's own menu; right: toggle a session |
 
 Not loaded: `control.lua` (Control Center alias).

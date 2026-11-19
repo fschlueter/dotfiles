@@ -1,4 +1,3 @@
-local colors = require("colors")
 local settings = require("settings")
 local left = settings.layout == "left"
 -- load_graph.lua differs per layout (cell geometry)
