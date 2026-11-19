@@ -8,6 +8,12 @@ return {
           files = { hidden = true },
           grep = { hidden = true },
         },
+        -- resize the presets, not picker.layout: that one would also stretch
+        -- sources with their own preset (explorer sidebar, select)
+        layouts = {
+          default = { layout = { width = 0.95, height = 0.95 } },
+          vertical = { layout = { width = 0.95, height = 0.95 } }, -- used below 120 columns
+        },
       },
       notifier = { timeout = 10000 }, -- ms, default is 3000
     },
