@@ -447,7 +447,9 @@ rows = [
     { token = "$space_logo_kimchi", fg = "#ff521d", bold = false, dim = false },
     { token = "$space_logo_muse", fg = "#0082fb", bold = false, dim = false },
     { token = "$space_logo_crush", fg = "#ff388b", bold = false, dim = false },
-    { token = "$space_logo_other", fg = "#16161c", bold = false, dim = false }
+    { token = "$space_logo_other", fg = "#e9e9f0", bold = false, dim = false },
+    # Local addition ($tabs: plugins/tab-count); radar Configure/repair may remove it
+    { token = "$tabs", fg = "#6e738d", bold = false, dim = true }
   ]
 ]
 # <<< herdr-radar sidebar block
