@@ -35,5 +35,3 @@ bind '"\e[B": history-search-forward'   # Down
 
 source ~/.env/host  # host profile (flags per host or OS); presets variables used by .env/shell
 source ~/.env/shell
-
-if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init bash)"; fi
