@@ -26,7 +26,7 @@ An interactive shell runs, top to bottom. Every file shown is always sourced, ex
 │   ├── (shell)               alias vim
 │   ├── .env/tools/eza        installs eza if missing; ls-style ls, ll, la, lt, ltree, lsize become eza
 │   ├── .env/tools/herdr      defines herdr() (installs herdr on first call); cached zsh/bash completion
-│   ├── .env/tools/wt         worktrunk shell integration (wt(), installs wt on first call on macOS), wth
+│   ├── .env/tools/wt         worktrunk shell integration (wt(), installs wt on first call), wth
 │   ├── .env/tools/pyright    defines pyright() (installs it on first call; uses the $DEFAULT_ENV interpreter)
 │   └── .env/env              SOFTWARE, venv aliases from ENVS_DIR, DEFAULT_ENV, PYTHONPATH, MATPLOTLIB, RNO-G paths,
 │                             thisroot (macOS), uv, git and vd aliases
@@ -85,7 +85,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.env/tools/yazi` | `y` wrapper for the [yazi](https://yazi-rs.github.io) file manager (cd's into its last dir), installs yazi and its plugins on first use |
 | `.env/tools/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
 | `.env/tools/herdr` | `herdr` wrapper, installs [herdr](https://herdr.dev) on first use (official installer); shell completion; key binding cheat sheet; recolors Ghostty with another theme while herdr is attached (`theme --herdr`, alias `herdr-theme`); `herdr-plugins-sync` installs the GitHub plugins missing on this host (remote servers need their own) |
-| `.env/tools/wt` | [worktrunk](https://worktrunk.dev) (`wt`, git worktrees), installed on first use on macOS (Homebrew; on Linux install it yourself); its shell integration (cd after `wt switch`, completion); `wth <branch>` = `wt switch` + open the worktree in its own herdr workspace |
+| `.env/tools/wt` | [worktrunk](https://worktrunk.dev) (`wt`, git worktrees), installed on first use (macOS: Homebrew, Linux: release binary into `~/.local/bin`); its shell integration (cd after `wt switch`, completion); `wth <branch>` = `wt switch` + open the worktree in its own herdr workspace |
 | `.env/tools/pyright` | `pyright` wrapper, installs the [pyright](https://github.com/microsoft/pyright) CLI on first use (`uv tool`); passes `--pythonpath $ENVS_DIR/$DEFAULT_ENV/bin/python` unless a project config or `--pythonpath` is given |
 | `.env/host`, `.env/hosts/` | host profiles (see above) |
 | `.config/git/` | git user config (`config`: identity, diff context lines drawn faint) and global ignore (`ignore`); a host's `~/.gitconfig`, if present, overrides `config` |

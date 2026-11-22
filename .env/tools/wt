@@ -1,16 +1,32 @@
 # shellcheck shell=bash
 # Worktrunk (`wt`): git worktree manager (~/.config/worktrunk/config.toml). Installed on first call if missing
-# (macOS only, via Homebrew; on Linux install it yourself).
+# (macOS: Homebrew, Linux: static musl release binary into ~/.local/bin, no sudo).
 # Its shell integration defines a `wt` function that cd's into the switched-to worktree.
 #   wth <branch> [wt switch args]   switch/create, then open the worktree in its own herdr workspace (wt-herdr)
 
 function dot_install_wt() {
-	if [[ "$OSTYPE" != darwin* ]]; then
-		echo "wt (worktrunk) not found; install it yourself: https://worktrunk.dev/#install" >&2
-		return 1
-	fi
 	echo "wt (worktrunk) not found, installing ..."
-	brew install worktrunk
+	if [[ "$OSTYPE" == darwin* ]]; then
+		brew install worktrunk
+		return
+	fi
+
+	# Releases ship only .tar.xz (needs tar with xz support)
+	local name tmp ret
+	case "$(uname -m)" in
+		x86_64) name=worktrunk-x86_64-unknown-linux-musl ;;
+		aarch64 | arm64) name=worktrunk-aarch64-unknown-linux-musl ;;
+		*) echo "No prebuilt wt for $(uname -m)." >&2; return 1 ;;
+	esac
+	tmp="$(mktemp -d)"
+	curl -fsSL --connect-timeout 10 -o "$tmp/wt.tar.xz" \
+		"https://github.com/max-sixty/worktrunk/releases/latest/download/$name.tar.xz" \
+		&& tar -xJf "$tmp/wt.tar.xz" -C "$tmp" \
+		&& mkdir -p "$HOME/.local/bin" \
+		&& install -m 755 "$tmp/$name/wt" "$HOME/.local/bin/"
+	ret=$?
+	rm -rf "$tmp"
+	return $ret
 }
 
 function _dot_wt_init() {
