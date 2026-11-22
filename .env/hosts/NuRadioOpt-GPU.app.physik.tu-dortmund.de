@@ -11,3 +11,9 @@ offline() {
   eval "$($AUGEROFFLINEROOT/bin/auger-offline-config --env-sh)"
   export PATH=$ROOTSYS/bin:$PATH
 }
+
+
+# Extra PYTHONPATH modules (relative to $SOFTWARE), added to the default list in .env/env
+python_module_extra=(
+  "deepcr/src"
+)
