@@ -43,8 +43,49 @@ fi
 DOTFILES_AUTO_INSTALL="${_ai:-$DOTFILES_AUTO_INSTALL}"
 export DOTFILES_PROFILE="$_p" DOTFILES_NVIM_AI DOTFILES_AUTO_INSTALL DOTFILES_SYNC
 
-# Interactive shells only (not install.sh)
-if [[ $- == *i* ]]; then  # plain `[[ ]] && echo` would return 1 here and abort install.sh (set -e)
-    echo "dotfiles: profile '$DOTFILES_PROFILE' (host '$_h', shell ${ZSH_VERSION:+zsh}${BASH_VERSION:+bash})"
+# Interactive shells only (not install.sh): one status line
+#   mithril  darwin profile · zsh · macOS 26.6.2 · up 3d · load 3.1
+# Plain [[ ]] && cmd would return 1 here and abort install.sh (set -e), so use if blocks.
+if [[ $- == *i* ]]; then
+    _os="" _up="" _load=""
+    case "$OSTYPE" in
+        darwin*)
+            _os="macOS $(sw_vers -productVersion 2>/dev/null)"
+            # "{ sec = 1732000000, usec = 0 } Tue Nov 24 ..." and "{ 3.14 3.12 3.33 }"
+            _s="$(sysctl -n kern.boottime vm.loadavg 2>/dev/null)"
+            _b="${_s#*sec = }"; _b="${_b%%,*}"
+            if [[ $_b == [0-9]* ]]; then _up=$(($(date +%s) - _b)); fi
+            _load="${_s##*\{ }"; _load="${_load%% *}"
+            ;;
+        *)
+            if [[ -r /etc/os-release ]]; then
+                _n="" _v=""
+                while IFS='=' read -r _k _s; do
+                    case "$_k" in
+                        NAME) _n="${_s//\"/}" ;;
+                        VERSION_ID) _v="${_s//\"/}" ;;
+                    esac
+                done </etc/os-release
+                _os="$_n${_v:+ $_v}"
+            fi
+            if [[ -r /proc/uptime ]]; then read -r _up _s </proc/uptime; _up="${_up%%.*}"; fi
+            if [[ -r /proc/loadavg ]]; then read -r _load _s </proc/loadavg; fi
+            ;;
+    esac
+    _sep=$' \033[90m·\033[0m '
+    _info="${DOTFILES_PROFILE%%.*} profile$_sep${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}"
+    if [[ -n $_os ]]; then _info="$_info$_sep$_os"; fi
+    if [[ $_up == [0-9]* ]]; then
+        if ((_up >= 86400)); then _s="$((_up / 86400))d"
+        elif ((_up >= 3600)); then _s="$((_up / 3600))h"
+        else _s="$((_up / 60))m"; fi
+        _info="$_info${_sep}up $_s"
+    fi
+    if [[ $_load == [0-9]* ]]; then
+        _s="${_load#*.}"
+        _info="$_info${_sep}load ${_load%%.*}.${_s:0:1}"
+    fi
+    printf '\033[1;32m%s\033[0m  %s\n' "${_h%%.*}" "$_info"
+    unset _os _up _load _s _b _n _v _k _info _sep
 fi
 unset _h _p _ai _dotfiles_env
