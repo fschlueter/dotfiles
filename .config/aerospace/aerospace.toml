@@ -104,9 +104,9 @@ key-mapping.preset = 'qwerty'
 #                 https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
 gaps.inner.horizontal = 15
 gaps.inner.vertical = 15
-gaps.outer.left = [{ monitor.main = 62 }, 10]
+gaps.outer.left = 10
 gaps.outer.bottom = 10
-gaps.outer.top = 12
+gaps.outer.top = [{ monitor."built-in" = 12 }, { monitor.main = 20 }, 12]
 gaps.outer.right = 10
 
 # 'main' binding mode declaration
