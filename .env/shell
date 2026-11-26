@@ -97,6 +97,9 @@ source ~/.env/tools/pyright
 
 source ~/.env/env  # coding and software environment
 
+# shell history search (atuin, Ctrl+R); last, after everything that sets PROMPT_COMMAND or zsh widgets
+source ~/.env/tools/atuin
+
 # Claude Code login token (exports CLAUDE_CODE_OAUTH_TOKEN); file is per host, chmod 600, not in the repo
 if [[ -r ~/.claude_token ]]; then
     source ~/.claude_token

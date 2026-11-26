@@ -45,7 +45,7 @@ Hosts differ through a **profile** (`.env/hosts/<profile>`), not through branche
 | Variable | Effect |
 |----------|--------|
 | `DOTFILES_STOW_IGNORE` | space-separated regexes `install.sh` passes to stow as `--ignore` (e.g. the macOS-only configs on Linux) |
-| `DOTFILES_AUTO_INSTALL` | `0` stops missing fzf/zoxide/uv/oh-my-posh/eza being installed at shell start (default `1`) |
+| `DOTFILES_AUTO_INSTALL` | `0` stops missing fzf/zoxide/uv/oh-my-posh/eza/atuin being installed at shell start (default `1`) |
 | `DOTFILES_NVIM_AI` | AI nvim plugins to load (`claudecode`, `minuet`); the others stay unloaded, their pins stay in `lazy-lock.json` |
 | `DOTFILES_TMUX_PLUGINS` | folder for tmux's TPM plugins; must be exported (default `~/scratch/tmux/plugins`) |
 | `ENVS_DIR` | folder holding the Python envs; `.env/env` creates one activation alias per env (default `$SOFTWARE/envs`) |
@@ -86,6 +86,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.env/tools/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
 | `.env/tools/herdr` | `herdr` wrapper, installs [herdr](https://herdr.dev) on first use (official installer); shell completion; key binding cheat sheet; recolors Ghostty with another theme while herdr is attached (`theme --herdr`, alias `herdr-theme`); `herdr-plugins-sync` installs the GitHub plugins missing on this host (remote servers need their own) |
 | `.env/tools/wt` | [worktrunk](https://worktrunk.dev) (`wt`, git worktrees), installed on first use (macOS: Homebrew, Linux: release binary into `~/.local/bin`); its shell integration (cd after `wt switch`, completion); `wth <branch>` = `wt switch` + open the worktree in its own herdr workspace |
+| `.env/tools/atuin` | [atuin](https://atuin.sh) shell history (SQLite, Ctrl+R search replaces fzf's; Up/Down unchanged), installed at shell start with the official installer into `~/.atuin/bin`; config and data in `~/.atuin` |
 | `.env/tools/pyright` | `pyright` wrapper, installs the [pyright](https://github.com/microsoft/pyright) CLI on first use (`uv tool`); passes `--pythonpath $ENVS_DIR/$DEFAULT_ENV/bin/python` unless a project config or `--pythonpath` is given |
 | `.env/host`, `.env/hosts/` | host profiles (see above) |
 | `.hushlogin` | silences `login`'s "Last login" line and motd; macOS only (`hosts/linux` skips it, so servers still show admin notices) |

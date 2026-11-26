@@ -1,0 +1,24 @@
+# shellcheck shell=bash
+# Shell history in a SQLite database (atuin): Ctrl+R opens its search, replacing fzf's (bound later, so it wins).
+# Up/Down stay prefix search (zsh-history-substring-search / bash history-search-*), hence --disable-up-arrow.
+# Installed at shell start if missing with the official installer (cargo-dist; checksum-verified binary into
+# ~/.atuin/bin, no sudo; same on macOS and Linux), without its rc-file edits; `atuin update` updates it in place.
+# Config and data live in ~/.atuin (not in this repo).
+# Source last in .env/shell: bash's hook (bundled bash-preexec) must wrap the final PROMPT_COMMAND, and zsh's
+# widgets must exist before zsh-syntax-highlighting (.zshrc).
+
+function dot_install_atuin() {
+	echo "atuin not found, installing ..."
+	curl --proto '=https' --tlsv1.2 -fsSL --connect-timeout 10 \
+		https://github.com/atuinsh/atuin/releases/latest/download/atuin-installer.sh \
+		| ATUIN_NO_MODIFY_PATH=1 sh || return
+	echo "atuin installed; import the old history with: atuin import auto"
+}
+
+path_prepend PATH "$HOME/.atuin/bin"
+if [[ ${DOTFILES_AUTO_INSTALL-1} != 0 ]] && ! dot_have atuin; then
+	dot_install_atuin || echo "atuin install failed." >&2
+fi
+if dot_have atuin; then
+	eval "$(atuin init "${ZSH_VERSION:+zsh}${BASH_VERSION:+bash}" --disable-up-arrow)"
+fi
