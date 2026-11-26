@@ -28,11 +28,10 @@ An interactive shell runs, top to bottom. Every file shown is always sourced, ex
 │   ├── .env/tools/herdr      defines herdr() (installs herdr on first call); cached zsh/bash completion
 │   ├── .env/tools/wt         worktrunk shell integration (wt(), installs wt on first call), wth
 │   ├── .env/tools/pyright    defines pyright() (installs it on first call; uses the $DEFAULT_ENV interpreter)
-│   ├── .env/env              SOFTWARE, venv aliases from ENVS_DIR, DEFAULT_ENV, PYTHONPATH, MATPLOTLIB, RNO-G paths,
-│   │                         thisroot (macOS), uv, git and vd aliases
-│   └── .env/tools/atuin      installs atuin if missing; atuin init (Ctrl+R and Up open its search)
+│   └── .env/env              SOFTWARE, venv aliases from ENVS_DIR, DEFAULT_ENV, PYTHONPATH, MATPLOTLIB, RNO-G paths,
+│                             thisroot (macOS), uv, git and vd aliases
 └── zsh: completion menu + list-colors (needs LS_COLORS), then zsh-syntax-highlighting (wraps all widgets defined before it),
-          zsh-history-substring-search (after it, as its README asks) + Up/Down bindings, commented out while atuin owns Up
+          zsh-history-substring-search (after it, as its README asks) + Up/Down bindings
 ```
 
 The shell-specific part must come first: bash's `history -a` has to be in `PROMPT_COMMAND` before `.env/tools/omp` puts the prompt hook ahead of it (bash < 5.1), bash-completion and zsh's `compinit` before fzf/zoxide, and `shwordsplit` before the bash-style shared files. Profiles run before `.env/shell`, so they can preset variables (`SOFTWARE`, `ENVS_DIR`, `python_module_extra`, ...) that `.env/env` only defaults.
@@ -78,7 +77,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 |------|------|
 | `.zshrc`, `.bashrc` | per-shell parts only: history, completion, plugins, key bindings. Login shells must source `.bashrc`; the stock `~/.profile` (Debian/Ubuntu) and `~/.bash_profile` (RHEL/Alma) already do, so no `.bash_profile` is shipped |
 | `.env/shell` | everything shell-independent, sourced by both: aliases, PATH, colors, fzf, zoxide, prompt, tools, environments |
-| `.zsh/plugins/` | zsh plugins as git submodules (completions, autosuggestions, syntax highlighting, history substring search: type a prefix, then Up/Down; commented out in `.zshrc` while atuin owns Up) |
+| `.zsh/plugins/` | zsh plugins as git submodules (completions, autosuggestions, syntax highlighting, history substring search: type a prefix, then Up/Down) |
 | `.env/env` | coding and software environment, sourced by `.env/shell` |
 | `.env/tools/core` | base PATH, installs fzf, zoxide and uv on first use; shared helpers (`path_append`/`path_prepend`, `dot_have`, `dot_unzip`, `dot_glibc_at_least`) |
 | `.env/tools/eza` | installs [eza](https://eza.rocks) on first use; `ls` (grid), `ll`/`la` (long, git status), `lt` (newest last), `ltree`, `lsize` use eza; GNU `ls` aliases without it |
@@ -87,7 +86,7 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.env/tools/nvim` | `nvim` wrapper, installs [Neovim](https://neovim.io) and `tree-sitter-cli` on first use |
 | `.env/tools/herdr` | `herdr` wrapper, installs [herdr](https://herdr.dev) on first use (official installer); shell completion; key binding cheat sheet; recolors Ghostty with another theme while herdr is attached (`theme --herdr`, alias `herdr-theme`); `herdr-plugins-sync` installs the GitHub plugins missing on this host (remote servers need their own) |
 | `.env/tools/wt` | [worktrunk](https://worktrunk.dev) (`wt`, git worktrees), installed on first use (macOS: Homebrew, Linux: release binary into `~/.local/bin`); its shell integration (cd after `wt switch`, completion); `wth <branch>` = `wt switch` + open the worktree in its own herdr workspace |
-| `.env/tools/atuin` | [atuin](https://atuin.sh) shell history (SQLite, Ctrl+R and Up open its search, replacing fzf's Ctrl+R and zsh-history-substring-search, which is commented out in `.zshrc`), installed at shell start with the official installer into `~/.atuin/bin`; config and data in `~/.atuin` |
+| `.env/tools/atuin` | [atuin](https://atuin.sh) shell history (SQLite, Ctrl+R search replaces fzf's; Up/Down unchanged), installed at shell start with the official installer into `~/.atuin/bin`; config and data in `~/.atuin` |
 | `.env/tools/pyright` | `pyright` wrapper, installs the [pyright](https://github.com/microsoft/pyright) CLI on first use (`uv tool`); passes `--pythonpath $ENVS_DIR/$DEFAULT_ENV/bin/python` unless a project config or `--pythonpath` is given |
 | `.env/host`, `.env/hosts/` | host profiles (see above) |
 | `.hushlogin` | silences `login`'s "Last login" line and motd; macOS only (`hosts/linux` skips it, so servers still show admin notices) |
