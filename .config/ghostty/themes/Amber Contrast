@@ -1,5 +1,7 @@
-# Matrix Contrast's slot plan in amber: orange-dominant, but ANSI hues kept distinguishable so diffs,
-# git status and syntax stay readable. See Matrix Contrast for what uses each slot.
+# Matrix Contrast's slot plan in amber: all warm (no blue/cyan/pink), hues spread from red-orange to olive so
+# diffs, git status and syntax stay readable. See Matrix Contrast for what uses each slot.
+# UI accents read from these slots: herdr accent (active tab, focused border) = 5; Claude Code dark-ansi:
+# brand = 9, permission/suggestion = 12, auto-accept/bash border = 13, plan mode = 14; statusline model = 6.
 # Used for herdr panes via `herdr-theme 'Amber Contrast'` (.env/tools/herdr); usable as a Ghostty theme too.
 
 # 0 black: zsh-hl comments, dim UI bits, herdr active sidebar row (raised from #2e2418 for that)
@@ -12,10 +14,10 @@ palette = 2 = #ffc93d
 palette = 3 = #ffe39a
 # 4 blue (dark amber): directories, globs
 palette = 4 = #d08a2a
-# 5 magenta (cool cyan accent): images/media in ls, redirections
-palette = 5 = #6cc6e0
-# 6 cyan (teal accent): diff hunk headers, symlinks
-palette = 6 = #7ed6c4
+# 5 magenta (amber accent): images/media in ls, redirections, herdr accent
+palette = 5 = #ffb000
+# 6 cyan (olive gold): diff hunk headers, symlinks
+palette = 6 = #c8c060
 # 7 white: default text where programs set it explicitly (git diff context lines use the default foreground, dimmed)
 palette = 7 = #dccab0
 # 8 bright black: zsh-autosuggestions, other dimmed hints
@@ -27,11 +29,11 @@ palette = 10 = #ffe2a6
 # 11 bright yellow (deep orange): warnings, search matches
 palette = 11 = #ff7a00
 # 12 bright blue: links and emphasis in TUI tools
-palette = 12 = #8fd3ee
+palette = 12 = #ffd27a
 # 13 bright magenta: emphasized special items
-palette = 13 = #ffb3a1
+palette = 13 = #ff9e5e
 # 14 bright cyan: emphasized info
-palette = 14 = #a3eadc
+palette = 14 = #e0dc9a
 # 15 bright white: bold headings
 palette = 15 = #fff2dc
 
