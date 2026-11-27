@@ -72,9 +72,9 @@ function M.add(name, opts)
     local half = settings.cell_width / 2
     if left then
       item:set({
-        width = 18, -- vertical extent
-        padding_left = 5,
-        padding_right = 3,
+        width = 16, -- vertical extent
+        padding_left = 1,
+        padding_right = 1,
         icon = { string = icon, drawing = icon ~= "", width = half, align = "left",
                  padding_left = 0, padding_right = 0, y_offset = 0, font = font(sizes[1]) },
         label = { width = half, align = "right", padding_left = 0, padding_right = 0,
