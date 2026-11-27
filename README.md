@@ -28,7 +28,7 @@ An interactive shell runs, top to bottom. Every file shown is always sourced, ex
 │   ├── .env/tools/herdr      defines herdr() (installs herdr on first call); cached zsh/bash completion
 │   ├── .env/tools/wt         worktrunk shell integration (wt(), installs wt on first call), wth
 │   ├── .env/tools/pyright    defines pyright() (installs it on first call; uses the $DEFAULT_ENV interpreter)
-│   └── .env/env              SOFTWARE, venv aliases from ENVS_DIR, DEFAULT_ENV, PYTHONPATH, MATPLOTLIB, RNO-G paths,
+│   └── .env/env              SOFTWARE, venv aliases from ENVS_DIR, DEFAULT_ENV, PYTHONPATH, MATPLOTLIBRC, npm cooldown, RNO-G paths,
 │                             thisroot (macOS), uv, git and vd aliases
 └── zsh: completion menu + list-colors (needs LS_COLORS), then zsh-syntax-highlighting (wraps all widgets defined before it),
           zsh-history-substring-search (after it, as its README asks) + Up/Down bindings
@@ -101,7 +101,6 @@ The installers download prebuilt binaries, so what runs depends on the glibc of 
 | `.local/bin/wallpaper` | `wallpaper [FOLDER]` (macOS): shows or sets the image folder the desktop wallpaper cycles (folder added once in System Settings; rewrites WallpaperAgent's undocumented `Index.plist`) |
 | `.local/bin/wt-herdr` | opens (or refocuses) a worktree in its own herdr workspace; used by `wth` and as `wt switch -x wt-herdr` |
 | `.config/yazi/` | yazi config; plugins are pinned in `package.toml` (manage with `ya pkg add/upgrade`) and not tracked in git |
-| `.npmrc` | npm user config: `min-release-age=7` (installs only versions published at least 7 days ago) |
 | `.tmux.conf` | tmux: passes image escape codes and `TERM`/`TERM_PROGRAM` through, so yazi image previews work inside tmux; Ctrl+S as a second prefix next to Ctrl+B; plugins via TPM in `$DOTFILES_TMUX_PLUGINS` (vim-tmux-navigator, tmux-power), cloned on first start |
 | `.config/nvim/` | [LazyVim](https://www.lazyvim.org) config (from the starter); plugins are installed by lazy.nvim on first start, pinned in `lazy-lock.json` |
 | `.config/aerospace/` | [AeroSpace](https://github.com/nikitabobko/AeroSpace) window manager config and session save/restore (macOS, see its [README](.config/aerospace/README.md)) |

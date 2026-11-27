@@ -27,7 +27,11 @@ for m in ${python_module[@]+"${python_module[@]}"}; do
     path_append PYTHONPATH "$SOFTWARE/$m"
 done
 
-export MATPLOTLIB="${MATPLOTLIB:-$HOME/.matplotlib/matplotlibrc}"
+export MATPLOTLIBRC="${MATPLOTLIBRC:-$HOME/.matplotlib/matplotlibrc}"
+
+# npm: only install versions published at least 7 days ago (supply-chain cooldown). An env var, not
+# a linked ~/.npmrc: `npm login` writes its token into ~/.npmrc, which must stay out of this repo.
+export npm_config_min_release_age=7
 
 # # to find py3.11 in homebrew ...
 # path_prepend PATH /opt/homebrew/opt/python@3.11/libexec/bin
