@@ -23,7 +23,8 @@
   - **Live switch, no reload**: `layout.sh` triggers `layout_switch`; `helpers/layout.lua`
     re-applies the layout defaults (`default.lua`) and the appliers each item file registers
     with `layout.on(fn(left))`. Both layouts' items always exist; the other layout's (brackets,
-    padding items, the left graph cells `*.left`, menus) are hidden. An applier must set every
+    padding items, menus) are hidden; the load and network graphs are one item per graph for both
+    layouts (`helpers/graph_style.lua`). An applier must set every
     property it sets for one layout also for the other; check with `tools/item_diff.sh`: a
     fresh load in a layout (`echo top > layout`, `tools/reload.sh`) and a switch to it
     (`sketchybar --trigger layout_switch LAYOUT=top`) must dump the same.
@@ -67,7 +68,7 @@
 | Volume | speaker icon (dim when muted) | popup: apps playing audio (click focuses); right: Sound settings; scroll: volume |
 | Wi-Fi | icon: slash dim when off, red when not connected; connected: accent / fg / yellow / orange by signal | left: native Wi-Fi menu; right: SSID, hostname, IP, mask, router (click copies) (top bar; left bar: see the note below the table) |
 | Bluetooth (WIP) | state icon | popup: paired devices (click connects), power toggle, Bluetooth menu |
-| Load (`cpu.lua`, `load_graph.lua`, `network.lua`) | CPU, GPU, memory and network graphs, colored by load / traffic | top: click toggles compact mode (`compact.lua`, numbers only; state in the gitignored file `compact`) |
+| Load (`cpu.lua`, `load_graph.lua`, `network.lua`) | CPU, GPU, memory and network graphs, colored by load / traffic | click toggles compact mode in both layouts (`compact.lua`: name and value only, the left bar as cells; state in the gitignored file `compact`) |
 | Amphetamine (`helpers/amphetamine.sh`) | alias of its menu bar extra, tinted `fg` | left: popup with session state, start (durations) / end, Amphetamine's own menu; right: toggle a session |
 
 > **Left bar: Wi-Fi and Bluetooth share one cell (Wi-Fi left, Bluetooth right), and every click
