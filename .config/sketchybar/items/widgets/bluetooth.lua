@@ -4,8 +4,8 @@
 --          plus rows to switch Bluetooth on/off and to open Control Centre's Bluetooth menu.
 -- State comes from `system_profiler SPBluetoothDataType` (~0.2 s, polled every 30 s and on
 -- opening the popup); switching uses blueutil (`brew install blueutil`).
--- Top layout: shares one bg1 bracket with the Wi-Fi icon (items/widgets/wifi.lua, required
--- before this file); left layout: own cell.
+-- Shares its background with Wi-Fi (items/widgets/wifi.lua, required before this file): top, one
+-- bg1 bracket; left bar, one cell, where this item gets all clicks and forwards left clicks to Wi-Fi.
 
 local colors = require("colors")
 local settings = require("settings")
@@ -36,8 +36,8 @@ local bluetooth = sbar.add("item", "widgets.bluetooth", {
   update_freq = 30,
 })
 
--- One background for Wi-Fi and Bluetooth. Top: a bracket. Left (no brackets there): both items
--- stretch their backgrounds towards each other (see items/widgets/wifi.lua).
+-- One background for Wi-Fi and Bluetooth. Top: a bracket. Left (no brackets there): Wi-Fi draws
+-- the cell, this item lies over it (see items/widgets/wifi.lua).
 local bracket = sbar.add("bracket", "widgets.network.bracket", { "widgets.wifi", bluetooth.name }, {
   background = { color = colors.bg1 },
 })
@@ -310,6 +310,7 @@ bluetooth:subscribe("mouse.clicked", function(env)
   if open then
     hide_popup()
   else
+    if layout.is_left() then sbar.trigger("wifi_hide") end -- same cell: popups would overlap
     bluetooth:set({ popup = { drawing = true } })
     refresh()
   end

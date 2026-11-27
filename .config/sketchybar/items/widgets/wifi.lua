@@ -16,8 +16,8 @@ local wifi = sbar.add("item", "widgets.wifi", {
   popup = { height = 30 },
 })
 -- One background with Bluetooth (items/widgets/bluetooth.lua, required after this file, which
--- adds the group padding). Top: its bracket. Left (no brackets): each item stretches its
--- background towards the other; the item's bounds clip it, so the halves meet in one field.
+-- adds the group padding). Top: its bracket. Left (no brackets): one cell; Wi-Fi draws it (an
+-- empty label fills the right half) and Bluetooth lies over it with a transparent background.
 layout.on(function(left)
   if left then
     wifi:set({
@@ -60,7 +60,7 @@ local current_ssid = ""
 
 -- Left click: the native Wi-Fi menu of Control Centre (the menu bar item, also when the menu
 -- bar is hidden; the alias is localized, see `sketchybar --query default_menu_items`).
--- Right click: popup with the connection details (click a row to copy it).
+-- Right click (left bar: ⌥+left click, see README): popup with the connection details (click a row to copy it).
 local popup = "popup." .. wifi.name
 
 local header = sbar.add("item", "widgets.wifi.header", {
@@ -170,6 +170,8 @@ sbar.add("event", "wifi_details")
 sbar.add("event", "wifi_menu")
 wifi:subscribe("wifi_details", function() on_click({ BUTTON = "right" }) end)
 wifi:subscribe("wifi_menu", function() on_click({ BUTTON = "left" }) end)
+sbar.add("event", "wifi_hide")
+wifi:subscribe("wifi_hide", hide_details)
 
 local copying = {}  -- row name -> label while the clipboard glyph is shown
 local function copy_label_to_clipboard(env)
