@@ -43,7 +43,8 @@ return function(name, opts)
   layout.on(function(left) item:set(graph_style(left)) end)
 
   local short = opts.compact_name or opts.name
-  local small = compact.add("widgets." .. name .. ".compact", { top = short, left = opts.name, label = "??%" })
+  local small = compact.add("widgets." .. name .. ".compact", { top = short, left = opts.name, label = "??%",
+                                                            sizes = { 12.0, 12.0 } })
   compact.register({ item }, { small })
 
   local function update(load, text)

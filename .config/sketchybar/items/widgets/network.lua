@@ -53,7 +53,8 @@ local up = graph("widgets.network.up", {
 })
 
 -- Compact mode (compact.lua): the rates replace the graphs
-local small = compact.add("widgets.network.compact", { top = "↓?", left = "↓?", label = "↑?" })
+local small = compact.add("widgets.network.compact", { top = "↓?", left = "↓?", label = "↑?",
+  sizes = { 11.0, 11.0 } }) -- not 12: "↓0.2M↑3.4M" would overflow the 58 pt cell
 compact.register({ down, up }, { small })
 
 local last_rates -- { down, up } of the latest show(), re-rendered on a layout switch
