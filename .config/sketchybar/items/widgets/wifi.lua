@@ -15,24 +15,29 @@ local wifi = sbar.add("item", "widgets.wifi", {
   label = { drawing = false },
   popup = { height = 30 },
 })
-local padding = sbar.add("item", "widgets.wifi.padding", { position = "right",
-                                                         width = settings.group_paddings })
-
--- Left: own cell. Top: no background of its own; items/widgets/bluetooth.lua (required after
--- this file) puts Wi-Fi and Bluetooth into one bg1 bracket and adds the group padding.
+-- One background with Bluetooth (items/widgets/bluetooth.lua, required after this file, which
+-- adds the group padding). Top: its bracket. Left (no brackets): each item stretches its
+-- background towards the other; the item's bounds clip it, so the halves meet in one field.
 layout.on(function(left)
-  padding:set({ drawing = left })
   if left then
     wifi:set({
-      icon = { width = settings.cell_width, align = "center", padding_left = 0, padding_right = 0 },
-      background = { drawing = true, color = colors.bg1, height = 28 },
+      -- The background height is the item's vertical extent. Shifted 9 pt (its corner radius) up
+      -- towards Bluetooth, it is clipped straight there; the field is 2 x 37 - 2 x 9 = 56 pt, the
+      -- icons are moved 4.5 pt inwards to sit where two 28 pt cells would put them.
+      icon = { width = settings.cell_width, align = "center", padding_left = 0, padding_right = 0,
+               y_offset = 4.5 },
+      background = { drawing = true, color = colors.bg1, height = 37, y_offset = 9 },
+      padding_left = 0, -- no gap inside the field
+      padding_right = -4, -- outer gap as other cells' (5) despite the 9 pt shift
       -- vertical bar: "right" aligns the popup's bottom with the item's, so it grows upwards
       popup = { align = "right" },
     })
   else
     wifi:set({
-      icon = { width = "dynamic", align = "left", padding_left = 8, padding_right = 6 },
-      background = { drawing = false, color = 0, height = 26 },
+      icon = { width = "dynamic", align = "left", padding_left = 8, padding_right = 6, y_offset = 0 },
+      background = { drawing = false, color = 0, height = 26, y_offset = 0 },
+      padding_left = 5,
+      padding_right = 5,
       popup = { align = "center" },
     })
     wifi:set({ background = { drawing = false } }) -- after the color, which turns it on

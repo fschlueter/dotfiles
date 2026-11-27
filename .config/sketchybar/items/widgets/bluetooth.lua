@@ -36,7 +36,8 @@ local bluetooth = sbar.add("item", "widgets.bluetooth", {
   update_freq = 30,
 })
 
--- Top: one background for Wi-Fi and Bluetooth
+-- One background for Wi-Fi and Bluetooth. Top: a bracket. Left (no brackets there): both items
+-- stretch their backgrounds towards each other (see items/widgets/wifi.lua).
 local bracket = sbar.add("bracket", "widgets.network.bracket", { "widgets.wifi", bluetooth.name }, {
   background = { color = colors.bg1 },
 })
@@ -49,8 +50,11 @@ layout.on(function(left)
   if left then
     bluetooth:set(cell({
       -- no label: undo cell()'s icon-over-label offsets
-      icon = { width = settings.cell_width, padding_left = 0, padding_right = 0, y_offset = 0 },
-      background = { drawing = true, color = colors.bg1, height = 28 },
+      -- shared field with Wi-Fi: mirror of its values (items/widgets/wifi.lua)
+      icon = { width = settings.cell_width, padding_left = 0, padding_right = 0, y_offset = -4.5 },
+      background = { drawing = true, color = colors.bg1, height = 37, y_offset = -9 },
+      padding_right = 0, -- the side facing Wi-Fi (below)
+      padding_left = -4,
       -- vertical bar: "right" aligns the popup's bottom with the item's, so it grows upwards
       -- (centered, the longer list ran off the bottom of the screen)
       popup = { align = "right" },
@@ -58,7 +62,9 @@ layout.on(function(left)
   else
     bluetooth:set(layout.merge(layout.top_cell(), {
       icon = { padding_left = 6, padding_right = 8 },
-      background = { drawing = false, color = 0, height = 26 },
+      background = { drawing = false, color = 0, height = 26, y_offset = 0 },
+      padding_right = 5,
+      padding_left = 5,
       popup = { align = "center" },
     }))
     bluetooth:set({ background = { drawing = false } }) -- after the color, which turns it on
