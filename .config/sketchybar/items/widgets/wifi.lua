@@ -157,12 +157,16 @@ end)
 wifi:subscribe("mouse.clicked", on_click)
 wifi:subscribe("mouse.exited.global", hide_details)
 
+local copying = {}  -- row name -> label while the clipboard glyph is shown
 local function copy_label_to_clipboard(env)
+  if copying[env.NAME] then return end  -- a second click would copy the glyph
   local label = sbar.query(env.NAME).label.value
-  sbar.exec("echo \"" .. label .. "\" | pbcopy")
+  copying[env.NAME] = label
+  sbar.exec("printf %s '" .. label:gsub("'", "'\\''") .. "' | pbcopy")
   sbar.set(env.NAME, { label = { string = icons.clipboard, align="center" } })
   sbar.delay(1, function()
     sbar.set(env.NAME, { label = { string = label, align = "right" } })
+    copying[env.NAME] = nil
   end)
 end
 
