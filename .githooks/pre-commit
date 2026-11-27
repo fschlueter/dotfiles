@@ -62,8 +62,11 @@ if command -v python3 >/dev/null; then
             .local/bin/*) git show ":$f" | head -1 | grep -qE '^#!.*python' || continue ;;
             *) continue ;;
         esac
-        git show ":$f" | python3 -I -c 'import ast, sys; ast.parse(sys.stdin.read(), sys.argv[1])' "$f" 2>&1 \
-            | grep . >&2 && fail=1
+        # exit status, not output: a SyntaxWarning alone must not fail the hook
+        if ! out=$(git show ":$f" | python3 -I -W ignore -c 'import ast, sys; ast.parse(sys.stdin.read(), sys.argv[1])' "$f" 2>&1); then
+            printf '%s\n' "$out" >&2
+            fail=1
+        fi
     done < <(git diff --cached --name-only --diff-filter=ACM)
 fi
 
