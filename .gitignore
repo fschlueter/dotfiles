@@ -9,3 +9,5 @@
 # matplotlib caches (stow may link the whole ~/.matplotlib here)
 .matplotlib/*
 !.matplotlib/matplotlibrc
+# npm user config with auth tokens (`npm login` through a stale ~/.npmrc link); config lives in .env/env
+.npmrc
