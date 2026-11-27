@@ -239,8 +239,14 @@ return function(cal)
 
   open()
 
+  -- query() can lack "popup" (failed query, e.g. around wake): treat as closed
+  local function drawing()
+    local p = cal:query().popup
+    return p and p.drawing or "off"
+  end
+
   cal:subscribe("mouse.clicked", function(_)
-    if cal:query().popup.drawing == "off" then open() end
+    if drawing() == "off" then open() end
     cal:set({ popup = { drawing = "toggle" } })
   end)
   cal:subscribe("mouse.exited.global", function(_)
@@ -250,7 +256,7 @@ return function(cal)
   -- runs it from its own routine handler (a second cal:subscribe("routine")
   -- would replace that handler)
   return function()
-    if cal:query().popup.drawing == "on" then
+    if drawing() == "on" then
       update_clocks()
       if os.time() - last_render >= map_interval then render_map(map) end
     end
