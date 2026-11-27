@@ -80,9 +80,14 @@ void ax_print_menu_options(AXUIElementRef app, bool geometry) {
         CFTypeRef title = ax_get_title(item);
 
         if (title) {
-          uint32_t buffer_len = 2*CFStringGetLength(title);
-          char buffer[2*CFStringGetLength(title)];
-          CFStringGetCString(title, buffer, buffer_len, kCFStringEncodingUTF8);
+          // UTF-8 needs up to 3 bytes per UTF-16 unit (CJK titles), plus the NUL
+          CFIndex buffer_len = CFStringGetMaximumSizeForEncoding(CFStringGetLength(title),
+                                                                 kCFStringEncodingUTF8) + 1;
+          char buffer[buffer_len];
+          if (!CFStringGetCString(title, buffer, buffer_len, kCFStringEncodingUTF8)) {
+            CFRelease(title);
+            continue;
+          }
           if (geometry) {
             CGPoint position = CGPointZero;
             CGSize size = CGSizeZero;
