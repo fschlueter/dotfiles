@@ -1,3 +1,6 @@
+# Template: render.sh writes aerospace.toml (gitignored, what AeroSpace reads) from this file,
+# with the outer gaps of the sketchybar layout (sketchybar/layout.sh). Edit here, not there.
+
 # Config version for compatibility and deprecations
 # See: https://nikitabobko.github.io/AeroSpace/guide#config-version
 # Fallback value (if you omit the key): config-version = 1

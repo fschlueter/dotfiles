@@ -129,6 +129,11 @@ echo "dotfiles: installing profile '$DOTFILES_PROFILE'"
 cd "$DOTFILES"
 stow --restow --target="$HOME" ${ignore[@]+"${ignore[@]}"} ${stow_args[@]+"${stow_args[@]}"} .
 
+# AeroSpace reads the gitignored aerospace.toml, rendered from aerospace.toml.in (sketchybar/layout.sh re-renders it)
+if [[ "$OSTYPE" == darwin* && ! -f .config/aerospace/aerospace.toml ]]; then
+    .config/aerospace/render.sh
+fi
+
 if ((agents)); then
     for r in "${AGENT_REPOS[@]}"; do
         # shellcheck disable=SC2086  # "dest url" pair

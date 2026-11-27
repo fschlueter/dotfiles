@@ -56,11 +56,10 @@ else
   top="[{ monitor.\"built-in\" = 12 }, { monitor.main = 20 }, 12]"
 fi
 
-# resolve the stow symlink so sed -i edits the repo file, not the link
-aero="$(cd "$dir/../aerospace" && pwd -P)/aerospace.toml"
-if [ -f "$aero" ]; then
-  sed -i '' -e "s/^gaps\.outer\.left = .*/gaps.outer.left = $left/" \
-    -e "s/^gaps\.outer\.top = .*/gaps.outer.top = $top/" "$aero"
+# aerospace.toml is rendered from the tracked aerospace.toml.in, so the gaps leave the repo clean
+aero="$dir/../aerospace/render.sh"
+if [ -x "$aero" ]; then
+  "$aero" "$left" "$top"
   aerospace reload-config || true
 fi
 

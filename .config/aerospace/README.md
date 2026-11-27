@@ -119,3 +119,7 @@ Both scripts honour these:
 - For apps that always belong on a fixed workspace, consider
   `on-window-detected` rules in `aerospace.toml` instead — that's more robust
   than session restore for those.
+
+## Config is rendered
+
+Edit `aerospace.toml.in` (tracked). `render.sh` writes `aerospace.toml` (gitignored; what AeroSpace reads) from it with the outer gaps of the sketchybar layout: `../sketchybar/layout.sh` re-renders on every layout switch, `install.sh` renders it once if missing, and the pre-commit hook fails if `aerospace.toml` has edits besides the gaps (they would be overwritten), else re-renders it so `.in` edits apply. Run `aerospace reload-config` after a re-render outside `layout.sh`.

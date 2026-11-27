@@ -6,6 +6,7 @@
 # 4. Python syntax: *.py and python scripts in .local/bin (parsed, not run; no __pycache__)
 # 5. text files end with a newline
 # 6. sketchybar Lua: no item added with empty props; no new blocking io.popen/os.execute
+# 7. aerospace.toml (rendered, gitignored) has no edits besides the gaps; then re-rendered from the .in
 # Bypass a false positive with `git commit --no-verify`.
 fail=0
 
@@ -86,5 +87,11 @@ while IFS= read -r f; do
     git diff --cached --no-color -U0 -- "$f" | grep -E '^\+[^+]' | grep -E 'io\.popen|os\.execute' \
         | grep -v -- '-- blocking:' | sed "s|^+|$f: blocks Lua, use sbar.exec: |" | grep . >&2 && fail=1
 done < <(git diff --cached --name-only --diff-filter=ACM -- '.config/sketchybar/*.lua')
+
+# --- 7. AeroSpace config (.config/aerospace/render.sh)
+render=.config/aerospace/render.sh
+if [[ -x $render && -f .config/aerospace/aerospace.toml.in ]]; then
+    if "$render" --check; then "$render"; else fail=1; fi
+fi
 
 exit $fail

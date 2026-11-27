@@ -1,4 +1,5 @@
 .config/aerospace/session.tsv
+.config/aerospace/aerospace.toml
 .config/yazi/plugins/
 .config/ghostty/theme-herdr
 .config/sketchybar/layout
