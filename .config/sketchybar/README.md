@@ -65,10 +65,16 @@
 | Calendar (`calendar.lua`, `calendar_popup.lua`) | date and time | popup: world map with day/night, local/UTC/CT clocks, today's events |
 | Battery | charge icon and % (color by charge, Low Power Mode) | popup: remaining time, energy mode switch |
 | Volume | speaker icon (dim when muted) | popup: apps playing audio (click focuses); right: Sound settings; scroll: volume |
-| Wi-Fi | icon: slash dim when off, red when not connected; connected: accent / fg / yellow / orange by signal | left: native Wi-Fi menu; right: SSID, hostname, IP, mask, router (click copies) |
+| Wi-Fi | icon: slash dim when off, red when not connected; connected: accent / fg / yellow / orange by signal | left: native Wi-Fi menu; right: SSID, hostname, IP, mask, router (click copies) (top bar; left bar: see the note below the table) |
 | Bluetooth (WIP) | state icon | popup: paired devices (click connects), power toggle, Bluetooth menu |
 | Load (`cpu.lua`, `load_graph.lua`, `network.lua`) | CPU, GPU, memory and network graphs, colored by load / traffic | top: click toggles compact mode (`compact.lua`, numbers only; state in the gitignored file `compact`) |
 | Amphetamine (`helpers/amphetamine.sh`) | alias of its menu bar extra, tinted `fg` | left: popup with session state, start (durations) / end, Amphetamine's own menu; right: toggle a session |
+
+> **Left bar: Wi-Fi and Bluetooth share one cell (Wi-Fi left, Bluetooth right), and every click
+> lands on Bluetooth** (it lies over Wi-Fi; sketchybar gives no click position). There:
+> **left click = Bluetooth popup, right click = Wi-Fi details, right click with a modifier
+> (e.g. ⌥) = native Wi-Fi menu.** Bluetooth forwards the right clicks via the events
+> `wifi_details` / `wifi_menu` (`items/widgets/bluetooth.lua`, `wifi.lua`).
 
 Not loaded: `control.lua` (Control Center alias).
 

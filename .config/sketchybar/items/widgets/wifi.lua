@@ -164,6 +164,12 @@ end)
 
 wifi:subscribe("mouse.clicked", on_click)
 wifi:subscribe("mouse.exited.global", hide_details)
+-- Left bar: Bluetooth lies over this item and gets its clicks (items/widgets/bluetooth.lua) and
+-- forwards its right clicks here: plain = details, with a modifier = native Wi-Fi menu.
+sbar.add("event", "wifi_details")
+sbar.add("event", "wifi_menu")
+wifi:subscribe("wifi_details", function() on_click({ BUTTON = "right" }) end)
+wifi:subscribe("wifi_menu", function() on_click({ BUTTON = "left" }) end)
 
 local copying = {}  -- row name -> label while the clipboard glyph is shown
 local function copy_label_to_clipboard(env)
