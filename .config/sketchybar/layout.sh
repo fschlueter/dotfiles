@@ -33,12 +33,12 @@ case "${1:-toggle}" in
       | sed -n 's/^true|//p')"
     [ -n "$main" ] || exit 0
     [ "$main" = "$(cat "$dir/layout_main" 2>/dev/null)" ] && exit 0
-    echo "$main" > "$dir/layout_main"
     case "$main" in
       Built-in*) next=top ;;
       *) next=left ;;
     esac
-    [ "$next" = "$current" ] && exit 0
+    # layout_main only after a done (or unneeded) switch, so a failed one is retried
+    [ "$next" = "$current" ] && { echo "$main" > "$dir/layout_main"; exit 0; }
     ;;
   *) echo "usage: $0 [top|left|toggle|auto]" >&2; exit 1 ;;
 esac
@@ -65,5 +65,6 @@ if [ -f "$aero" ]; then
 fi
 
 echo "$next" > "$state"
+[ -n "${main-}" ] && echo "$main" > "$dir/layout_main"
 # live switch, no reload (helpers/layout.lua)
 sketchybar --trigger layout_switch LAYOUT="$next"
