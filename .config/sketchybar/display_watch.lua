@@ -2,7 +2,7 @@
 -- display changes; it reloads the bar only when the layout changes.
 local cmd = "'" .. os.getenv("CONFIG_DIR") .. "/layout.sh' auto"
 
-local watcher = sbar.add("item", "display_watch", { drawing = false })
+local watcher = sbar.add("item", "display_watch", { drawing = false, updates = true })
 watcher:subscribe("display_change", function(_)
   sbar.exec(cmd)
 end)
