@@ -14,7 +14,9 @@
 #   prefix+n / p      next / previous tab  prefix+1..9       tab N
 #   prefix+shift+x    close tab
 #   prefix+v          split vertical       prefix+minus      split horizontal
-#   prefix+h/j/k/l    focus pane           prefix+tab        cycle panes (shift+tab back)
+#   prefix+h/j/k/l    focus pane           prefix+shift+tab  cycle panes back
+#   prefix+tab        last pane, also across workspaces (custom; replaces cycle forward)
+#   ctrl+alt+[ / ]    previous / next agent (custom)
 #   prefix+x          close pane           prefix+z          zoom pane
 #   prefix+r          resize mode          prefix+shift+p    rename pane
 #   prefix+e          herdr-nvim sidebar   prefix+o          herdr-nvim file picker (both custom)
