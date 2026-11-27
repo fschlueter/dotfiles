@@ -64,8 +64,12 @@ end
 -- Clicks press the hidden native menu bar item, so its popup opens at the native x.
 -- Each menu.i therefore gets the native item's x/width (`menus -L`: title, x, width).
 -- menu.1 (the app-name menu) lies under apple/front_app: hidden here, right-click front_app.
+local menus_gen = 0  -- bumped per update and on hide: a late `menus -L` result is dropped
 local function update_menus(env)
+  menus_gen = menus_gen + 1
+  local gen = menus_gen
   sbar.exec("$CONFIG_DIR/helpers/menus/bin/menus -L", function(menus)
+    if gen ~= menus_gen then return end
     sbar.set('/menu\\..*/', { drawing = false })
     menu_padding:set({ drawing = true })
     local cursor = row_start()
@@ -108,6 +112,7 @@ menu_watcher:subscribe("front_app_switched", update_menus)
 
 -- hidden on a layout switch (front_app's applier restores its own label and padding)
 local function hide_menus()
+  menus_gen = menus_gen + 1
   menu_watcher:set({ updates = false })
   sbar.set("/menu\\..*/", { drawing = false })
 end
