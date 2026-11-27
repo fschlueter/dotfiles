@@ -134,9 +134,13 @@ refresh_modes = function()
 end
 
 
-battery:subscribe({"routine", "power_source_change", "system_woke"}, function()
+local log = require("wake_log")
+battery:subscribe({"routine", "power_source_change", "system_woke"}, function(env)
+  local woke = env.SENDER == "system_woke"
+  if woke then log("battery: pmset") end
   -- `pmset -g` shows the powermode of the active power source
   sbar.exec("pmset -g batt; pmset -g", function(batt_info)
+    if woke then log("battery: done") end
     local icon = "!"
     local label = "?"
 

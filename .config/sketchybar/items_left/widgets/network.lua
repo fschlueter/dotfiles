@@ -115,7 +115,8 @@ end
 
 local last -- { rx, tx, t } of the previous read
 
-up:subscribe({ "routine", "forced", "system_woke" }, function()
+-- no system_woke: the next routine read (2 s) follows soon enough after wake
+up:subscribe({ "routine", "forced" }, function()
   sbar.exec(command, function(out)
     local rx, tx, t = tostring(out):match("^(%d+) (%d+)%s+([%d.]+)")
     if not rx then return end

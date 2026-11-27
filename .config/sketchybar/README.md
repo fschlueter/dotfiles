@@ -7,7 +7,9 @@
 ## Structure
 
 - `sketchybarrc` → `helpers/init.lua` (SbarLua path, `make` for the C helpers) → `init.lua`:
-  `bar.lua`, `default.lua`, `items/`, `theme_watch.lua`, `display_watch.lua`.
+  `bar.lua`, `default.lua`, `wake_log.lua`, `items/`, `theme_watch.lua`, `display_watch.lua`.
+- `wake_log.lua` (temporary): timestamped lines in `~/.cache/sketchybar/wake.log` for sleep, wake and
+  display changes and the handlers they start (spaces, battery, Bluetooth, display_watch).
 - **Two layouts**: `sbl top|left|toggle` (`layout.sh`) or right click on the Apple logo; state in
   the gitignored file `layout`. `display_watch.lua` runs `layout.sh auto` at load and on
   display changes: when the main display changed (gitignored `layout_main`), top for the

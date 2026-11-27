@@ -235,7 +235,8 @@ refresh = function()
   end)
 end
 if left then
-  amphetamine:subscribe({ "routine", "forced", "system_woke" }, refresh)
+  -- no system_woke: its osascript can take seconds right after wake; routine follows within 30 s
+  amphetamine:subscribe({ "routine", "forced" }, refresh)
 end
 
 amphetamine:subscribe("mouse.clicked", function(env)

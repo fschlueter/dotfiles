@@ -225,11 +225,12 @@ local function render()
   power_row:set({ label = powered and "Turn Bluetooth Off" or "Turn Bluetooth On" })
 end
 
-local function refresh()
+local function refresh(done)
   sbar.exec("system_profiler SPBluetoothDataType 2>/dev/null", function(out)
     local state, list = parse(out)
     powered, devices = state, sort_by_recent(list)
     render()
+    if type(done) == "function" then done() end
   end)
 end
 
@@ -275,7 +276,15 @@ menu_row:subscribe("mouse.clicked", function()
   sbar.exec("$CONFIG_DIR/helpers/menus/bin/menus -s 'Control Centre,Bluetooth'")
 end)
 
-bluetooth:subscribe({ "routine", "forced", "system_woke" }, refresh)
+bluetooth:subscribe({ "routine", "forced" }, refresh)
+-- after wake: wait until the rest of the bar has settled (wake_log.lua logs when it runs)
+local log = require("wake_log")
+bluetooth:subscribe("system_woke", function()
+  sbar.delay(5, function()
+    log("bluetooth: refresh")
+    refresh(function() log("bluetooth: done") end)
+  end)
+end)
 bluetooth:subscribe("mouse.clicked", function()
   local open = bluetooth:query().popup.drawing == "on"
   if open then

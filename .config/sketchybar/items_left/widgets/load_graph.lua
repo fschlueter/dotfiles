@@ -82,7 +82,7 @@ return function(name, opts)
 
   if opts.command then
     item:set({ update_freq = 2 })
-    item:subscribe({ "routine", "forced", "system_woke" }, function()
+    item:subscribe({ "routine", "forced" }, function() -- no system_woke: routine follows within 2 s
       sbar.exec(opts.command, function(out)
         local load, text = tostring(out):match("^%s*(%d+)%s*(%S*)")
         if load then update(tonumber(load), text ~= "" and text or nil) end
