@@ -57,6 +57,7 @@ _omp_sysload() {
     )
 }
 if [[ "$OSTYPE" == darwin* || -r /proc/stat ]]; then
+    mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/ohmyposh"
     if [[ -n ${ZSH_VERSION-} ]]; then
         autoload -Uz add-zsh-hook
         add-zsh-hook precmd _omp_sysload
