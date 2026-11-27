@@ -218,7 +218,9 @@ local query = aerospace .. " list-workspaces --all --format "
   .. aerospace .. " list-windows --all --format '%{workspace}|%{app-name}|%{window-title}'"
 
 -- At most one query runs; events arriving meanwhile (a switch fires up to three) share one rerun.
-local busy, again = false, false
+-- A query that never returns would block all later ones: its guard is cleared after 5 s, and
+-- a result that arrives after that (an older generation) is ignored.
+local busy, again, gen = false, false, 0
 local log = require("wake_log")
 
 local function update(env)
@@ -226,12 +228,16 @@ local function update(env)
   local logged = reason == "system_woke" or reason == "display_change"
   if reason == "aerospace_workspace_change" then focus(env.FOCUSED_WORKSPACE) end
   if busy then again = true; return end
-  busy = true
+  busy, gen = true, gen + 1
+  local mine = gen
+  sbar.delay(5, function() if busy and gen == mine then busy = false end end)
   if logged then log("spaces: query (" .. reason .. ")") end
   sbar.exec(query, function(out)
+    if mine ~= gen then return end
     busy = false
-    if again then again = false; update() end
     if logged then log("spaces: done") end
+    -- events arrived meanwhile: this result predates them (it could undo focus()), so only rerun
+    if again then again = false; update(); return end
     if type(out) ~= "string" then return end
     local new, seen, windows = {}, {}, false
     for line in out:gmatch("[^\r\n]+") do
