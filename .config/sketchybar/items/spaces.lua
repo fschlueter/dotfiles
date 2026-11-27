@@ -172,11 +172,15 @@ end
 if left then sbar.add("item", "spaces.gap", { width = settings.group_paddings }) end
 
 local state = {}  -- last parsed state
+local sent = {}   -- name -> key of what draw() last sent, so it sets only items that changed
 
 local function draw()
   for name, space in pairs(spaces) do
     local s = state[name]
-    if not s then
+    local key = s and table.concat({ tostring(s.focused), tostring(s.visible), s.apps }, "|") or "-"
+    if key == sent[name] then
+      -- unchanged
+    elseif not s then
       space:set({ drawing = false })
     else
       local hl = s.focused and colors.accent or (s.visible and colors.fg or colors.dim)
@@ -194,15 +198,40 @@ local function draw()
         },
       })
     end
+    sent[name] = key
   end
+end
+
+-- Highlight the focused workspace at once from the event's FOCUSED_WORKSPACE (aerospace.toml),
+-- before the query below confirms it. The old one keeps its visibility until then (on another
+-- monitor it stays visible).
+local function focus(ws)
+  local new = ws and state[ws]
+  if not new or new.focused then return end
+  for _, s in pairs(state) do s.focused = false end
+  new.focused, new.visible = true, true
+  draw()
 end
 
 local query = aerospace .. " list-workspaces --all --format "
   .. "'%{workspace}|%{workspace-is-focused}|%{workspace-is-visible}'; echo '#'; "
   .. aerospace .. " list-windows --all --format '%{workspace}|%{app-name}|%{window-title}'"
 
-local function update()
+-- At most one query runs; events arriving meanwhile (a switch fires up to three) share one rerun.
+local busy, again = false, false
+local log = require("wake_log")
+
+local function update(env)
+  local reason = type(env) == "table" and env.SENDER
+  local logged = reason == "system_woke" or reason == "display_change"
+  if reason == "aerospace_workspace_change" then focus(env.FOCUSED_WORKSPACE) end
+  if busy then again = true; return end
+  busy = true
+  if logged then log("spaces: query (" .. reason .. ")") end
   sbar.exec(query, function(out)
+    busy = false
+    if again then again = false; update() end
+    if logged then log("spaces: done") end
     if type(out) ~= "string" then return end
     local new, seen, windows = {}, {}, false
     for line in out:gmatch("[^\r\n]+") do
