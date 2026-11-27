@@ -259,7 +259,7 @@ amphetamine:subscribe("mouse.clicked", function(env)
     sbar.exec(control .. " toggle", refresh)
     return
   end
-  local drawing = amphetamine:query().popup.drawing
+  local drawing = (amphetamine:query().popup or {}).drawing or "off"  -- no "popup" when a query fails
   amphetamine:set({ popup = { drawing = "toggle" } })
   if drawing == "off" then refresh() end
 end)

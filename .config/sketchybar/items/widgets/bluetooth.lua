@@ -86,8 +86,9 @@ do
   end
 end
 
+-- once, via sbar.exec: os.execute switches off SbarLua's child reaping, leaving zombies
+sbar.exec("mkdir -p \"$HOME/.cache/sketchybar\"")
 local function save_last_used()
-  os.execute("mkdir -p " .. os.getenv("HOME") .. "/.cache/sketchybar")
   local f = io.open(recent_file, "w")
   if not f then return end
   for addr, t in pairs(last_used) do f:write(addr, "\t", t, "\n") end
@@ -287,7 +288,7 @@ bluetooth:subscribe("system_woke", function()
   end)
 end)
 bluetooth:subscribe("mouse.clicked", function()
-  local open = bluetooth:query().popup.drawing == "on"
+  local open = (bluetooth:query().popup or {}).drawing == "on"  -- no "popup" when a query fails
   if open then
     hide_popup()
   else

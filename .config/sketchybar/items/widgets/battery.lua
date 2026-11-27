@@ -177,7 +177,7 @@ battery:subscribe("mouse.exited.global", function(_)
 end)
 
 battery:subscribe("mouse.clicked", function(env)
-  local drawing = battery:query().popup.drawing
+  local drawing = (battery:query().popup or {}).drawing or "off"  -- no "popup" when a query fails
   battery:set( { popup = { drawing = "toggle" } })
 
   if drawing == "off" then
