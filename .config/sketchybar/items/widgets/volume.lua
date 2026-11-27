@@ -122,14 +122,14 @@ int main(int argc, char **argv) {
   return 0;
 }
 ]==]
-if not io.open(owner_bin, "r") then
-  os.execute('mkdir -p "' .. owner_bin:match("(.*)/") .. '"')
-  local f = io.open(owner_bin .. ".c", "w")
-  if f then  -- unwritable cache: fall back to process names (see above)
-    f:write(owner_src)
-    f:close()
-    sbar.exec('cc -O2 -o "' .. owner_bin .. '" "' .. owner_bin .. '.c"')
-  end
+local existing = io.open(owner_bin, "r")
+if existing then
+  existing:close()
+else
+  -- all in sbar.exec: Lua's own shell call switches off SbarLua's child reaping (zombies, see bluetooth.lua);
+  -- if it fails (e.g. unwritable cache), the process names are shown (see above)
+  sbar.exec('mkdir -p "' .. owner_bin:match("(.*)/") .. '" && cat > "' .. owner_bin .. '.c" <<\'OWNER_SRC\''
+    .. ' && cc -O2 -o "' .. owner_bin .. '" "' .. owner_bin .. '.c"\n' .. owner_src .. 'OWNER_SRC\n')
 end
 
 -- coreaudiod holds an "audio-out" power assertion per process playing sound
