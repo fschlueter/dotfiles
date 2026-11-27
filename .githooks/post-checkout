@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Re-renders the gitignored aerospace.toml (.config/aerospace/render.sh) after a checkout, merge or
+# rebase brought in another aerospace.toml.in, and reloads AeroSpace if it changed (macOS).
+# post-merge runs this file too.
+[[ "$OSTYPE" == darwin* && -x .config/aerospace/render.sh ]] || exit 0
+out=.config/aerospace/aerospace.toml
+before="$(cksum < "$out" 2>/dev/null)"
+.config/aerospace/render.sh || exit 0
+if [[ "$(cksum < "$out")" != "$before" ]] && command -v aerospace >/dev/null; then
+    aerospace reload-config >/dev/null 2>&1
+fi
+exit 0

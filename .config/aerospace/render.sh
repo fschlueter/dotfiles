@@ -29,7 +29,8 @@ if [[ ${1-} == --check ]]; then
     if committed="$(git -C "$dir" show HEAD:./aerospace.toml.in 2>/dev/null)"; then
         diff -q <(render <(printf '%s\n' "$committed") "$l" "$t") "$out" >/dev/null && exit 0
     fi
-    echo "$out: edits besides the gaps; move them to aerospace.toml.in (diff: rendered .in vs file):" >&2
+    echo "$out: edits besides the gaps; move them to aerospace.toml.in, or, if it is only stale (rendered" >&2
+    echo "from an older .in), run $0 (diff: rendered .in vs file):" >&2
     diff <(render "$in" "$l" "$t") "$out" >&2 || true
     exit 1
 fi

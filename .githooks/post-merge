@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Same as post-checkout: re-render aerospace.toml
+exec "$(dirname "$0")/post-checkout" "$@"
