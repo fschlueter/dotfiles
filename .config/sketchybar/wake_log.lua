@@ -3,6 +3,8 @@
 -- Handlers that react to them (spaces, Bluetooth, battery, display_watch) log their start/end.
 local file = os.getenv("HOME") .. "/.cache/sketchybar/wake.log"
 os.execute("mkdir -p '" .. file:match("(.*)/") .. "'")
+-- keep the last 2000 lines
+os.execute("f='" .. file .. "'; [ -f \"$f\" ] && tail -n 2000 \"$f\" > \"$f.tmp\" && mv \"$f.tmp\" \"$f\"")
 
 local function log(msg)
   msg = tostring(msg):gsub("'", "")
