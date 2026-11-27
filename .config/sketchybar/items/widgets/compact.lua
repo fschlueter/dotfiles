@@ -1,10 +1,10 @@
 local settings = require("settings")
 local colors = require("colors")
 local layout = require("helpers.layout")
-local cell = require("helpers.cell")
 
 -- Compact mode of the load and network widgets, both layouts: the graphs are replaced by plain
--- items with name and value (top: in one row; left: a cell, name above value). One click on any
+-- items with name and value in one row (left bar: name at the left edge, value at the right, no
+-- background). One click on any
 -- of them toggles all; the state is the gitignored file "compact" ("1" = compact), so it survives
 -- reloads and layout switches.
 -- While hidden (compact mode) the graph items keep updates on: they poll and feed the compact
@@ -58,9 +58,9 @@ local function font(size)
 end
 
 -- Adds a compact item. opts: top / left = icon (name) text per layout ("" hides it), label =
--- initial value, sizes = { name, value } font sizes on the left bar (default 9, 11).
+-- initial value, sizes = { name, value } font sizes on the left bar (default 10, 10).
 function M.add(name, opts)
-  local sizes = opts.sizes or { 9.0, 11.0 }
+  local sizes = opts.sizes or { 10.0, 10.0 }
   local item = sbar.add("item", name, {
     position = "right",
     drawing = false,
@@ -69,26 +69,31 @@ function M.add(name, opts)
   })
   layout.on(function(left)
     local icon = left and opts.left or opts.top
+    local half = settings.cell_width / 2
     if left then
-      item:set(cell({
+      item:set({
+        width = 18, -- vertical extent
         padding_left = 5,
         padding_right = 3,
-        icon = { string = icon, drawing = icon ~= "", font = font(sizes[1]) },
-        label = { font = font(sizes[2]) },
-        background = { color = colors.bg1, height = 36 },
-      }))
+        icon = { string = icon, drawing = icon ~= "", width = half, align = "left",
+                 padding_left = 0, padding_right = 0, y_offset = 0, font = font(sizes[1]) },
+        label = { width = half, align = "right", padding_left = 0, padding_right = 0,
+                  y_offset = 0, font = font(sizes[2]) },
+        background = { color = 0, height = 18 },
+      })
     else
       item:set({
+        width = "dynamic",
         padding_left = 2,
         padding_right = 2,
         icon = { string = icon, drawing = icon ~= "", width = "dynamic", align = "left",
                  padding_left = 2, padding_right = 1, y_offset = 0, font = font(13.0) },
         label = { width = "dynamic", align = "left", padding_left = 1, padding_right = 2,
                   y_offset = 0, font = font(13.0) },
-        background = { color = 0, height = 36 },
+        background = { color = 0, height = 18 },
       })
-      item:set({ background = { drawing = false } }) -- after the color, which turns it on
     end
+    item:set({ background = { drawing = false } }) -- after the color, which turns it on
   end)
   return item
 end
