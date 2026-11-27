@@ -76,6 +76,7 @@ fi
 # --- 5. Final newline (text files; numstat prints "-" for binary ones)
 while IFS=$'\t' read -r added _ f; do
     [[ $added == - || $f == .config/nvim/lazyvim.json ]] && continue  # binary; written by LazyVim
+    [[ "$(git ls-files -s -- "$f")" == 120000* ]] && continue  # symlink: its target has no newline
     [[ -n "$(git show ":$f" | tail -c1)" ]] && { echo "$f: no newline at end of file" >&2; fail=1; }
 done < <(git diff --cached --numstat --diff-filter=ACM)
 
