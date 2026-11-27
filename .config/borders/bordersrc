@@ -23,8 +23,10 @@ inactive_hex="$(slot "$INACTIVE_SLOT")"
 # AeroSpace runs this with "hook" on focus change and after layout/fullscreen bindings; a closed window can
 # still be listed at that moment, so the hook checks once more shortly after.
 # Hook mode sends only active_color: any of the other settings makes borders redraw (hidpi: recreate)
-# every window's border, which blinks. It also skips sending a color equal to the last one.
-last_file="$HOME/.cache/borders/active"
+# every window's border, which blinks; borders itself redraws the defocused window inactive. The re-check
+# sends only a changed color. Without a running instance the hook does nothing: `borders <args>` would
+# start one with only these args (the service starts borders, which runs this file without args).
+sent=""
 apply() {
 	local active="0xe6${active_hex:-c4a7e7}" state tiled  # 0xAARRGGBB
 	state="$(aerospace list-windows --focused --format '%{window-parent-container-layout} %{window-is-fullscreen}' 2>/dev/null)"
@@ -35,17 +37,20 @@ apply() {
 		*) [[ "$tiled" -le 1 ]] && active=0x00000000 ;;
 	esac
 	if [[ "$1" == hook ]]; then
-		[[ "$(cat "$last_file" 2>/dev/null)" == "$active" ]] && return
+		[[ "$active" == "$sent" ]] && return
 		borders active_color="$active"
 	else
 		borders style=round width=7.0 hidpi=on ax_focus=on \
 			active_color="$active" inactive_color="0xe6${inactive_hex:-e0def4}"
 	fi
-	mkdir -p "${last_file%/*}" && echo "$active" >"$last_file"
+	sent="$active"
 }
 
-apply "$1"
 if [[ "$1" == hook ]]; then
+	pgrep -x borders >/dev/null || exit 0
+	apply hook
 	sleep 0.3
 	apply hook
+else
+	apply
 fi
