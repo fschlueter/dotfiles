@@ -50,11 +50,15 @@ layout.on(function(left)
   if left then
     bluetooth:set(cell({
       -- no label: undo cell()'s icon-over-label offsets
-      -- shared field with Wi-Fi: mirror of its values (items/widgets/wifi.lua)
-      icon = { width = settings.cell_width, padding_left = 0, padding_right = 0, y_offset = -4.5 },
-      background = { drawing = true, color = colors.bg1, height = 37, y_offset = -9 },
-      padding_right = 0, -- the side facing Wi-Fi (below)
-      padding_left = -4,
+      -- same row as Wi-Fi (items/widgets/wifi.lua): icon in the right half, no background of its
+      -- own, pulled down over Wi-Fi's 28 pt cell by a negative padding
+      icon = { width = settings.cell_width / 2, align = "center", padding_left = settings.cell_width / 2,
+               padding_right = 0, y_offset = 0 },
+      -- invisible background: keeps the 28 pt extent that the padding below cancels
+      background = { drawing = true, color = colors.transparent, border_width = 0, height = 28,
+                     y_offset = 0 },
+      padding_right = -28,
+      padding_left = 5,
       -- vertical bar: "right" aligns the popup's bottom with the item's, so it grows upwards
       -- (centered, the longer list ran off the bottom of the screen)
       popup = { align = "right" },
@@ -62,7 +66,7 @@ layout.on(function(left)
   else
     bluetooth:set(layout.merge(layout.top_cell(), {
       icon = { padding_left = 6, padding_right = 8 },
-      background = { drawing = false, color = 0, height = 26, y_offset = 0 },
+      background = { drawing = false, color = 0, height = 26, y_offset = 0, border_width = 2 },
       padding_right = 5,
       padding_left = 5,
       popup = { align = "center" },

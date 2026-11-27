@@ -21,20 +21,23 @@ local wifi = sbar.add("item", "widgets.wifi", {
 layout.on(function(left)
   if left then
     wifi:set({
-      -- The background height is the item's vertical extent. Shifted 9 pt (its corner radius) up
-      -- towards Bluetooth, it is clipped straight there; the field is 2 x 37 - 2 x 9 = 56 pt, the
-      -- icons are moved 4.5 pt inwards to sit where two 28 pt cells would put them.
-      icon = { width = settings.cell_width, align = "center", padding_left = 0, padding_right = 0,
-               y_offset = 4.5 },
-      background = { drawing = true, color = colors.bg1, height = 37, y_offset = 9 },
-      padding_left = 0, -- no gap inside the field
-      padding_right = -4, -- outer gap as other cells' (5) despite the 9 pt shift
+      -- Side by side with Bluetooth in one cell: Wi-Fi draws the cell and its icon in the left
+      -- half; Bluetooth (items/widgets/bluetooth.lua) overlaps this row with its icon in the right half.
+      -- an empty label fills the right half, so the background spans the whole cell
+      icon = { width = settings.cell_width / 2, align = "center", padding_left = 0,
+               padding_right = 0, y_offset = 0 },
+      label = { drawing = true, string = "", width = settings.cell_width / 2, padding_left = 0,
+                padding_right = 0 },
+      background = { drawing = true, color = colors.bg1, height = 28, y_offset = 0 },
+      padding_left = 0, -- the side facing Bluetooth
+      padding_right = 5,
       -- vertical bar: "right" aligns the popup's bottom with the item's, so it grows upwards
       popup = { align = "right" },
     })
   else
     wifi:set({
       icon = { width = "dynamic", align = "left", padding_left = 8, padding_right = 6, y_offset = 0 },
+      label = { drawing = false, string = "", width = "dynamic", padding_left = 0, padding_right = 0 },
       background = { drawing = false, color = 0, height = 26, y_offset = 0 },
       padding_left = 5,
       padding_right = 5,
