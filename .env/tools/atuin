@@ -9,9 +9,10 @@
 
 function dot_install_atuin() {
 	echo "atuin not found, installing ..."
-	curl --proto '=https' --tlsv1.2 -fsSL --connect-timeout 10 \
-		https://github.com/atuinsh/atuin/releases/latest/download/atuin-installer.sh \
-		| ATUIN_NO_MODIFY_PATH=1 sh || return
+	local installer  # downloaded first: in a pipe, a failed curl would go unnoticed
+	installer=$(curl --proto '=https' --tlsv1.2 -fsSL --connect-timeout 10 \
+		https://github.com/atuinsh/atuin/releases/latest/download/atuin-installer.sh) || return
+	ATUIN_NO_MODIFY_PATH=1 sh -c "$installer" || return
 	echo "atuin installed; import the old history with: atuin import auto"
 }
 
