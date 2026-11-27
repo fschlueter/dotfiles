@@ -17,6 +17,8 @@ local watcher = sbar.add("item", "theme_watch", {
   update_freq = 5,
 })
 
+-- baseline at load: taken at the first routine check, a change within its 5 s was missed
+sbar.exec(cmd, function(out) snapshot = snapshot or out end)
 watcher:subscribe("routine", function(_)
   sbar.exec(cmd, function(out)
     if snapshot == nil then
