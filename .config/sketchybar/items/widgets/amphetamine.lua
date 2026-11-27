@@ -164,14 +164,16 @@ local function close()
   amphetamine:set({ popup = { drawing = false } })
 end
 
--- "on 5400" -> "1:30 h left"; 0 seconds = indefinite session
+-- "on 5400" -> "1:30 h left"; 0 seconds = indefinite session; negative =
+-- session until a trigger, app or date ends it (no countdown)
 local function describe(out)
   out = tostring(out):gsub("%s+$", "")
   if out == "off" then return "No session", false end
   if out == "not running" then return "Amphetamine not running", false end
-  local seconds = tonumber(out:match("^on (%d+)"))
+  local seconds = tonumber(out:match("^on (%-?%d+)"))
   if not seconds then return out, false end
   if seconds == 0 then return "Session: indefinite", true, 0 end
+  if seconds < 0 then return "Session: until trigger/app/date", true, seconds end
   return string.format("Session: %d:%02d h left", seconds // 3600, seconds % 3600 // 60), true,
          seconds
 end
