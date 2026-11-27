@@ -302,7 +302,8 @@ bluetooth:subscribe("mouse.clicked", function(env)
   -- left click = Wi-Fi (native menu; with a modifier: details), right click = this popup
   if layout.is_left() and env.BUTTON ~= "right" then
     hide_popup()
-    sbar.trigger((env.MODIFIER or "") ~= "" and "wifi_details" or "wifi_menu")
+    local mod = env.MODIFIER or "none"  -- "none" without a modifier key
+    sbar.trigger((mod ~= "none" and mod ~= "") and "wifi_details" or "wifi_menu")
     return
   end
   local open = (bluetooth:query().popup or {}).drawing == "on"  -- no "popup" when a query fails
