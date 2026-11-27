@@ -4,6 +4,8 @@
 # 2. shell syntax: `bash -n` / `zsh -n`; shellcheck (config in .shellcheckrc) if installed
 # 3. Lua syntax: `luac -p` if installed (sketchybar, nvim)
 # 4. Python syntax: *.py and python scripts in .local/bin (parsed, not run; no __pycache__)
+# 5. text files end with a newline
+# 6. sketchybar Lua: no item added with empty props; no new blocking io.popen/os.execute
 # Bypass a false positive with `git commit --no-verify`.
 fail=0
 
@@ -69,5 +71,20 @@ if command -v python3 >/dev/null; then
         fi
     done < <(git diff --cached --name-only --diff-filter=ACM)
 fi
+
+# --- 5. Final newline (text files; numstat prints "-" for binary ones)
+while IFS=$'\t' read -r added _ f; do
+    [[ $added == - || $f == .config/nvim/lazyvim.json ]] && continue  # binary; written by LazyVim
+    [[ -n "$(git show ":$f" | tail -c1)" ]] && { echo "$f: no newline at end of file" >&2; fail=1; }
+done < <(git diff --cached --numstat --diff-filter=ACM)
+
+# --- 6. sketchybar Lua (reasons: .config/sketchybar/README.md, Known limits)
+while IFS= read -r f; do
+    git show ":$f" | grep -nE 'sbar\.add\(.*,[[:space:]]*\{[[:space:]]*\}[[:space:]]*\)' \
+        | sed "s|^|$f: item with empty props {}: |" | grep . >&2 && fail=1
+    # added lines only; a load-time call that must block is marked "-- blocking: <reason>"
+    git diff --cached --no-color -U0 -- "$f" | grep -E '^\+[^+]' | grep -E 'io\.popen|os\.execute' \
+        | grep -v -- '-- blocking:' | sed "s|^+|$f: blocks Lua, use sbar.exec: |" | grep . >&2 && fail=1
+done < <(git diff --cached --name-only --diff-filter=ACM -- '.config/sketchybar/*.lua')
 
 exit $fail

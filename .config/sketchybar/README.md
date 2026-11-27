@@ -92,7 +92,12 @@ Not loaded: `control.lua` (Control Center alias).
 - Setting a background `color` turns its `drawing` on: to hide one, set `drawing = false` in a
   later `set`, or leave the color.
 - An item added with empty properties (`{}`) breaks the batched config at load: its empty
-  `--set` swallows the next command.
+  `--set` swallows the next command. The pre-commit hook flags it.
+- Lua code runs on sketchybar's event loop: a blocking `io.popen` / `os.execute` in a handler
+  stalls the bar (a profiling run with `io.popen` ended in a crash). Use `sbar.exec`; the pre-commit
+  hook flags added calls unless the line says `-- blocking: <reason>` (load-time setup).
+- After a display change the bar once kept stale bounds (left bar stretched over the screen edge);
+  `brew services restart sketchybar` fixed it.
 - The top bar's right-side gaps (10 pt) come from per-item padding widths; re-measure when a
   background changes size.
 - Hardcoded: interface `en0`, localized menu aliases (`Control Centre,WiFi`, `...,Bluetooth`).
