@@ -1,9 +1,10 @@
 return {
   "saghen/blink.cmp",
   opts = {
-    -- Off in markdown and inside comments (checked on every trigger)
+    -- Off in markdown. Comments only suppress the menu (auto_show below): an enabled() that is
+    -- false at a buffer's first insert keeps blink from ever setting up that buffer's keymaps.
     enabled = function()
-      return vim.bo.filetype ~= "markdown" and not require("config.util").cursor_in_comment()
+      return vim.bo.filetype ~= "markdown"
     end,
     -- Enter is a plain newline; accept with <C-y> (LazyVim's <Tab> still jumps snippets / accepts AI text)
     keymap = {
@@ -11,9 +12,10 @@ return {
     },
     completion = {
       menu = {
-        -- Don't pop up while editing inside a word (<C-space> still opens it)
+        -- Don't pop up inside comments or while editing inside a word (<C-space> still opens it)
         auto_show = function()
-          return not require("config.util").cursor_before_word()
+          local util = require("config.util")
+          return not util.cursor_in_comment() and not util.cursor_before_word()
         end,
       },
     },
