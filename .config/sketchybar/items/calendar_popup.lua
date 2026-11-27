@@ -33,8 +33,15 @@ local last_render = 0
 -- Renders the map for the current time (day/night) in the theme's colors.
 local function render_map(map_item)
   last_render = os.time()
-  sbar.exec("date +%z", function(out)
-    local sign, hh, mm = tostring(out):match("([+-])(%d%d)(%d%d)")
+  -- the map's bands are standard time: the smaller of the January and July offsets (no DST)
+  sbar.exec("date -j -f %m%d 0115 +%z; date -j -f %m%d 0715 +%z", function(out)
+    local std
+    for s, h, m in tostring(out):gmatch("([+-])(%d%d)(%d%d)") do
+      local v = (tonumber(h) * 60 + tonumber(m)) * (s == "-" and -1 or 1)
+      if not std or v < std then std = v end
+    end
+    local sign = std and (std < 0 and "-" or "+")
+    local hh, mm = std and math.abs(std) // 60, std and math.abs(std) % 60
     local args = ""
     for _, z in ipairs(zones) do
       if z.local_zone then
@@ -201,12 +208,14 @@ return function(cal)
     local cmd = "PATH=/opt/homebrew/bin:$PATH; command -v icalBuddy >/dev/null"
       .. " || { echo MISSING; exit; };"
       .. " icalBuddy -n -nc -ea -b '' -iep datetime,title -po datetime,title"
-      .. " -ps '| ~~ |' -tf '%H:%M' -li " .. max_events .. " eventsToday"
+      .. " -ps '| ~~ |' -tf '%H:%M' -li " .. max_events .. " eventsToday || echo FAILED"
     sbar.exec(cmd, function(out)
       out = tostring(out)
       local lines = {}
       if out:find("^MISSING") then
         lines[1] = { "", "icalBuddy missing" }
+      elseif out:find("FAILED%s*$") then
+        lines[1] = { "", "Calendar unreadable (access?)" }
       else
         for line in out:gmatch("[^\n]+") do
           local datetime, title = line:match("^(.-) ~~ (.*)$")
