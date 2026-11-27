@@ -88,9 +88,13 @@ end
 
 -- tracked here: query() has no "popup" key while the popup is empty
 local is_open = false
+-- bumped on every open and close, so a pmset query still running from an
+-- earlier open cannot add its rows to a closed or reopened popup
+local generation = 0
 local function collapse()
   if not is_open then return end
   is_open = false
+  generation = generation + 1
   volume:set({ popup = { drawing = false } })
   sbar.remove('/widgets.volume.popup\\..*/')
   rows = 0
@@ -132,7 +136,9 @@ local playing_cmd = [[pids=$(pmset -g assertions | awk '/Created for PID/ {p=$4;
 if [ -x "]] .. owner_bin .. [[" ]; then "]] .. owner_bin .. [[" $pids; else ps -o comm= -p "$(echo $pids | tr ' ' ,)"; fi]]
 
 local function add_playing()
+  local gen = generation
   sbar.exec(playing_cmd, function(out)
+    if gen ~= generation or not is_open then return end
     add_header("Playing")
     local seen = {}
     for path in string.gmatch(out or "", "[^\r\n]+") do
@@ -161,6 +167,7 @@ local function toggle(env)
   end
   if is_open then return collapse() end
   is_open = true
+  generation = generation + 1
   volume:set({ popup = { drawing = true } })
   add_playing()
 end
