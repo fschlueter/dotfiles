@@ -1,81 +1,86 @@
 local settings = require("settings")
 local colors = require("colors")
+local layout = require("helpers.layout")
 local cell = require("helpers.cell")
 
-local left = settings.layout == "left"
+-- Top: date left of the time; left: time above weekday and day (cell()).
+-- Fonts of the two texts; which one is icon and which label depends on the layout.
+local date_font = { style = settings.font.style_map["Black"] }
+local time_font = { family = settings.font.numbers, style = settings.font.style_map["Heavy"],
+                    size = 16.0 }
 
--- Top: date left of the time; left: time above weekday and day
-local date_text = {
-  color = colors.fg,
-  font = { style = settings.font.style_map["Black"], size = 12.0 },
-}
-local time_text = {
-  color = colors.accent,
-  font = {
-    family = settings.font.numbers,
-    style = settings.font.style_map["Heavy"],
-    size = 16.0,
+-- Padding items around the calendar (top: required because of the bracket)
+local pad_before = sbar.add("item", "calendar.padding.before", { position = "right" })
+local cal = sbar.add("item", "calendar", {
+  position = "right",
+  update_freq = 30,
+  background = {
+    color = colors.bg2,
+    border_color = colors.accent,
+    border_width = 1
   },
-}
-local background = {
-  color = colors.bg2,
-  border_color = colors.accent,
-  border_width = 1
-}
+})
+-- Top: double border for calendar using a single item bracket
+local bracket = sbar.add("bracket", "calendar.bracket", { cal.name }, {
+  background = {
+    color = colors.transparent,
+    height = 28,
+    border_color = colors.dim,
+  }
+})
+local pad_after = sbar.add("item", "calendar.padding.after", { position = "right" })
 
-local cal
-if left then
-  date_text.font.size = nil -- cell() sets it
-  background.height = settings.cell_background_height + 6
-  sbar.add("item", { position = "right", width = settings.group_paddings })
-  -- in cell() the icon sits above the label
-  cal = sbar.add("item", "calendar", cell({
-    position = "right",
-    update_freq = 30,
-    -- on the vertical bar "right" aligns the popup's bottom with the item's,
-    -- so it grows upwards from the bottom of the screen
-    popup = { align = "right" },
-    label = date_text,
-    icon = time_text,
-    background = background,
-  }))
-  sbar.add("item", { position = "right", width = settings.group_paddings + 1 }) -- taller cell: same gap as the others
-else
-  date_text.padding_left = 8
-  time_text.padding_right = 8
-  time_text.width = 60
-  time_text.align = "right"
-  -- Padding item required because of bracket
-  sbar.add("item", { position = "right", width = 10 })
-  cal = sbar.add("item", "calendar", {
-    icon = date_text,
-    label = time_text,
-    position = "right",
-    update_freq = 30,
-    popup = { align = "right" },
-    padding_left = 1,
-    padding_right = 1,
-    background = background,
-  })
-  -- Double border for calendar using a single item bracket
-  sbar.add("bracket", { cal.name }, {
-    background = {
-      color = colors.transparent,
-      height = 28,
-      border_color = colors.dim,
-    }
-  })
-  -- Padding item required because of bracket
-  sbar.add("item", { position = "right", width = 7 })  -- gap to the next background: 10 pt
+local function text(left)
+  if left then
+    return { label = { string = os.date("%a %d") }, icon = { string = os.date("%H:%M") } }
+  end
+  return { icon = { string = os.date("%a. %d %b.") }, label = { string = os.date("%H:%M") } }
 end
+
+layout.on(function(left)
+  bracket:set({ drawing = not left })
+  if left then
+    pad_before:set({ width = settings.group_paddings })
+    pad_after:set({ width = settings.group_paddings + 1 }) -- taller cell: same gap as the others
+    -- in cell() the icon (time) sits above the label (date)
+    cal:set(layout.merge(cell({
+      -- on the vertical bar "right" aligns the popup's bottom with the item's,
+      -- so it grows upwards from the bottom of the screen
+      popup = { align = "right" },
+      icon = layout.merge({ color = colors.accent }, { font = time_font }),
+      label = { color = colors.fg, font = layout.merge({ family = settings.font.text },
+                                                       layout.merge({ size = 9.0 }, date_font)) },
+      background = { height = settings.cell_background_height + 6 },
+      padding_left = 5,
+      padding_right = 5,
+    }), text(true)))
+  else
+    pad_before:set({ width = 10 })
+    pad_after:set({ width = 7 })  -- gap to the next background: 10 pt
+    cal:set(layout.merge({
+      popup = { align = "right" },
+      icon = {
+        color = colors.fg,
+        font = { family = settings.font.text, style = date_font.style, size = 12.0 },
+        width = "dynamic", align = "left", padding_left = 8, padding_right = settings.paddings,
+        y_offset = 0,
+      },
+      label = {
+        color = colors.accent,
+        font = time_font,
+        width = 60, align = "right", padding_left = settings.paddings, padding_right = 8,
+        y_offset = 0,
+      },
+      background = { drawing = true, height = 26 },
+      padding_left = 1,
+      padding_right = 1,
+    }, text(false)))
+  end
+end)
 
 local popup_tick = require("items.calendar_popup")(cal)
 
 cal:subscribe({ "forced", "routine", "system_woke" }, function(env)
-  if left then
-    cal:set({ label = os.date("%a %d"), icon = os.date("%H:%M") })
-  else
-    cal:set({ icon = os.date("%a. %d %b."), label = os.date("%H:%M") })
-  end
+  cal:set(text(layout.is_left()))
   popup_tick()
 end)

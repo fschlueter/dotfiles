@@ -1,9 +1,9 @@
 local settings = require("settings")
 local colors = require("colors")
 
--- Equivalent to the --default domain. Top bar: items move down by half the
--- corner-radius overhang (3 pt) to sit on the visible centre.
-local top = settings.layout == "top"
+local layout = require("helpers.layout")
+
+-- Equivalent to the --default domain.
 sbar.default({
   updates = "when_shown",
   icon = {
@@ -28,7 +28,6 @@ sbar.default({
     padding_right = settings.paddings,
   },
   background = {
-    height = top and 26 or 28,
     corner_radius = 9,
     border_width = 2,
     border_color = colors.bg2,
@@ -51,5 +50,9 @@ sbar.default({
   padding_left = 5,
   padding_right = 5,
   scroll_texts = true,
-  y_offset = top and -3 or 0,
 })
+-- Per layout (helpers/layout.lua re-applies them on a switch). Top bar: items move down by half
+-- the corner-radius overhang (3 pt) to sit on the visible centre.
+layout.defaults(function(left)
+  return { y_offset = left and 0 or -3, background = { height = left and 28 or 26 } }
+end)

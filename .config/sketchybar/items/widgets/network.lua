@@ -1,17 +1,18 @@
 local colors = require("colors")
 local settings = require("settings")
+local layout = require("helpers.layout")
 local compact = require("items.widgets.compact")
 
 -- Network traffic graph (en0): download (blue, filled) and upload (red line) as two overlaid
 -- graphs, the rates above (download left, upload right, in the line colors), styled
--- like the load graphs (load_graph.lua).
+-- like the load graphs (load_graph.lua; also its top/left items: "*.left" are the left bar's
+-- cell, which shows the rates without arrows, the cell is too narrow).
 -- Must be required right before cpu.lua: rightmost of the load group, whose padding item
 -- cpu.lua adds.
 -- Log scale from 10 KB/s to 100 MB/s: a graph can't be rescaled once pushed, and a linear
 -- scale either hides small traffic or clips large.
 -- Rates: byte counters from `netstat -ibI en0` (link row) every 2 s, divided by the time
 -- between two reads (perl's Time::HiRes; `date` has no sub-second precision on macOS).
--- Same as items_left/widgets/network.lua except the item layout.
 
 local width = 64
 
@@ -81,8 +82,73 @@ small_props.icon.color, small_props.label.color = colors.dim, colors.dim
 local small = sbar.add("item", "widgets.network.compact", small_props)
 compact.register({ down, up }, { small })
 
+-- Left bar cell: rates in a row at the top, below a bg1 box with both graphs.
+local cell_height = 44 -- vertical extent of the cell
+local box_height = 22  -- graph box at the bottom of the cell
+local shift = box_height / 2 - cell_height / 2 + 2 -- box near the cell bottom
+local text_y = cell_height / 2 - 9 - shift           -- text row near the top
+
+-- width = 0: takes no (vertical) space, so the upload graph added next is drawn over it;
+-- this one carries the bg1 box so it stays underneath both lines
+local down_left = sbar.add("graph", "widgets.network.down.left", settings.cell_width, {
+  position = "right",
+  drawing = false,
+  width = 0,
+  y_offset = shift,
+  graph = {
+    color = colors.blue,
+    fill_color = colors.with_alpha(colors.blue, 0.3),
+    line_width = 1.5,
+  },
+  background = {
+    height = box_height,
+    color = colors.bg1,
+    border_color = { alpha = 0 },
+    drawing = true,
+  },
+  icon = { drawing = false },
+  label = { drawing = false },
+})
+
+local up_left = sbar.add("graph", "widgets.network.up.left", settings.cell_width, {
+  position = "right",
+  drawing = false,
+  width = cell_height,
+  padding_right = 3,
+  y_offset = shift,
+  graph = { color = colors.red, line_width = 1.5 },
+  background = {
+    height = box_height,
+    color = { alpha = 0 },
+    border_color = { alpha = 0 },
+    drawing = true,
+  },
+  icon = {
+    string = "?",
+    color = colors.dim,
+    font = text_font,
+    padding_left = 1,
+    padding_right = 0,
+    width = 0,
+    y_offset = text_y,
+  },
+  label = {
+    string = "?",
+    color = colors.dim,
+    font = text_font,
+    align = "right",
+    padding_left = 0,
+    padding_right = 1,
+    width = 0,
+    y_offset = text_y,
+  },
+})
+layout.on(function(left)
+  down_left:set({ drawing = left })
+  up_left:set({ drawing = left })
+end)
+
 -- ---------------------------------------------------------------------------------------------
--- Shared with items_left/widgets/network.lua from here on (except the arrows in show()).
 
 local scale_min, scale_max = 4, 8 -- log10 of bytes/s
 local command = [[netstat -ibI en0 | awk '/<Link#/ {print $7, $10; exit}'; ]]
@@ -109,8 +175,17 @@ end
 local function show(down_rate, up_rate)
   down:push({ scaled(down_rate) })
   up:push({ scaled(up_rate) })
+  down_left:push({ scaled(down_rate) })
+  up_left:push({ scaled(up_rate) })
   local down_color, up_color = color(down_rate, colors.blue), color(up_rate, colors.red)
-  down:set({ graph = { color = down_color, fill_color = colors.with_alpha(down_color, 0.3) } })
+  local down_graph = { graph = { color = down_color, fill_color = colors.with_alpha(down_color, 0.3) } }
+  down:set(down_graph)
+  down_left:set(down_graph)
+  up_left:set({
+    graph = { color = up_color },
+    icon = { string = fmt(down_rate), color = down_color },
+    label = { string = fmt(up_rate), color = up_color },
+  })
   up:set({
     graph = { color = up_color },
     icon = { string = "↓" .. fmt(down_rate), color = down_color },
@@ -124,6 +199,7 @@ end
 
 local last -- { rx, tx, t } of the previous read
 
+-- polled through the top upload graph (compact.lua keeps its updates on whenever it is hidden);
 -- no system_woke: the next routine read (2 s) follows soon enough after wake
 up:subscribe({ "routine", "forced" }, function()
   sbar.exec(command, function(out)

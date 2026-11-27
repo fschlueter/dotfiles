@@ -6,12 +6,12 @@
 -- and on macOS window/app events.
 local colors = require("colors")
 local settings = require("settings")
+local layout = require("helpers.layout")
 local app_icons = require("helpers.app_icons")
 local app_name = require("helpers.front_app_name").name
 
-local left = settings.layout == "left"
 local aerospace = "/opt/homebrew/bin/aerospace"
-local max_apps = left and 2 or 6  -- app icons per workspace (left: what fits the box)
+local max_apps = 6  -- app icons per workspace; left: 2 (what fits the box), set by the applier
 
 sbar.add("event", "aerospace_workspace_change")
 
@@ -38,44 +38,59 @@ do
 end
 
 local function props(name)
-  local p = {
+  return {
     drawing = false,
     icon = {
       string = name,
       font = { style = settings.font.style_map["Bold"], size = 13.0 },
       color = colors.dim,
     },
-    label = {
-      font = "sketchybar-app-font:Regular:14.0",
-      color = colors.dim,
-    },
+    label = { color = colors.dim },
     background = {
       color = colors.bg1,
       border_width = 1,
       border_color = colors.bg1,
     },
+    padding_left = 2,
+    padding_right = 2,
   }
+end
+
+-- Layout part of a workspace item's properties
+local function layout_props(left)
   if left then
     -- one row across the cell: name, then the app icons centred in an inset box
     -- The box (label background) always ends at the cell's right edge; x_offset moves it
     -- inside, the negative padding_left moves the icons along (found by trial).
     local name_width, shift = 20, 3
-    p.icon.width, p.icon.align = name_width, "center"
-    p.icon.padding_left, p.icon.padding_right = 0, 0
-    p.label.width, p.label.align = settings.cell_width - name_width - 5, "center"
-    p.label.padding_left, p.label.padding_right = -(shift + 1), 0
-    p.label.background = { drawing = true, color = colors.bg, height = 20, corner_radius = 6,
-                           x_offset = -shift }
-    p.label.font = "sketchybar-app-font:Regular:10.0"
-    p.background.height = 28
-    p.padding_left, p.padding_right = 2, 2
-  else
-    p.padding_left, p.padding_right = 2, 2
-    p.icon.padding_left = 8
-    p.label.padding_right = 8
-    p.background.height = 24
+    return {
+      icon = { width = name_width, align = "center", padding_left = 0, padding_right = 0 },
+      label = {
+        width = settings.cell_width - name_width - 5,
+        align = "center",
+        padding_left = -(shift + 1),
+        padding_right = 0,
+        background = { drawing = true, color = colors.bg, height = 20, corner_radius = 6,
+                       x_offset = -shift },
+        font = "sketchybar-app-font:Regular:10.0",
+      },
+      background = { height = 28 },
+    }
   end
-  return p
+  return {
+    icon = { width = "dynamic", align = "left", padding_left = 8,
+             padding_right = settings.paddings },
+    label = {
+      width = "dynamic",
+      align = "left",
+      padding_left = settings.paddings,
+      padding_right = 8,
+      -- (no color: setting one turns the background on)
+      background = { drawing = false, height = 0, corner_radius = 0, x_offset = 0 },
+      font = "sketchybar-app-font:Regular:14.0",
+    },
+    background = { height = 24 },
+  }
 end
 
 -- Right-click popup: all windows, grouped by workspace; click a row to focus that window.
@@ -169,7 +184,7 @@ for i, name in ipairs(names) do
   index_of[name] = i
 end
 
-if left then sbar.add("item", "spaces.gap", { width = settings.group_paddings }) end
+local gap = sbar.add("item", "spaces.gap", { width = settings.group_paddings }) -- left only
 
 local state = {}  -- last parsed state
 local sent = {}   -- name -> key of what draw() last sent, so it sets only items that changed
@@ -270,6 +285,16 @@ local function update(env)
   end)
 end
 
+layout.on(function(left)
+  local p = layout_props(left)
+  for _, space in pairs(spaces) do space:set(p) end
+  gap:set({ drawing = left })
+  max_apps = left and 2 or 6
+  close_popup()
+  sent = {}
+  update()
+end)
+
 local watcher = sbar.add("item", "spaces.watcher", { drawing = false, updates = true })
 watcher:subscribe({
   "aerospace_workspace_change",
@@ -280,5 +305,4 @@ watcher:subscribe({
   "system_woke",
   "forced",
 }, update)
-
-update()
+-- (the applier above ran the first update)

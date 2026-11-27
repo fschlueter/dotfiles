@@ -1,5 +1,5 @@
 -- Picks the layout for the main display (`layout.sh auto`) at load and on
--- display changes; it reloads the bar only when the layout changes.
+-- display changes; it switches the layout (live, helpers/layout.lua) only when it changes.
 local cmd = "'" .. os.getenv("CONFIG_DIR") .. "/layout.sh' auto"
 
 local watcher = sbar.add("item", "display_watch", { drawing = false, updates = true })

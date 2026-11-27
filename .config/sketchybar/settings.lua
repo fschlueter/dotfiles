@@ -1,5 +1,5 @@
--- Bar layout: "top" (horizontal) or "left" (vertical); items read it (items/init.lua).
--- Read from the state file `layout` (written by layout.sh), default "top".
+-- Bar layout: "top" (horizontal) or "left" (vertical), the one at load; helpers/layout.lua
+-- updates it on a live switch. Read from the state file `layout` (written by layout.sh), default "top".
 local function read_layout()
   local dir = os.getenv("CONFIG_DIR") or "."
   local f = io.open(dir .. "/layout", "r")

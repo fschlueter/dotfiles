@@ -1,11 +1,13 @@
 local settings = require("settings")
+local layout = require("helpers.layout")
 
 -- Compact mode of the top bar's load and network widgets: the graphs are replaced by
 -- plain "name value" items. One click on any of them toggles all; the state is the
--- gitignored file `compact` ("1" = compact), so it survives reloads.
--- In compact mode the hidden graph items keep `updates` on: they poll and feed the
--- compact items, and a hidden item would otherwise stop. Otherwise they keep the default
--- `when_shown` and pause while the bar is hidden.
+-- gitignored file `compact` ("1" = compact), so it survives reloads. On the left bar both
+-- are hidden (its own graph cells show instead).
+-- While hidden (compact mode or left bar) the top graph items keep `updates` on: they poll
+-- and feed the compact items and the left cells, and a hidden item would otherwise stop.
+-- Otherwise they keep the default `when_shown` and pause while the bar is hidden.
 
 local path = (os.getenv("CONFIG_DIR") or ".") .. "/compact"
 
@@ -20,11 +22,13 @@ end
 local M = { on = read(), full = {}, small = {} }
 
 local function apply()
+  local left = layout.is_left()
   for _, item in ipairs(M.full) do
-    item:set({ drawing = not M.on, updates = M.on and "on" or "when_shown" })
+    item:set({ drawing = not (M.on or left), updates = (M.on or left) and "on" or "when_shown" })
   end
-  for _, item in ipairs(M.small) do item:set({ drawing = M.on }) end
+  for _, item in ipairs(M.small) do item:set({ drawing = M.on and not left }) end
 end
+layout.on(function(_) apply() end)
 
 local function toggle()
   M.on = not M.on

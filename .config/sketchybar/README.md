@@ -20,9 +20,13 @@
     `helpers/cell.lua` stacks icon above label). Position `left` stacks from the top, `right` from
     the bottom; `width` is the vertical extent. Brackets don't work here; items draw their own
     backgrounds. Popups open to the right.
-  - Items read `settings.layout` and set their layout-specific properties in one file in
-    `items/`. Only `front_app`, `menus`, `widgets/load_graph` and `widgets/network` have a
-    separate left version in `items_left/` (`items/init.lua`, `items/widgets/init.lua` pick it).
+  - **Live switch, no reload**: `layout.sh` triggers `layout_switch`; `helpers/layout.lua`
+    re-applies the layout defaults (`default.lua`) and the appliers each item file registers
+    with `layout.on(fn(left))`. Both layouts' items always exist; the other layout's (brackets,
+    padding items, the left graph cells `*.left`, menus) are hidden. An applier must set every
+    property it sets for one layout also for the other; check with `tools/item_diff.sh`: a
+    fresh load in a layout (`echo top > layout`, `tools/reload.sh`) and a switch to it
+    (`sketchybar --trigger layout_switch LAYOUT=top`) must dump the same.
 - `bar.lua`: the top bar overhangs the screen's top edge, so its rounded corners show on the other
   three sides; the left bar floats 6 pt from the screen edges (items are centred on the whole bar,
   so an overhang would push them off the visible centre).
@@ -85,7 +89,10 @@ Not loaded: `control.lua` (Control Center alias).
 
 ## Known limits
 
-- The items in `items_left/` duplicate their `items/` version; changes have to be made in both.
+- Setting a background `color` turns its `drawing` on: to hide one, set `drawing = false` in a
+  later `set`, or leave the color.
+- An item added with empty properties (`{}`) breaks the batched config at load: its empty
+  `--set` swallows the next command.
 - The top bar's right-side gaps (10 pt) come from per-item padding widths; re-measure when a
   background changes size.
 - Hardcoded: interface `en0`, localized menu aliases (`Control Centre,WiFi`, `...,Bluetooth`).

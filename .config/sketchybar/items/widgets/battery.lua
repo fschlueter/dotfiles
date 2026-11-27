@@ -2,33 +2,15 @@ local icons = require("icons")
 local colors = require("colors")
 local settings = require("settings")
 local cell = require("helpers.cell")
+local layout = require("helpers.layout")
 
-local left = settings.layout == "left"
-local props = {
+local battery = sbar.add("item", "widgets.battery", {
   position = "right",
-  icon = {
-    font = {
-      style = settings.font.style_map["Regular"],
-      size = left and 18.0 or 19.0,
-    }
-  },
-  label = { font = { family = settings.font.numbers } },
   update_freq = 180,
   -- small cell size so the separator row stays thin; rows get their height
   -- from a transparent background
   popup = { align = "center", height = 9 }
-}
--- left: own bg1 cell, icon above the percentage (cell()), both larger and further apart
--- than cell()'s defaults; top: bg1 bracket (below)
-if left then
-  props = cell(props)
-  props.icon.font.size = 22.0
-  props.icon.y_offset = 10
-  props.label.font.size = 12.0
-  props.label.y_offset = -12
-  props.background = { drawing = true, color = colors.bg1, height = 46 }
-end
-local battery = sbar.add("item", "widgets.battery", props)
+})
 
 -- Popup: time remaining, a separator, one row per energy mode. A mode row is
 -- a level meter in block characters (pixel art that follows the theme
@@ -208,13 +190,34 @@ battery:subscribe("mouse.clicked", function(env)
   end
 end)
 
-if not left then
-  sbar.add("bracket", "widgets.battery.bracket", { battery.name }, {
-    background = { color = colors.bg1 }
-  })
-end
-
-sbar.add("item", "widgets.battery.padding", {
-  position = "right",
-  width = left and settings.group_paddings or 1,  -- top: gap to the next background: 10 pt
+local bracket = sbar.add("bracket", "widgets.battery.bracket", { battery.name }, {
+  background = { color = colors.bg1 }
 })
+
+local padding = sbar.add("item", "widgets.battery.padding", { position = "right" })
+
+-- left: own bg1 cell, icon above the percentage (cell()), both larger and further apart
+-- than cell()'s defaults; top: bg1 bracket
+layout.on(function(left)
+  bracket:set({ drawing = not left })
+  padding:set({ width = left and settings.group_paddings or 1 }) -- top: gap to the next background: 10 pt
+  local icon_font = { style = settings.font.style_map["Regular"], size = left and 22.0 or 19.0 }
+  local label_font = { family = settings.font.numbers, style = settings.font.style_map["Semibold"],
+                       size = left and 12.0 or 13.0 }
+  if left then
+    battery:set(cell({
+      icon = { font = icon_font, y_offset = 10 },
+      label = { font = label_font, y_offset = -12 },
+      background = { drawing = true, color = colors.bg1, height = 46 },
+    }))
+  else
+    battery:set({
+      icon = { font = icon_font, width = "dynamic", align = "left",
+               padding_left = settings.paddings, padding_right = settings.paddings, y_offset = 0 },
+      label = { font = label_font, width = "dynamic", align = "left",
+                padding_left = settings.paddings, padding_right = settings.paddings, y_offset = 0 },
+      background = { drawing = false, color = 0, height = 26 },
+    })
+    battery:set({ background = { drawing = false } }) -- after the color, which turns it on
+  end
+end)

@@ -3,35 +3,23 @@
 -- Used by both layouts.
 local colors = require("colors")
 local settings = require("settings")
+local layout = require("helpers.layout")
 
 local extra = "Control Centre,Amphetamine"
 
-local left = settings.layout == "left"
 local amphetamine = sbar.add("alias", extra, {
   position = "right",
-  -- left: scaled to fit the countdown ("00:19") into the bar width
-  alias = { color = colors.fg, scale = left and 0.7 or 1.0 },
-  padding_left = left and 5 or 4, -- left: default item padding, as the other cells
-  padding_right = left and 5 or 4,
-  -- left: own bg1 cell; the background ends with the content, so empty icon and label
-  -- of width `fit()` pad the image to the cell width; top: bracket below
-  background = left and { drawing = true, color = colors.bg1, height = 28 } or nil,
-  icon = { drawing = left, string = " ", padding_left = 0, padding_right = 0 },
-  label = { drawing = left, string = " ", padding_left = 0, padding_right = 0 },
-  update_freq = left and 30 or 0,
+  alias = { color = colors.fg },
+  icon = { string = " ", padding_left = 0, padding_right = 0 },
+  label = { string = " ", padding_left = 0, padding_right = 0 },
   popup = { align = "center", height = 26 }, -- row height
 })
 
-if not left then
-  sbar.add("bracket", "widgets.amphetamine.bracket", { amphetamine.name }, {
-    background = { color = colors.bg1 }
-  })
-end
-
-sbar.add("item", "widgets.amphetamine.padding", {
-  position = "right",
-  width = left and settings.group_paddings or 6,  -- top: gap to the next background: 10 pt
+local bracket = sbar.add("bracket", "widgets.amphetamine.bracket", { amphetamine.name }, {
+  background = { color = colors.bg1 }
 })
+
+local padding = sbar.add("item", "widgets.amphetamine.padding", { position = "right" })
 
 -- The icon is Amphetamine's own (alias), so it follows the session state by itself.
 --   left click: popup with the session state, durations to start, end, Amphetamine's menu
@@ -209,12 +197,35 @@ add_row("menu", "pill", "Amphetamine menu…", function()
 end)
 
 -- Left: pads the image (about 23 pt at scale 0.7, 54 pt with a countdown) to the cell width.
-local function fit(countdown)
-  if not left then return end
+local countdown = false
+local function fit(timed)
+  countdown = timed
+  if not layout.is_left() then return end
   local pad = countdown and 1 or 16
   amphetamine:set({ icon = { width = pad }, label = { width = pad } })
 end
-fit(false)
+
+-- Left: own bg1 cell, the alias scaled to fit the countdown ("00:19") into the bar width; the
+-- background ends with the content, so empty icon and label of width fit() pad the image to the
+-- cell width; the state is polled (the popup's status row). Top: bg1 bracket, no polling.
+layout.on(function(left)
+  bracket:set({ drawing = not left })
+  padding:set({ width = left and settings.group_paddings or 6 }) -- top: gap to the next background: 10 pt
+  amphetamine:set({
+    alias = { scale = left and 0.7 or 1.0 },
+    padding_left = left and 5 or 4, -- left: default item padding, as the other cells
+    padding_right = left and 5 or 4,
+    background = left and { drawing = true, color = colors.bg1, height = 28 }
+                       or { drawing = false, color = 0, height = 26 },
+    icon = { drawing = left, width = left and (countdown and 1 or 16) or "dynamic" },
+    label = { drawing = left, width = left and (countdown and 1 or 16) or "dynamic" },
+    update_freq = left and 30 or 0,
+  })
+  if not left then -- after the color, which turns it on
+    amphetamine:set({ background = { drawing = false } })
+  end
+  if left and refresh then refresh() end -- (not yet defined at load)
+end)
 
 local function show_state(active, text)
   session_active = active
@@ -236,10 +247,11 @@ refresh = function()
     fit(active and (seconds or 0) > 0) -- Amphetamine shows a countdown for timed sessions
   end)
 end
-if left then
-  -- no system_woke: its osascript can take seconds right after wake; routine follows within 30 s
-  amphetamine:subscribe({ "routine", "forced" }, refresh)
-end
+-- no system_woke: its osascript can take seconds right after wake; routine follows within 30 s
+-- (routine only comes on the left bar: update_freq is 0 on top)
+amphetamine:subscribe({ "routine", "forced" }, function()
+  if layout.is_left() then refresh() end
+end)
 
 amphetamine:subscribe("mouse.clicked", function(env)
   if env.BUTTON == "right" then

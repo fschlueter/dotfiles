@@ -1,7 +1,6 @@
 local colors = require("colors")
 local settings = require("settings")
-
-local left = settings.layout == "left"
+local layout = require("helpers.layout")
 
 -- Equivalent to the --bar domain. With position "left" the bar is vertical:
 -- `height` is its thickness, items with position "left" stack from the top,
@@ -17,18 +16,21 @@ local left = settings.layout == "left"
 -- from the top edge (top) / along the bar (left).
 local radius = 6
 local inset = 6
-local thickness = left and settings.bar_width or settings.bar_height
 sbar.bar({
-  position = left and "left" or "top",
   display = "main", -- only on the main display (layout.sh sets AeroSpace's gaps to match)
-  height = left and thickness or thickness + radius,
   topmost = "on", -- above the auto-hidden macOS menu bar
   color = colors.bar.bg,
   border_color = colors.bar.border,
   border_width = 1, -- fine accent border (colors.bar.border)
   corner_radius = radius,
   margin = inset,
-  y_offset = left and inset or -radius,
   padding_right = 2,
   padding_left = 2,
 })
+layout.on(function(left)
+  sbar.bar({
+    position = left and "left" or "top",
+    height = left and settings.bar_width or settings.bar_height + radius,
+    y_offset = left and inset or -radius,
+  })
+end)

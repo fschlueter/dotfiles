@@ -65,4 +65,5 @@ if [ -f "$aero" ]; then
 fi
 
 echo "$next" > "$state"
-sketchybar --reload
+# live switch, no reload (helpers/layout.lua)
+sketchybar --trigger layout_switch LAYOUT="$next"

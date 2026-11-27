@@ -10,6 +10,7 @@
 local colors = require("colors")
 local settings = require("settings")
 local cell = require("helpers.cell")
+local layout = require("helpers.layout")
 
 local popup_width = 250
 local max_devices = 16
@@ -24,45 +25,45 @@ local glyphs = {
   ["Magic Trackpad"] = "󰟸", Speaker = "󰓃", Gamepad = "󰊗", other = "󰾰",
 }
 
-local left = settings.layout == "left"
-local props = {
+local bluetooth = sbar.add("item", "widgets.bluetooth", {
   position = "right",
   icon = {
     string = glyphs.on,
     color = colors.dim,
     font = nerd_font,
-    padding_left = 6,
-    padding_right = 8,
   },
   label = { drawing = false },
-  popup = { align = "center" },
   update_freq = 30,
-}
-if left then
-  props = cell(props)
-  -- no label: undo cell()'s icon-over-label offsets
-  props.icon.width = settings.cell_width
-  props.icon.padding_left = 0
-  props.icon.padding_right = 0
-  props.icon.y_offset = 0
-  props.background = { drawing = true, color = colors.bg1, height = 28 }
-  -- vertical bar: "right" aligns the popup's bottom with the item's, so it grows upwards
-  -- (centered, the longer list ran off the bottom of the screen)
-  props.popup.align = "right"
-end
-local bluetooth = sbar.add("item", "widgets.bluetooth", props)
-
-if not left then
-  -- one background for Wi-Fi and Bluetooth
-  sbar.add("bracket", "widgets.network.bracket", { "widgets.wifi", bluetooth.name }, {
-    background = { color = colors.bg1 },
-  })
-end
-
-sbar.add("item", "widgets.bluetooth.padding", {
-  position = "right",
-  width = left and settings.group_paddings or 6,  -- top: gap to the next background: 10 pt
 })
+
+-- Top: one background for Wi-Fi and Bluetooth
+local bracket = sbar.add("bracket", "widgets.network.bracket", { "widgets.wifi", bluetooth.name }, {
+  background = { color = colors.bg1 },
+})
+
+local padding = sbar.add("item", "widgets.bluetooth.padding", { position = "right" })
+
+layout.on(function(left)
+  bracket:set({ drawing = not left })
+  padding:set({ width = left and settings.group_paddings or 6 }) -- top: gap to the next background: 10 pt
+  if left then
+    bluetooth:set(cell({
+      -- no label: undo cell()'s icon-over-label offsets
+      icon = { width = settings.cell_width, padding_left = 0, padding_right = 0, y_offset = 0 },
+      background = { drawing = true, color = colors.bg1, height = 28 },
+      -- vertical bar: "right" aligns the popup's bottom with the item's, so it grows upwards
+      -- (centered, the longer list ran off the bottom of the screen)
+      popup = { align = "right" },
+    }))
+  else
+    bluetooth:set(layout.merge(layout.top_cell(), {
+      icon = { padding_left = 6, padding_right = 8 },
+      background = { drawing = false, color = 0, height = 26 },
+      popup = { align = "center" },
+    }))
+    bluetooth:set({ background = { drawing = false } }) -- after the color, which turns it on
+  end
+end)
 
 local popup = "popup." .. bluetooth.name
 local powered = false

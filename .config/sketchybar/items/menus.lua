@@ -1,6 +1,10 @@
 local colors = require("colors")
 local icons = require("icons")
 local settings = require("settings")
+local layout = require("helpers.layout")
+
+-- Top layout only: the front app's menu row (hidden on the left bar, where a click on
+-- front_app opens the native menu instead).
 
 local menu_watcher = sbar.add("item", {
   drawing = false,
@@ -102,18 +106,30 @@ end
 
 menu_watcher:subscribe("front_app_switched", update_menus)
 
+-- hidden on a layout switch (front_app's applier restores its own label and padding)
+local function hide_menus()
+  menu_watcher:set({ updates = false })
+  sbar.set("/menu\\..*/", { drawing = false })
+end
+
 -- Menus replace the front_app name; its icon stays as the toggle back
 local shown = false  -- menu.1 is always hidden, so track the state here
 space_menu_swap:subscribe("swap_menus_and_spaces", function(env)
   shown = not shown
   if not shown then
-    menu_watcher:set( { updates = false })
-    sbar.set("/menu\\..*/", { drawing = false })
+    hide_menus()
     sbar.set("front_app", { label = { drawing = true }, padding_right = app_pad })
   else
     menu_watcher:set( { updates = true })
     sbar.set("front_app", { label = { drawing = false } })
     update_menus()
+  end
+end)
+
+layout.on(function(_)
+  if shown then
+    shown = false
+    hide_menus()
   end
 end)
 

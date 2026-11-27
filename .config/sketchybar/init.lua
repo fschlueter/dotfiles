@@ -12,6 +12,7 @@ require("wake_log")
 require("items")
 require("theme_watch")
 require("display_watch")
+require("helpers.layout").loaded()
 sbar.end_config()
 
 -- Run the event loop of the sketchybar module (without this there will be no

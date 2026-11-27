@@ -1,7 +1,5 @@
 local settings = require("settings")
-local left = settings.layout == "left"
--- load_graph.lua differs per layout (cell geometry)
-local load_graph = require((left and "items_left" or "items") .. ".widgets.load_graph")
+local load_graph = require("items.widgets.load_graph")
 
 -- Load graphs for cpu, gpu and memory. Top: next to the network graph (no background),
 -- cpu rightmost; left: three cells, cpu at the bottom.
