@@ -125,9 +125,11 @@ int main(int argc, char **argv) {
 if not io.open(owner_bin, "r") then
   os.execute('mkdir -p "' .. owner_bin:match("(.*)/") .. '"')
   local f = io.open(owner_bin .. ".c", "w")
-  f:write(owner_src)
-  f:close()
-  sbar.exec('cc -O2 -o "' .. owner_bin .. '" "' .. owner_bin .. '.c"')
+  if f then  -- unwritable cache: fall back to process names (see above)
+    f:write(owner_src)
+    f:close()
+    sbar.exec('cc -O2 -o "' .. owner_bin .. '" "' .. owner_bin .. '.c"')
+  end
 end
 
 -- coreaudiod holds an "audio-out" power assertion per process playing sound
