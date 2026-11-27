@@ -10,6 +10,18 @@ set -euo pipefail
 export PATH="/opt/homebrew/bin:$PATH"
 
 dir="$(cd "$(dirname "$0")" && pwd)"
+
+# One run at a time: a display change sends several display_change events at once. Later runs wait,
+# then see layout_main already updated and exit (auto). A lock older than 5 s is taken over.
+lock="${TMPDIR:-/tmp}/sketchybar-layout.lock"
+for _ in $(seq 50); do
+  mkdir "$lock" 2>/dev/null && break
+  sleep 0.1
+done
+mkdir -p "$lock"
+trap 'rmdir "$lock" 2>/dev/null' EXIT
+trap 'exit 1' INT TERM HUP
+
 state="$dir/layout"
 current="$(cat "$state" 2>/dev/null || echo top)"
 
