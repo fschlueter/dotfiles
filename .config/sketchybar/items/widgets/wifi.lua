@@ -165,7 +165,7 @@ end)
 wifi:subscribe("mouse.clicked", on_click)
 wifi:subscribe("mouse.exited.global", hide_details)
 -- Left bar: Bluetooth lies over this item and gets its clicks (items/widgets/bluetooth.lua) and
--- forwards its right clicks here: plain = details, with a modifier = native Wi-Fi menu.
+-- forwards its left clicks here: plain = native Wi-Fi menu, with a modifier = details.
 sbar.add("event", "wifi_details")
 sbar.add("event", "wifi_menu")
 wifi:subscribe("wifi_details", function() on_click({ BUTTON = "right" }) end)

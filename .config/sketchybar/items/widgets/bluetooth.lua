@@ -298,10 +298,11 @@ bluetooth:subscribe("system_woke", function()
   end)
 end)
 bluetooth:subscribe("mouse.clicked", function(env)
-  -- left bar: this item covers Wi-Fi's (same cell), so its right clicks go to Wi-Fi
-  if layout.is_left() and env.BUTTON == "right" then
+  -- left bar: this item covers Wi-Fi's (same cell) and gets its clicks; buttons follow the icons:
+  -- left click = Wi-Fi (native menu; with a modifier: details), right click = this popup
+  if layout.is_left() and env.BUTTON ~= "right" then
     hide_popup()
-    sbar.trigger((env.MODIFIER or "") ~= "" and "wifi_menu" or "wifi_details")
+    sbar.trigger((env.MODIFIER or "") ~= "" and "wifi_details" or "wifi_menu")
     return
   end
   local open = (bluetooth:query().popup or {}).drawing == "on"  -- no "popup" when a query fails

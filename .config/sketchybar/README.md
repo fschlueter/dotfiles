@@ -71,10 +71,10 @@
 | Amphetamine (`helpers/amphetamine.sh`) | alias of its menu bar extra, tinted `fg` | left: popup with session state, start (durations) / end, Amphetamine's own menu; right: toggle a session |
 
 > **Left bar: Wi-Fi and Bluetooth share one cell (Wi-Fi left, Bluetooth right), and every click
-> lands on Bluetooth** (it lies over Wi-Fi; sketchybar gives no click position). There:
-> **left click = Bluetooth popup, right click = Wi-Fi details, right click with a modifier
-> (e.g. ⌥) = native Wi-Fi menu.** Bluetooth forwards the right clicks via the events
-> `wifi_details` / `wifi_menu` (`items/widgets/bluetooth.lua`, `wifi.lua`).
+> lands on Bluetooth** (it lies over Wi-Fi; sketchybar gives no click position). The mouse
+> buttons follow the icons: **left click = native Wi-Fi menu (with a modifier, e.g. ⌥: Wi-Fi
+> details), right click = Bluetooth popup.** Bluetooth forwards the left clicks via the events
+> `wifi_menu` / `wifi_details` (`items/widgets/bluetooth.lua`, `wifi.lua`).
 
 Not loaded: `control.lua` (Control Center alias).
 
