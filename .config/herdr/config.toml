@@ -182,7 +182,7 @@ last_pane = "prefix+tab"  # back-and-forth, also across workspaces
 # with radar's.
 tab_bar_right_separator = " · "
 tab_bar_right = [
-  { type = 'command', command = 'cat "/Users/felix/.local/state/herdr/plugins/hhdebb.herdr-radar/tabbar${HERDR_SESSION:+-$HERDR_SESSION}.txt"', interval_seconds = 6, timeout_seconds = 2 },
+  { type = 'command', command = 'cat "$HOME/.local/state/herdr/plugins/hhdebb.herdr-radar/tabbar${HERDR_SESSION:+-$HERDR_SESSION}.txt"', interval_seconds = 6, timeout_seconds = 2 },
   { type = 'command', command = 'node ~/.claude/scripts/subscription-quota.mjs', interval_seconds = 15, timeout_seconds = 2 },
 ]
 
