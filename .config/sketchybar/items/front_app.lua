@@ -10,7 +10,6 @@ local front_app_name = require("helpers.front_app_name")
 -- Left: icon only, 24 px wide; the underline is the icon background, the transparent item
 -- background sets the vertical extent so it is not clipped; any click opens the native app menu.
 local front_app = sbar.add("item", "front_app", {
-  display = "active",
   icon = {
     font = "sketchybar-app-font:Regular:16.0",
     color = colors.accent,
@@ -78,8 +77,12 @@ layout.on(function(left)
 end)
 
 local current_app
+local gen = 0  -- a slow Ghostty title query must not overwrite a newer app's name
 local function update()
+  gen = gen + 1
+  local my_gen = gen
   front_app_name.focused(current_app, function(name)
+    if my_gen ~= gen then return end
     front_app:set({
       icon = { string = app_icons[name] or app_icons["Default"] },
       label = { string = name },
